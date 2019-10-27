@@ -20,6 +20,9 @@ pero en breve se irán subiendo más.
         *   **tabla.py** Agente racional de tipo tabla.
         *   **simple.py** Agente racional reactivo simple.
         *   **modelos.py** Agente racional reactivo basado en modelos.
+    * **grafos.py** Definición de un problema para búsqueda en grafos.
+    * **informada.py** Algoritmos de búsqueda informada en grafos.
+    * **noinformada.py** Algoritmos de búsqueda no informada en grafos.
 
 [dia]: https://www.youtube.com/c/descubriendolainteligenciaartificial
        "Canal de Youtube Descubriendo la Inteligencia Artficial"
