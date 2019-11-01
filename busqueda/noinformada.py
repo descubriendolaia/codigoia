@@ -54,15 +54,15 @@ def anchura(
     while True:
         # Mostramos la frontera y explorada.
         if log:
-            log_frnt = [n.estado.nombre
-                        for n in frontera]
-            log_xplr = [e.nombre
-                        for e in explorados]
+            log_frontera = [n.estado.nombre
+                            for n in frontera]
+            log_explorados = [e.nombre
+                              for e in explorados]
             print("----- NUEVO CICLO -----")
             msg = "Frontera: {0}"
-            print(msg.format(log_frnt))
+            print(msg.format(log_frontera))
             msg = "Explorados: {0}"
-            print(msg.format(log_xplr))
+            print(msg.format(log_explorados))
 
         # Si frontera está vacía, terminamos.
         if not frontera:
@@ -73,18 +73,18 @@ def anchura(
         if log:
             msg = "Nodo: {0}"
             print(msg.format(nodo.estado.nombre))
-            log_frnt = [n.estado.nombre
-                        for n in frontera]
+            log_frontera = [n.estado.nombre
+                            for n in frontera]
             msg = "Frontera: {0}"
-            print(msg.format(log_frnt))
+            print(msg.format(log_frontera))
 
         # Agregamos su estado al conjunto de explorados.
         explorados.add(nodo.estado)
         if log:
-            log_xplr = [e.nombre
-                        for e in explorados]
+            log_explorados = [e.nombre
+                              for e in explorados]
             msg = "Explorados: {0}"
-            print(msg.format(log_xplr))
+            print(msg.format(log_explorados))
 
         # Si el nodo no tiene acciones, pasamos al siguiente.
         if not nodo.acciones:
@@ -181,15 +181,15 @@ def coste_uniforme(
     while True:
         # Mostramos la frontera y explorada.
         if log:
-            log_frnt = [n.estado.nombre
-                        for n in frontera]
-            log_xplr = [e.nombre
-                        for e in explorados]
+            log_frontera = [n.estado.nombre
+                            for n in frontera]
+            log_explorados = [e.nombre
+                              for e in explorados]
             print("----- NUEVO CICLO -----")
             msg = "Frontera: {0}"
-            print(msg.format(log_frnt))
+            print(msg.format(log_frontera))
             msg = "Explorados: {0}"
-            print(msg.format(log_xplr))
+            print(msg.format(log_explorados))
 
         # Si frontera está vacía, terminamos.
         if not frontera:
@@ -200,10 +200,10 @@ def coste_uniforme(
         if log:
             msg = "Nodo: {0}"
             print(msg.format(nodo.estado.nombre))
-            log_frnt = [n.estado.nombre
-                        for n in frontera]
+            log_frontera = [n.estado.nombre
+                            for n in frontera]
             msg = "Frontera: {0}"
-            print(msg.format(log_frnt))
+            print(msg.format(log_frontera))
 
         # Miramos si el nodo es ya un objetivo.
         if problema.es_objetivo(estado=nodo.estado):
@@ -215,10 +215,10 @@ def coste_uniforme(
         # Agregamos su estado al conjunto de explorados.
         explorados.add(nodo.estado)
         if log:
-            log_xplr = [e.nombre
-                        for e in explorados]
+            log_explorados = [e.nombre
+                              for e in explorados]
             msg = "Explorados: {0}"
-            print(msg.format(log_xplr))
+            print(msg.format(log_explorados))
 
         # Si el nodo no tiene acciones, pasamos al siguiente.
         if not nodo.acciones:
@@ -339,15 +339,15 @@ def profundidad(
     while True:
         # Mostramos la frontera y explorada.
         if log:
-            log_frnt = [n.estado.nombre
-                        for n in frontera]
-            log_xplr = [e.nombre
-                        for e in explorados]
+            log_frontera = [n.estado.nombre
+                            for n in frontera]
+            log_explorados = [e.nombre
+                              for e in explorados]
             print("----- NUEVO CICLO -----")
             msg = "Frontera: {0}"
-            print(msg.format(log_frnt))
+            print(msg.format(log_frontera))
             msg = "Explorados: {0}"
-            print(msg.format(log_xplr))
+            print(msg.format(log_explorados))
 
         # Si frontera está vacía, terminamos.
         if not frontera:
@@ -358,18 +358,18 @@ def profundidad(
         if log:
             msg = "Nodo: {0}"
             print(msg.format(nodo.estado.nombre))
-            log_frnt = [n.estado.nombre
-                        for n in frontera]
+            log_frontera = [n.estado.nombre
+                            for n in frontera]
             msg = "Frontera: {0}"
-            print(msg.format(log_frnt))
+            print(msg.format(log_frontera))
 
         # Agregamos su estado al conjunto de explorados.
         explorados.add(nodo.estado)
         if log:
-            log_xplr = [e.nombre
-                        for e in explorados]
+            log_explorados = [e.nombre
+                              for e in explorados]
             msg = "Explorados: {0}"
-            print(msg.format(log_xplr))
+            print(msg.format(log_explorados))
 
         # Si el nodo no tiene acciones, pasamos al siguiente.
         if not nodo.acciones:
@@ -430,6 +430,7 @@ def profundidad(
 def profundidad_recursiva(
         problema,
         limite=None,
+        tipo_limite="profundidad",
         log=False,
         paso_a_paso=False):
     """
@@ -441,6 +442,9 @@ def profundidad_recursiva(
     - limite: profundidad máxima de expansión del árbol en una rama, es decir,
               número máximo de veces que invocará a la función de forma
               recursiva. Si se indica None no habrá límite.
+    - tipo_limite: si es por 'profundidad' o por 'coste'. La primera resta
+                   1 cada vez que se crean hijos. La segunda resta el coste
+                   de realizar esa acción.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
@@ -450,6 +454,10 @@ def profundidad_recursiva(
     # Comprobaciones.
     if not problema:
         raise "No se indicó una definición de problema a resolver"
+    if type(limite) is int and limite < 0:
+        raise "Debe indicar un límite positivo"
+    if tipo_limite not in ("profundidad", "coste"):
+        raise "El tipo de límite debe ser 'profundidad' o 'coste'"
 
     # Obtenemos el nodo raíz.
     estado = problema.estado_inicial.nombre
@@ -464,6 +472,7 @@ def profundidad_recursiva(
     return _bpp_recursiva(nodo=raiz,
                           problema=problema,
                           limite=limite,
+                          tipo_limite=tipo_limite,
                           explorados=explorados,
                           log=log,
                           paso_a_paso=paso_a_paso)
@@ -472,6 +481,7 @@ def profundidad_recursiva(
 def _bpp_recursiva(nodo,
                    problema,
                    limite,
+                   tipo_limite,
                    explorados,
                    log,
                    paso_a_paso):
@@ -483,6 +493,9 @@ def _bpp_recursiva(nodo,
     - limite: profundidad máxima de expansión del árbol en una rama, es decir,
               número máximo de veces que invocará a la función de forma
               recursiva. Si se indica None no habrá límite.
+    - tipo_limite: si es por 'profundidad' o por 'coste'. La primera resta
+                   1 cada vez que se crean hijos. La segunda resta el coste
+                   de realizar esa acción.
     - explorados: conjunto de estados ya explorados.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
@@ -507,22 +520,6 @@ def _bpp_recursiva(nodo,
             msg = "Objetivo: {0}"
             print(msg.format(nodo.estado.nombre))
         return nodo
-
-    # Si se indicó un límite máximo
-    if type(limite) is int:
-        # Si se indicó log, mostrar el límite.
-        if log:
-            msg = "Limite: {0}"
-            print(msg.format(limite))
-
-        # Si se ha llegado al límite, terminamos.
-        if limite == 0:
-            if log:
-                print("Límite máximo alcanzado (corte)")
-            return None
-        else:
-            # Descenderemos un nivel.
-            limite = limite - 1
 
     # Agregamos su estado al conjunto de explorados.
     explorados.add(nodo.estado)
@@ -566,10 +563,52 @@ def _bpp_recursiva(nodo,
             if paso_a_paso:
                 input("Pulse cualquier tecla para continuar.")
 
+            # Si se indicó un límite máximo
+            lim = None
+            if type(limite) is int:
+                # Si se indicó log, mostrar el límite.
+                if log:
+                    msg = "   Limite: {0}"
+                    print(msg.format(limite))
+
+                # Si se ha traspasado al límite, terminamos.
+                if limite <= 0:
+                    if log:
+                        print("   Límite máximo alcanzado (corte)")
+                    return None
+                else:
+                    # Indicamos el tipo de límite.
+                    if log:
+                        msg = "   Tipo de Límite: {0}"
+                        print(msg.format(tipo_limite))
+
+                    # Si es límite por profundidad
+                    if "profundidad" == tipo_limite:
+                        # Descenderemos un nivel.
+                        lim = limite - 1
+                    elif "coste" == tipo_limite:
+                        # Restamos el coste de realizar la acción.
+                        coste = problema.coste_accion(estado=nodo.estado,
+                                                      accion=accion)
+                        lim = limite - coste
+
+                        # Indicamos el coste.
+                        if log:
+                            msg = "   Coste Acción: {0}"
+                            print(msg.format(coste))
+                    else:
+                        raise "Tipo de límite debe ser 'profundidad' o 'coste'"
+
+                # Indicamos el nuevo límite.
+                if log:
+                    msg = "   Nuevo Límite: {0}"
+                    print(msg.format(lim))
+
             # Invocamos la recursiva para cada hijo.
             resultado = _bpp_recursiva(nodo=hijo,
                                        problema=problema,
-                                       limite=limite,
+                                       limite=lim,
+                                       tipo_limite=tipo_limite,
                                        explorados=explorados,
                                        log=log,
                                        paso_a_paso=paso_a_paso)
@@ -586,9 +625,120 @@ def _bpp_recursiva(nodo,
 
 def profundidad_iterativa(
         problema,
+        limite,
         log=False,
         paso_a_paso=False):
-    pass
+    """
+    La versión iterativa de la búsqueda en profundidad irá aumentando el límite
+    máximo de la búsqueda en profundidad limitada hasta alcanzar un objetivo o
+    hasta alcancar un límite máximo.
+    Argumentos:
+    - problema: definición del problema a resolver.
+    - limite: profundidad máxima de expansión del árbol. None es sin límite.
+    - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
+              él y siguiendo sus nodos padres, se obtendrá la solución.
+              Si no encuentra solución, devuelve "None".
+    """
+    # Comprobaciones.
+    if not problema:
+        raise "No se indicó una definición de problema a resolver"
+    if type(limite) is int and limite < 0:
+        raise "Debe indicar un límite positivo"
+
+    # Si no indican límite, es una búsqueda en profundidad normal.
+    if limite is None:
+        if log:
+            print("--- No se ha indicado límite ---")
+        return profundidad_recursiva(problema=problema,
+                                     log=log,
+                                     paso_a_paso=paso_a_paso)
+    else:
+        # Vamos ampliando el límite poco a poco.
+        for i in range(1, limite + 1):
+            # Indicamos el límite a probar.
+            if log:
+                print()
+                print("***********************")
+                msg = "*** Límite {0} "
+                print(msg.format(i))
+                print("***********************")
+
+            # Lanzamos la recursiva con cada uno de los límites.
+            resultado = profundidad_recursiva(problema=problema,
+                                              limite=i,
+                                              tipo_limite="profundidad",
+                                              log=log,
+                                              paso_a_paso=paso_a_paso)
+
+            # Si ha solución, la devolvemos.
+            if resultado:
+                return resultado
+
+    # Si llegamos aquí es que no hay solución.
+    return None
+
+
+# %% --- COSTE ITERATIVO ---
+
+def coste_iterativo(
+        problema,
+        limite,
+        paso=1,
+        log=False,
+        paso_a_paso=False):
+    """
+    Versión de búsqued en profundidad iterativa pero teniendo en cuenta los
+    costes de las acciones. Aquí el límite se refiere a un coste de camino
+    máximo, en vez de una profundidad máxima.
+    Argumentos:
+    - problema: definición del problema a resolver.
+    - limite: coste máximo de camino. None es sin límite.
+    - paso: en cuanto se ampliará el límite en cada iteración.
+    - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
+              él y siguiendo sus nodos padres, se obtendrá la solución.
+              Si no encuentra solución, devuelve "None".
+    """
+    # Comprobaciones.
+    if not problema:
+        raise "No se indicó una definición de problema a resolver"
+    if type(limite) is int and limite < 0:
+        raise "Debe indicar un límite positivo"
+
+    # Si no indican límite, es una búsqueda en profundidad normal.
+    if limite is None:
+        if log:
+            print("--- No se ha indicado límite ---")
+        return profundidad_recursiva(problema=problema,
+                                     log=log,
+                                     paso_a_paso=paso_a_paso)
+    else:
+        # Vamos ampliando el límite poco a poco.
+        for i in range(1, limite + 1, paso):
+            # Indicamos el límite a probar.
+            if log:
+                print()
+                print("***********************")
+                msg = "*** Límite {0}"
+                print(msg.format(i))
+                print("***********************")
+
+            # Lanzamos la recursiva con cada uno de los límites.
+            resultado = profundidad_recursiva(problema=problema,
+                                              limite=i,
+                                              tipo_limite="coste",
+                                              log=log,
+                                              paso_a_paso=paso_a_paso)
+
+            # Si ha solución, la devolvemos.
+            if resultado:
+                return resultado
+
+    # Si llegamos aquí es que no hay solución.
+    return None
 
 
 # %% --- BIDIRECCIONAL ---
@@ -653,6 +803,7 @@ def muestra_solucion(objetivo,
     - tiempo: cantidad de tiempo que ha tardado en ejecutarse el algoritmo.
     """
     # Mostramos la solución.
+    print()
     print("--------------------")
     print("----- SOLUCIÓN -----")
     print("--------------------")
@@ -870,7 +1021,9 @@ if __name__ == "__main__":
     lanza_coste_uniforme = False
     lanza_profundidad = False
     lanza_profundidad_recursiva = False
-    lanza_profundidad_limitada = True
+    lanza_profundidad_limitada = False
+    lanza_profundidad_iterativa = False
+    lanza_coste_iterativo = True
 
     # Indica si se mostrará lo que hace cada algoritmo.
     log = True
@@ -942,6 +1095,36 @@ if __name__ == "__main__":
                                          limite=limite,
                                          log=log,
                                          paso_a_paso=paso_a_paso)
+        tiempo = time() - inicio
+        muestra_solucion(objetivo=solucion,
+                         segundos=tiempo)
+
+    # Búsqueda primero en profundidad (versión iterativa).
+    if lanza_profundidad_iterativa:
+        print("**********************************************")
+        print("***** PRIMERO EN PROFUNDIDAD (ITERATIVA) *****")
+        print("**********************************************")
+        inicio = time()
+        limite = 10  # Indicar un número mayor que cero.
+        solucion = profundidad_iterativa(problema=problema,
+                                         limite=limite,
+                                         log=log,
+                                         paso_a_paso=paso_a_paso)
+        tiempo = time() - inicio
+        muestra_solucion(objetivo=solucion,
+                         segundos=tiempo)
+
+    # Búsqueda coste iterativo.
+    if lanza_coste_iterativo:
+        print("***************************")
+        print("***** COSTE ITERATIVO *****")
+        print("***************************")
+        inicio = time()
+        limite = 500  # Indicar un número mayor que cero.
+        solucion = coste_iterativo(problema=problema,
+                                   limite=limite,
+                                   log=log,
+                                   paso_a_paso=paso_a_paso)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
