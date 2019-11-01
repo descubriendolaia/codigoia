@@ -1,28 +1,25 @@
-# C贸digo Fuente de "Descubriendo la Inteligencia Artificial"
+# C骴igo Fuente de "Descubriendo la Inteligencia Artificial"
 
-Este es el c贸digo fuente de los algoritmos explicados en el canal de Youtube
+Este es el c骴igo fuente de los algoritmos explicados en el canal de Youtube
 ["Descubriendo la Inteligencia Artficial"][dia].
 
-La mayor铆a del c贸digo se ha realizadon con el lenguaje de programaci贸n Python,
-m谩s concretamente con la versi贸n 3 de dicho lenguaje.
+La mayor憝a del c骴igo se ha realizadon con el lenguaje de programaci髇 Python,
+m醩 concretamente con la versi髇 3 de dicho lenguaje.
 
 ## Novedades
 
-Poco a poco se ir谩n subiendo nuevos algoritmos y c贸digos de ejemplo.
+Poco a poco se ir醤 subiendo nuevos algoritmos y c骴igos de ejemplo.
 
-De momento, s贸lo hay algunos algoritmos de b煤squedas no informadas en grafos,
-pero en breve se ir谩n subiendo m谩s.
+De momento, s髄o hay algunos algoritmos de b鷖quedas no informadas en grafos,
+pero en breve se ir醤 subiendo m醩.
 
-## Descripci贸n de las Subcarpetas
+## Descripci髇 de las Subcarpetas
 
-*   **busqueda/** Incluye los algoritmos del enfoque de b煤squeda en grafos.
-    *   **agentes/** Ejemplos de agentes tabla y reactivos (los m谩s simples).
-        *   **tabla.py** Agente racional de tipo tabla.
-        *   **simple.py** Agente racional reactivo simple.
-        *   **modelos.py** Agente racional reactivo basado en modelos.
-    * **grafos.py** Definici贸n de un problema para b煤squeda en grafos.
-    * **informada.py** Algoritmos de b煤squeda informada en grafos.
-    * **noinformada.py** Algoritmos de b煤squeda no informada en grafos.
+*   **agentes.py** Ejemplos de agentes tabla y reactivos (los m醩 simples).
+*   **busqueda/** Incluye los algoritmos del enfoque de b鷖queda en grafos.
+    * **grafos.py** Definici髇 de un problema para b鷖queda en grafos.
+    * **informada.py** Algoritmos de b鷖queda informada en grafos.
+    * **noinformada.py** Algoritmos de b鷖queda no informada en grafos.
 
 [dia]: https://www.youtube.com/c/descubriendolainteligenciaartificial
        "Canal de Youtube Descubriendo la Inteligencia Artficial"
