@@ -12,7 +12,8 @@ from grafos import Accion, Estado, Problema, Nodo
 
 def anchura(
         problema,
-        log=False):
+        log=False,
+        paso_a_paso=False):
     """
     Búsqueda en grafos primero en anchura (breadth-first search).
     Se expande al completo cada nivel antes de expandir los del siguiente.
@@ -21,6 +22,7 @@ def anchura(
     Argumentos:
     - problema: definición del problema a resolver.
     - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -127,12 +129,17 @@ def anchura(
                     msg = "   Añade Frontera: {0}"
                     print(msg.format(nombre_hijo))
 
+        # Si nos piden ir paso a paso.
+        if paso_a_paso:
+            input("Pulse cualquier tecla para continuar.")
+
 
 # %% --- COSTE UNIFORME ---
 
 def coste_uniforme(
         problema,
-        log=False):
+        log=False,
+        paso_a_paso=False):
     """
     Búsqueda en grafos de coste uniforme (uniform-cost search).
     Basado en primero en anchura pero teniendo en cuenta los costes.
@@ -141,6 +148,7 @@ def coste_uniforme(
     Argumentos:
     - problema: definición del problema a resolver.
     - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -271,12 +279,17 @@ def coste_uniforme(
                         if log:
                             print("      Sustituido: NO")
 
+        # Si nos piden ir paso a paso.
+        if paso_a_paso:
+            input("Pulse cualquier tecla para continuar.")
+
 
 # %% --- PRIMERO EN PROFUNDIDAD ---
 
 def profundidad(
         problema,
-        log=False):
+        log=False,
+        paso_a_paso=False):
     """
     Búsqueda en grafos primero en profundidad (depth-first search).
     Se expande el nodo raíz, luego uno de sus hijos, luego uno de los hijos
@@ -287,6 +300,7 @@ def profundidad(
     Argumentos:
     - problema: definición del problema a resolver.
     - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -393,15 +407,21 @@ def profundidad(
                     msg = "   Añade Frontera: {0}"
                     print(msg.format(nombre_hijo))
 
+        # Si nos piden ir paso a paso.
+        if paso_a_paso:
+            input("Pulse cualquier tecla para continuar.")
+
 
 def profundidad_recursiva(
         problema,
-        log=False):
+        log=False,
+        paso_a_paso=False):
     """
     Versión recursiva de la búsqueda en grafos primero en profundidad.
     Argumentos:
     - problema: definición del problema a resolver.
     - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -423,16 +443,29 @@ def profundidad_recursiva(
     return _bpp_recursiva(nodo=raiz,
                           problema=problema,
                           explorados=explorados,
-                          log=log)
+                          log=log,
+                          paso_a_paso=paso_a_paso)
 
 
 def _bpp_recursiva(nodo,
                    problema,
                    explorados,
-                   log=False):
+                   log=False,
+                   paso_a_paso=False):
     """
     Función recursiva para realizar la búsqueda primero en profundidad.
     """
+    # Mostramos la situación actual.
+    print("----- NUEVA LLAMADA RECURSIVA -----")
+    if not nodo.padre:
+        msg = "Estado Raíz: {0}"
+        print(msg.format(nodo.estado.nombre))
+    else:
+        msg = "Padre: {0} --- {1} ---> Estado: {2}"
+        print(msg.format(nodo.padre.estado.nombre,
+                         nodo.accion.nombre,
+                         nodo.estado.nombre))
+
     # Miramos si el raíz es ya un objetivo.
     if problema.es_objetivo(estado=nodo.estado):
         if log:
@@ -473,11 +506,16 @@ def _bpp_recursiva(nodo,
 
         # Si el estado del hijo no ha sido explorado
         if hijo.estado not in explorados:
+            # Si nos piden ir paso a paso.
+            if paso_a_paso:
+                input("Pulse cualquier tecla para continuar.")
+
             # Invocamos la recursiva para cada hijo.
             resultado = _bpp_recursiva(nodo=hijo,
                                        problema=problema,
                                        explorados=explorados,
-                                       log=log)
+                                       log=log,
+                                       paso_a_paso=paso_a_paso)
 
             # Si nos devuelve la solución, la devolvemos.
             if resultado:
@@ -491,7 +529,8 @@ def _bpp_recursiva(nodo,
 
 def profundidad_limitada(
         problema,
-        log=False):
+        log=False,
+        paso_a_paso=False):
     pass
 
 
@@ -499,7 +538,8 @@ def profundidad_limitada(
 
 def profundidad_iterativa(
         problema,
-        log=False):
+        log=False,
+        paso_a_paso=False):
     pass
 
 
@@ -507,7 +547,8 @@ def profundidad_iterativa(
 
 def bidireccional(
         problema,
-        log=False):
+        log=False,
+        paso_a_paso=False):
     pass
 
 
@@ -783,6 +824,7 @@ if __name__ == "__main__":
 
     # Indica si se mostrará lo que hace cada algoritmo.
     log = True
+    paso_a_paso = True
 
     # Poder medir los tiempos.
     from time import time
@@ -794,7 +836,8 @@ if __name__ == "__main__":
         print("******************************")
         inicio = time()
         solucion = anchura(problema=problema,
-                           log=log)
+                           log=log,
+                           paso_a_paso=paso_a_paso)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
@@ -806,7 +849,8 @@ if __name__ == "__main__":
         print("**************************")
         inicio = time()
         solucion = coste_uniforme(problema=problema,
-                                  log=log)
+                                  log=log,
+                                  paso_a_paso=paso_a_paso)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
@@ -818,7 +862,8 @@ if __name__ == "__main__":
         print("**********************************")
         inicio = time()
         solucion = profundidad(problema=problema,
-                               log=log)
+                               log=log,
+                               paso_a_paso=paso_a_paso)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
@@ -830,7 +875,8 @@ if __name__ == "__main__":
         print("**********************************************")
         inicio = time()
         solucion = profundidad_recursiva(problema=problema,
-                                         log=log)
+                                         log=log,
+                                         paso_a_paso=paso_a_paso)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
