@@ -747,7 +747,267 @@ def bidireccional(
         problema,
         log=False,
         paso_a_paso=False):
-    pass
+    """
+    No sólo se lanzará una búsqueda desde el origen, también se lanzará otra
+    búsqueda desde el objetivo. Este generará 2 árboles de búsqueda que, si
+    en sus fronteras hay algún estado común, entonces habrán encontrado un
+    camino entre ambos estatos. En esta implementación se usará la búsqueda
+    en anchura para ambos árboles, aunque uno de los árboles podría ser una
+    búsqueda en profundidad iterativa.
+    Argumentos:
+    - problema: definición del problema a resolver.
+    - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+    Devuelve: referencia a los nodos con el estado común. A partir de
+              ellos y siguiendo sus nodos padres, se obtendrá la solución.
+              Si no encuentra solución, devuelve "(None, None)".
+    """
+    # Comprobaciones.
+    if not problema:
+        raise "No se indicó una definición de problema a resolver"
+    if len(problema.estados_objetivos) > 1:
+        raise "El problema sólo puede tener un único objetivo"
+
+    # Obtenemos el nodo raíz del primer árbol.
+    estadoI = problema.estado_inicial.nombre
+    accionesI = problema.acciones[estadoI] if problema.acciones else {}
+    raizI = Nodo(estado=problema.estado_inicial,
+                 acciones=accionesI)
+
+    # Obtenemos el nodo raíz del segundo árbol.
+    estadoF = problema.estados_objetivos[0].nombre
+    accionesF = problema.acciones[estadoF] if problema.acciones else {}
+    raizF = Nodo(estado=problema.estados_objetivos[0],
+                 acciones=accionesF)
+
+    # Miramos si la primera raíz es ya un objetivo.
+    if problema.es_objetivo(estado=raizI.estado):
+        if log:
+            msg = "Objetivo: {0}"
+            print(msg.format(raizI.estado.nombre))
+        return (raizI, raizF)
+
+    # Miramos si la segunda raíz es ya el inicio.
+    if problema.estado_inicial == raizF.estado:
+        if log:
+            msg = "Inicio: {0}"
+            print(msg.format(raizF.estado.nombre))
+        return (raizI, raizF)
+
+    # Definimos las fronteras (FIFO) y agregamos los nodos raíz.
+    fronteraI = [raizI, ]
+    fronteraF = [raizF, ]
+
+    # Definimos las listas de nodos de los estados explorados.
+    exploradosI = []
+    exploradosF = []
+
+    # Entramos en el bucle principal.
+    while True:
+        # Mostramos las frontera y los explorados.
+        if log:
+            log_fronteraI = [n.estado.nombre
+                             for n in fronteraI]
+            log_fronteraF = [n.estado.nombre
+                             for n in fronteraF]
+            log_exploradosI = set([n.estado.nombre
+                                   for n in exploradosI])
+            log_exploradosF = set([n.estado.nombre
+                                   for n in exploradosF])
+            print("----- NUEVO CICLO -----")
+            msg = "Frontera Inicial: {0}"
+            print(msg.format(log_fronteraI))
+            msg = "Frontera Objetivo: {0}"
+            print(msg.format(log_fronteraF))
+            msg = "Explorados Inicial: {0}"
+            print(msg.format(log_exploradosI))
+            msg = "Explorados Objetivo: {0}"
+            print(msg.format(log_exploradosF))
+
+        # Si alguna frontera está vacía, terminamos.
+        if not fronteraI or not fronteraF:
+            return (None, None)
+
+        # Obtenemos el siguiente nodo del primer árbol.
+        nodoI = fronteraI.pop(0)
+        if log:
+            msg = "Nodo Inicial: {0}"
+            print(msg.format(nodoI.estado.nombre))
+            log_fronteraI = [n.estado.nombre
+                             for n in fronteraI]
+            msg = "Frontera Inicial: {0}"
+            print(msg.format(log_fronteraI))
+
+        # Obtenemos el siguiente nodo del segundo árbol.
+        nodoF = fronteraF.pop(0)
+        if log:
+            msg = "Nodo Objetivo: {0}"
+            print(msg.format(nodoF.estado.nombre))
+            log_fronteraF = [n.estado.nombre
+                             for n in fronteraF]
+            msg = "Frontera Objetivo: {0}"
+            print(msg.format(log_fronteraF))
+
+        # Agregamos su estado al conjunto de explorados del primero.
+        exploradosI.append(nodoI)
+        if log:
+            log_exploradosI = [n.estado.nombre
+                               for n in exploradosI]
+            msg = "Explorados Inicial: {0}"
+            print(msg.format(log_exploradosI))
+
+        # Agregamos su estado al conjunto de explorados del segundo.
+        exploradosF.append(nodoF)
+        if log:
+            log_exploradosF = [n.estado.nombre
+                               for n in exploradosF]
+            msg = "Explorados Objetivo: {0}"
+            print(msg.format(log_exploradosF))
+
+        # Si alguno de los nodos no tiene acciones, lo indicamos.
+        if not nodoI.acciones:
+            if log:
+                print("No hay Acciones (Inicial)")
+        if not nodoF.acciones:
+            if log:
+                print("No hay Acciones (Objetivo)")
+
+        # Por cada una de las acciones del primer árbol que se pueden hacer.
+        for nombre_accion in nodoI.acciones.keys():
+            # Indicamos la acción.
+            if log:
+                msg = "   Accion (Inicial): {0}"
+                print(msg.format(nombre_accion))
+
+            # Creamos un nodo hijo.
+            accion = Accion(nombre=nombre_accion)
+            hijo = crea_nodo_hijo(problema=problema,
+                                  padre=nodoI,
+                                  accion=accion)
+            nombre_hijo = hijo.estado.nombre
+            if log:
+                msg = "   Hijo (Inicial): {0}"
+                print(msg.format(nombre_hijo))
+
+            # Si el estado del hijo no ha sido explorado
+            # y tampoco está en la frontera.
+            estados_frontera = [nodo.estado
+                                for nodo in fronteraI]
+            estados_explorados = [nodo.estado
+                                  for nodo in exploradosI]
+            if(hijo.estado in estados_explorados or
+               hijo.estado in estados_frontera):
+                # Indicamos que ya estaba.
+                if log:
+                    if hijo.estado in estados_explorados:
+                        msg = "   {0} ya ha sido explorado (Inicial)"
+                        print(msg.format(hijo.estado.nombre))
+                    if hijo.estado in estados_frontera:
+                        msg = "   {0} ya está en la frontera (Inicial)"
+                        print(msg.format(hijo.estado.nombre))
+            else:
+                # Si el estado del hijo es un objetivo, lo devolvemos.
+                es_objetivo = problema.es_objetivo(estado=hijo.estado)
+                if es_objetivo:
+                    if log:
+                        msg = "Objetivo (Inicial): {0}"
+                        print(msg.format(nombre_hijo))
+                    return (hijo, None)
+
+                # Sino, lo agregamos a la frontera.
+                fronteraI.append(hijo)
+                if log:
+                    msg = "   Añade Frontera (Inicial): {0}"
+                    print(msg.format(nombre_hijo))
+
+        # Por cada una de las acciones del segundo árbol que se pueden hacer.
+        for nombre_accion in nodoF.acciones.keys():
+            # Indicamos la acción.
+            if log:
+                msg = "   Accion (Objetivo): {0}"
+                print(msg.format(nombre_accion))
+
+            # Creamos un nodo hijo.
+            accion = Accion(nombre=nombre_accion)
+            hijo = crea_nodo_hijo(problema=problema,
+                                  padre=nodoF,
+                                  accion=accion)
+            nombre_hijo = hijo.estado.nombre
+            if log:
+                msg = "   Hijo (Objetivo): {0}"
+                print(msg.format(nombre_hijo))
+
+            # Si el estado del hijo no ha sido explorado
+            # y tampoco está en la frontera.
+            estados_frontera = [nodo.estado
+                                for nodo in fronteraF]
+            estados_explorados = [nodo.estado
+                                  for nodo in exploradosF]
+            if(hijo.estado in estados_explorados or
+               hijo.estado in estados_frontera):
+                # Indicamos que ya estaba.
+                if log:
+                    if hijo.estado in exploradosF:
+                        msg = "   {0} ya ha sido explorado (Objetivo)"
+                        print(msg.format(hijo.estado.nombre))
+                    if hijo.estado in estados_frontera:
+                        msg = "   {0} ya está en la frontera (Objetivo)"
+                        print(msg.format(hijo.estado.nombre))
+            else:
+                # Si el estado del hijo es un objetivo, lo devolvemos.
+                es_objetivo = problema.es_objetivo(estado=hijo.estado)
+                if es_objetivo:
+                    if log:
+                        msg = "Objetivo (Objetivo): {0}"
+                        print(msg.format(nombre_hijo))
+                    return (None, hijo)
+
+                # Sino, lo agregamos a la frontera.
+                fronteraF.append(hijo)
+                if log:
+                    msg = "   Añade Frontera (Objetivo): {0}"
+                    print(msg.format(nombre_hijo))
+
+        # Miramos si en las fronteras o explorados hay algún estado común.
+        estadosI = set(nodo.estado
+                       for nodo in fronteraI)
+        estadosF = set(nodo.estado
+                       for nodo in fronteraF)
+        estadosI = estadosI.union(set(nodo.estado
+                                      for nodo in exploradosI))
+        estadosF = estadosF.union(set(nodo.estado
+                                      for nodo in exploradosF))
+        comunes = estadosI.intersection(estadosF)
+
+        # Si hay comunes, los devolvemos como la solución.
+        if comunes:
+            # Obtenemos el estado común.
+            comun = comunes.pop()
+
+            # Obtenemos los frontera y explorados de cada árbol.
+            nodos_arbolI = []
+            nodos_arbolF = []
+            nodos_arbolI.extend(fronteraI)
+            nodos_arbolF.extend(fronteraF)
+            nodos_arbolI.extend(exploradosI)
+            nodos_arbolF.extend(exploradosF)
+
+            # Obtenemos el común del primer árbol.
+            comunI = [nodo
+                      for nodo in nodos_arbolI
+                      if nodo.estado == comun][0]
+
+            # Obtenemos el común del segundo árbol.
+            comunF = [nodo
+                      for nodo in nodos_arbolF
+                      if nodo.estado == comun][0]
+
+            # Devolvemos los nodos con el estado común.
+            return (comunI, comunF)
+
+        # Si nos piden ir paso a paso.
+        if paso_a_paso:
+            input("Pulse cualquier tecla para continuar.")
 
 
 # %% --- FUNCIONES AUXILIARES ---
@@ -794,12 +1054,17 @@ def crea_nodo_hijo(problema,
     return hijo
 
 
-def muestra_solucion(objetivo,
+def muestra_solucion(objetivo=None,
+                     es_bidireccional=False,
+                     bidireccional=(None, None),
                      segundos=0):
     """
     Muestra la solución encuentrada a partir de un nodo objetivo.
     Argumentos:
     - objetivo: nodo objetivo encontrado por un algoritmo.
+    - es_bidireccional: la solución es diferente al resto.
+    - bidireccional: esta búsqueda devuelve un par de nodos con estados comunes
+                     que deben combinarse para obtener la solución final.
     - tiempo: cantidad de tiempo que ha tardado en ejecutarse el algoritmo.
     """
     # Mostramos la solución.
@@ -814,32 +1079,92 @@ def muestra_solucion(objetivo,
         print(msg.format(tiempo*1000))
         print("--------------------")
 
-    # Si no hay objetivo, no hay solución.
-    if not objetivo:
-        print("No hay solución")
-        return
+    # ------------------- #
+    # -- BIDIRECCIONAL -- #
+    # ------------------- #
 
-    # Recorremos desde el nodo objetivo al nodo raíz.
-    nodo = objetivo
-    while nodo:
-        # Mostramos los datos de ese nodo.
-        msg = "Estado: {0}, Coste Total: {1}"
-        estado = nodo.estado.nombre
-        coste_total = nodo.coste
-        print(msg.format(estado, coste_total))
+    # Si nos pasan la solución de la bidireccional.
+    if es_bidireccional:
+        # Obtenemos los nodos con el estado común.
+        nodoI = bidireccional[0]
+        nodoF = bidireccional[1]
 
-        # Mostramos la acción que llevó a ese nodo.
-        if nodo.accion:
-            accion = nodo.accion.nombre
-            padre = nodo.padre.estado
-            coste = problema.coste_accion(estado=padre,
-                                          accion=nodo.accion)
-            if accion:
-                msg = "<--- {0} [{1}] ---"
-                print(msg.format(accion, coste))
+        # Guardamos los costes para mostrarlos al final.
+        costeI = nodoI.coste if nodoI else 0
+        costeF = nodoF.coste if nodoF else 0
 
-        # Pasamos al nodo padre.
-        nodo = nodo.padre
+        # Definimos una lista que indicará el camino completo.
+        camino = []
+
+        # Si hay nodo en el primer árbol
+        if nodoI:
+            # Lo recorremos hasta la raíz
+            while nodoI:
+                # Agregamos cada nodo al camino (orden inverso).
+                camino.insert(0, nodoI)
+
+                # Ascendemos en el árbol.
+                nodoI = nodoI.padre
+
+        # Si hay nodo en el segúndo árbol.
+        if nodoF:
+            # No repetimos el nodo común.
+            nodoF = nodoF.padre
+
+            # Lo recorremos hasta la raíz.
+            while nodoF:
+                # Agregamos cada nodo al camino.
+                camino.append(nodoF)
+
+                # Ascendemos en el árbol.
+                nodoF = nodoF.padre
+
+        # Si no hay camino, lo indicamos.
+        if not camino:
+            print("No hay solución")
+            return
+
+        # Recorremos el camino.
+        for nodo in camino:
+            # Mostramos el estado de cada nodo.
+            msg = "Estado: {0}"
+            print(msg.format(nodo.estado.nombre))
+
+        # Mostramos al final el coste total.
+        msg = "Coste Total: {0}"
+        print(msg.format(costeI + costeF))
+
+    # --------------------- #
+    # -- RESTO BÚSQUEDAS -- #
+    # --------------------- #
+
+    else:
+        # Si no hay objetivo, no hay solución.
+        if not objetivo:
+            print("No hay solución")
+            return
+
+        # Recorremos desde el nodo objetivo al nodo raíz.
+        nodo = objetivo
+        while nodo:
+            # Mostramos los datos de ese nodo.
+            msg = "Estado: {0}, Coste Total: {1}"
+            estado = nodo.estado.nombre
+            coste_total = nodo.coste
+            print(msg.format(estado, coste_total))
+
+            # Mostramos la acción que llevó a ese nodo.
+            if nodo.accion:
+                accion = nodo.accion.nombre
+                padre = nodo.padre.estado
+                coste = problema.coste_accion(estado=padre,
+                                              accion=nodo.accion)
+                if accion:
+                    msg = "<--- {0} [{1}] ---"
+                    print(msg.format(accion, coste))
+
+            # Pasamos al nodo padre.
+            nodo = nodo.padre
 
 
 # %% --- MAIN ---
@@ -1006,11 +1331,21 @@ if __name__ == "__main__":
                         "E": 104},
               "Kosos": {"O": 104}}
 
-    # Definimos el problema: ir de Lanoi a Kosos.
-    problema = Problema(estado_inicial=lanoi,
-                        estados_objetivos=[kosos],
-                        acciones=acciones,
-                        costes=costes)
+    # Definimos varios problemas.
+    problema_1 = Problema(estado_inicial=lanoi,
+                          estados_objetivos=[kosos],
+                          acciones=acciones,
+                          costes=costes)
+
+    problema_2 = Problema(estado_inicial=lanoi,
+                          estados_objetivos=[goorum],
+                          acciones=acciones,
+                          costes=costes)
+
+    problema_3 = Problema(estado_inicial=lanoi,
+                          estados_objetivos=[boomon, goorum],
+                          acciones=acciones,
+                          costes=costes)
 
     # ------------------------------------------------------------------------
     # ALGORITMOS DE BÚSQUEDA NO INFORMADA
@@ -1023,11 +1358,15 @@ if __name__ == "__main__":
     lanza_profundidad_recursiva = False
     lanza_profundidad_limitada = False
     lanza_profundidad_iterativa = False
-    lanza_coste_iterativo = True
+    lanza_coste_iterativo = False
+    lanza_bidireccional = False
 
     # Indica si se mostrará lo que hace cada algoritmo.
     log = True
     paso_a_paso = False
+
+    # Indicamos el problema a resolver.
+    problema = problema_1
 
     # Poder medir los tiempos.
     from time import time
@@ -1123,8 +1462,23 @@ if __name__ == "__main__":
         limite = 500  # Indicar un número mayor que cero.
         solucion = coste_iterativo(problema=problema,
                                    limite=limite,
+                                   paso=100,
                                    log=log,
                                    paso_a_paso=paso_a_paso)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
+                         segundos=tiempo)
+
+    # Búsqueda bidireccional.
+    if lanza_bidireccional:
+        print("**************************")
+        print("***** BIDIRECCIONAL *****")
+        print("**************************")
+        inicio = time()
+        solucion = bidireccional(problema=problema,
+                                 log=log,
+                                 paso_a_paso=paso_a_paso)
+        tiempo = time() - inicio
+        muestra_solucion(es_bidireccional=True,
+                         bidireccional=solucion,
                          segundos=tiempo)
