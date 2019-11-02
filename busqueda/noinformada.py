@@ -54,10 +54,10 @@ def anchura(
     while True:
         # Mostramos la frontera y explorada.
         if log:
-            log_frontera = [n.estado.nombre
-                            for n in frontera]
-            log_explorados = [e.nombre
-                              for e in explorados]
+            log_frontera = [nodo.estado.nombre
+                            for nodo in frontera]
+            log_explorados = [estado.nombre
+                              for estado in explorados]
             print("----- NUEVO CICLO -----")
             msg = "Frontera: {0}"
             print(msg.format(log_frontera))
@@ -73,16 +73,16 @@ def anchura(
         if log:
             msg = "Nodo: {0}"
             print(msg.format(nodo.estado.nombre))
-            log_frontera = [n.estado.nombre
-                            for n in frontera]
+            log_frontera = [nodo.estado.nombre
+                            for nodo in frontera]
             msg = "Frontera: {0}"
             print(msg.format(log_frontera))
 
         # Agregamos su estado al conjunto de explorados.
         explorados.add(nodo.estado)
         if log:
-            log_explorados = [e.nombre
-                              for e in explorados]
+            log_explorados = [estado.nombre
+                              for estado in explorados]
             msg = "Explorados: {0}"
             print(msg.format(log_explorados))
 
@@ -181,10 +181,10 @@ def coste_uniforme(
     while True:
         # Mostramos la frontera y explorada.
         if log:
-            log_frontera = [n.estado.nombre
-                            for n in frontera]
-            log_explorados = [e.nombre
-                              for e in explorados]
+            log_frontera = [nodo.estado.nombre
+                            for nodo in frontera]
+            log_explorados = [estado.nombre
+                              for estado in explorados]
             print("----- NUEVO CICLO -----")
             msg = "Frontera: {0}"
             print(msg.format(log_frontera))
@@ -200,8 +200,8 @@ def coste_uniforme(
         if log:
             msg = "Nodo: {0}"
             print(msg.format(nodo.estado.nombre))
-            log_frontera = [n.estado.nombre
-                            for n in frontera]
+            log_frontera = [nodo.estado.nombre
+                            for nodo in frontera]
             msg = "Frontera: {0}"
             print(msg.format(log_frontera))
 
@@ -215,8 +215,8 @@ def coste_uniforme(
         # Agregamos su estado al conjunto de explorados.
         explorados.add(nodo.estado)
         if log:
-            log_explorados = [e.nombre
-                              for e in explorados]
+            log_explorados = [estado.nombre
+                              for estado in explorados]
             msg = "Explorados: {0}"
             print(msg.format(log_explorados))
 
@@ -249,9 +249,9 @@ def coste_uniforme(
                                 for nodo in frontera]
             if hijo.estado in explorados or hijo.estado in estados_frontera:
                 # Miramos si el estado está en algún nodo de la frontera.
-                buscar = [n
-                          for n in frontera
-                          if n.estado == hijo.estado]
+                buscar = [nodo
+                          for nodo in frontera
+                          if nodo.estado == hijo.estado]
                 if buscar:
                     # Indicamos que el estado ya existía en la frontera.
                     if log:
@@ -339,10 +339,10 @@ def profundidad(
     while True:
         # Mostramos la frontera y explorada.
         if log:
-            log_frontera = [n.estado.nombre
-                            for n in frontera]
-            log_explorados = [e.nombre
-                              for e in explorados]
+            log_frontera = [nodo.estado.nombre
+                            for nodo in frontera]
+            log_explorados = [estado.nombre
+                              for estado in explorados]
             print("----- NUEVO CICLO -----")
             msg = "Frontera: {0}"
             print(msg.format(log_frontera))
@@ -358,16 +358,16 @@ def profundidad(
         if log:
             msg = "Nodo: {0}"
             print(msg.format(nodo.estado.nombre))
-            log_frontera = [n.estado.nombre
-                            for n in frontera]
+            log_frontera = [nodo.estado.nombre
+                            for nodo in frontera]
             msg = "Frontera: {0}"
             print(msg.format(log_frontera))
 
         # Agregamos su estado al conjunto de explorados.
         explorados.add(nodo.estado)
         if log:
-            log_explorados = [e.nombre
-                              for e in explorados]
+            log_explorados = [estado.nombre
+                              for estado in explorados]
             msg = "Explorados: {0}"
             print(msg.format(log_explorados))
 
@@ -524,8 +524,8 @@ def _bpp_recursiva(nodo,
     # Agregamos su estado al conjunto de explorados.
     explorados.add(nodo.estado)
     if log:
-        log_explorados = [e.nombre
-                          for e in explorados]
+        log_explorados = [estado.nombre
+                          for estado in explorados]
         msg = "Explorados: {0}"
         print(msg.format(log_explorados))
 
@@ -806,14 +806,14 @@ def bidireccional(
     while True:
         # Mostramos las frontera y los explorados.
         if log:
-            log_fronteraI = [n.estado.nombre
-                             for n in fronteraI]
-            log_fronteraF = [n.estado.nombre
-                             for n in fronteraF]
-            log_exploradosI = set([n.estado.nombre
-                                   for n in exploradosI])
-            log_exploradosF = set([n.estado.nombre
-                                   for n in exploradosF])
+            log_fronteraI = [nodo.estado.nombre
+                             for nodo in fronteraI]
+            log_fronteraF = [nodo.estado.nombre
+                             for nodo in fronteraF]
+            log_exploradosI = set([nodo.estado.nombre
+                                   for nodo in exploradosI])
+            log_exploradosF = set([nodo.estado.nombre
+                                   for nodo in exploradosF])
             print("----- NUEVO CICLO -----")
             msg = "Frontera Inicial: {0}"
             print(msg.format(log_fronteraI))
@@ -833,8 +833,8 @@ def bidireccional(
         if log:
             msg = "Nodo Inicial: {0}"
             print(msg.format(nodoI.estado.nombre))
-            log_fronteraI = [n.estado.nombre
-                             for n in fronteraI]
+            log_fronteraI = [nodo.estado.nombre
+                             for nodo in fronteraI]
             msg = "Frontera Inicial: {0}"
             print(msg.format(log_fronteraI))
 
@@ -843,24 +843,24 @@ def bidireccional(
         if log:
             msg = "Nodo Objetivo: {0}"
             print(msg.format(nodoF.estado.nombre))
-            log_fronteraF = [n.estado.nombre
-                             for n in fronteraF]
+            log_fronteraF = [nodo.estado.nombre
+                             for nodo in fronteraF]
             msg = "Frontera Objetivo: {0}"
             print(msg.format(log_fronteraF))
 
         # Agregamos su estado al conjunto de explorados del primero.
         exploradosI.append(nodoI)
         if log:
-            log_exploradosI = [n.estado.nombre
-                               for n in exploradosI]
+            log_exploradosI = [nodo.estado.nombre
+                               for nodo in exploradosI]
             msg = "Explorados Inicial: {0}"
             print(msg.format(log_exploradosI))
 
         # Agregamos su estado al conjunto de explorados del segundo.
         exploradosF.append(nodoF)
         if log:
-            log_exploradosF = [n.estado.nombre
-                               for n in exploradosF]
+            log_exploradosF = [nodo.estado.nombre
+                               for nodo in exploradosF]
             msg = "Explorados Objetivo: {0}"
             print(msg.format(log_exploradosF))
 
