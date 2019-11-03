@@ -1078,6 +1078,122 @@ if __name__ == "__main__":
     print("Son Idénticas: {0}".format(identicas))
     print()
 
+    print("-----------------------------")
+    print("--- EQUIVALENCIAS TÍPICAS ---")
+    print("-----------------------------")
+    print()
+    # Comprobamos la lista de equivalencias más típicas.
+    print("--- Constantes ---")
+    no_V = ~V
+    no_F = ~F
+    print("¬V <=> F: {0}".format(no_V.es_equivalente(F)))
+    print("V <=> ¬F: {0}".format(V.es_equivalente(no_F)))
+    print()
+
+    p_y_V = P & True
+    p_y_F = P & False
+    p_o_V = P | True
+    p_o_F = P | False
+    print("P ^ V <=> P: {0}".format(p_y_V.es_equivalente(P)))
+    print("P ^ F <=> F: {0}".format(p_y_F.es_equivalente(False)))
+    print("P v V <=> V: {0}".format(p_o_V.es_equivalente(True)))
+    print("P v F <=> P: {0}".format(p_o_F.es_equivalente(P)))
+    print()
+
+    p_y_no_p = P & ~P
+    p_o_no_p = P | ~P
+    print("P ^ ¬P <=> F: {0}".format(p_y_no_p.es_equivalente(False)))
+    print("P v ¬P <=> V: {0}".format(p_o_no_p.es_equivalente(True)))
+    print()
+
+    print("--- Doble Negación ---")
+    no_no_p = ~~P
+    print("¬¬P ^ P <=> P: {0}".format(no_no_p.es_equivalente(P)))
+    print()
+
+    print("--- Idempotente ---")
+    p_y_p = P & P
+    p_o_p = P | P
+    print("P ^ P <=> P: {0}".format(p_y_p.es_equivalente(P)))
+    print("P v P <=> P: {0}".format(p_o_p.es_equivalente(P)))
+    print()
+
+    print("--- Conmutativa ---")
+    izq = P & Q
+    der = Q & P
+    msg = "P ^ Q <=> Q ^ P: {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    izq = P | Q
+    der = Q | P
+    msg = "P v Q <=> Q v P: {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    print()
+
+    print("--- Asociativa ---")
+    izq = (P & Q) & R
+    der = P & (Q & R)
+    msg = "(P ^ Q) ^ R <=> P ^ (Q ^ R): {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    izq = (P | Q) | R
+    der = P | (Q | R)
+    msg = "(P v Q) v R <=> P v (Q v R): {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    print()
+
+    print("--- Absorción ---")
+    izq = P & (P | Q)
+    der = P
+    msg = "P ^ (P v Q) <=> P: {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    izq = P | (P & Q)
+    der = P
+    msg = "P v (P ^ Q) <=> P: {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    print()
+
+    print("--- Distributiva ---")
+    izq = P & (Q | R)
+    der = (P & Q) | (P & R)
+    msg = "P ^ (Q v R) <=> (P ^ Q) v (P ^ R): {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    izq = P | (Q & R)
+    der = (P | Q) & (P | R)
+    msg = "P v (Q ^ R) <=> (P v Q) ^ (P v R): {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    print()
+
+    print("--- Leyes de De Morgan ---")
+    izq = ~(P & Q)
+    der = ~P | ~Q
+    msg = "¬(P ^ Q) <=> ¬P v ¬Q: {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    izq = ~(P | Q)
+    der = ~P & ~Q
+    msg = "¬(P v Q) <=> ¬P ^ ¬Q: {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    print()
+
+    print("--- Contraposición ---")
+    izq = P >> Q
+    der = ~Q >> ~P
+    msg = " (P => Q) <=> (¬Q => ¬P): {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    print()
+
+    print("--- Eliminar Condicional ---")
+    izq = P >> Q
+    der = ~P | Q
+    msg = " (P => Q) <=> (¬P v Q): {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    print()
+
+    print("--- Eliminar Bicondicional ---")
+    izq = Equivale(P, Q)
+    der = (P & Q) | (~P & ~Q)
+    msg = " (P <=> Q) <=> (P ^ Q) v (¬P ^ ¬Q): {0}"
+    print(msg.format(izq.es_equivalente(der)))
+    print()
+
     print("---------------------")
     print("--- SUSTITUCIONES ---")
     print("---------------------")
