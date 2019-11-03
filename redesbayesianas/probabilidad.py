@@ -8,6 +8,7 @@ import random
 
 
 # %% --- AXIOMAS DE KOLGOMOROV ---
+
 # Existe varias formas de sentar la reglas básicas de la probabilidad. Una
 # bastante común es la definición de aximas hechas por Kolgomorov:
 # - La probabilidad P de un evento E debe estar siempre entre 0 y 1:
@@ -69,6 +70,7 @@ print(msg.format(prob_1_o_3_o_5))
 
 
 # %% --- DEFINICIONES ---
+
 # Un experimento puede ser sacar un número entero aleatorio entre 1 y 10.
 # El espacio muestral son todos los números enteros que hay entre 1 y 10.
 # Un evento simple es sacar una vez un número aleatorio:
@@ -159,6 +161,7 @@ for veces in limites:
 
 
 # %% --- PROBABILIDAD A POSTERIORI ---
+
 # La probabilidad a priori es la probabilidad en ausencia de más información.
 # La probabilidad a posteriori es la probabilidad cuando aparece nueva
 # información a tener en cuenta. Thomas Bayes postuló que:
@@ -196,7 +199,7 @@ def frecuencia_relativa(espacio_muestral,
     """
     # Comprobaciones.
     if not espacio_muestral:
-        raise "No ha indicado un espacio muestral"
+        raise ValueError("No ha indicado un espacio muestral")
     if limite <= 0:
         limite = 10000
 
@@ -262,6 +265,7 @@ print()
 
 
 # %% --- REGLA DEL PRODUCTO / MULTIPLICACIÓN ---
+
 # A partir de la definición de probabilidad a posteriori, reordenando términos
 # se puede definir la regla del producto (o de la multiplicación):
 # P(A,B) = P(A|B)·P(B) = P(B|A)·P(A)
@@ -338,6 +342,7 @@ print()
 
 
 # %% --- PROBABILIDAD TOTAL / MARGINAL ---
+
 # Se puede calcular la probabilidad de un evento a partir de las probabilidades
 # conjuntas con el resto de variables, siempre y cuando el resto de variables
 # sean todas independientes entre sí y exhaustivas es:
@@ -376,6 +381,7 @@ print(msg.format(proba_f))
 
 
 # %% --- REGLA DE BAYES ---
+
 # A partir de la regla del producto, reordenando términos en la expresión
 # P(A|B)·P(B) = P(B|A)·P(A), se puede definir la Regla de Bayes:
 # P(A|B) = [P(B|A)·P(A)] / P(B) = [P(B|A)·P(A)] / sum(P(B|A)·P(A))
@@ -457,6 +463,7 @@ print()
 
 
 # %% --- NORMALIZACION ---
+
 # Para no repetir tantos cálculos, se puede usar la normalización 'alfa':
 # alfa = 1 / P(B) = 1 / sum(P(B|Ai)·P(Ai)) => P(A|B) = alfa·P(B|A)·P(B)
 print("****************************")
@@ -504,6 +511,7 @@ print()
 
 
 # %% --- PROPIEDADES ÚTILES ---
+
 # La probabilida de que se haya dado un evento si ya se ha dado, es 1:
 # P(A|A) = 1
 # Por lo tanto, da igual el resto de evento que se den, seguirá siendo 1:

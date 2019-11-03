@@ -65,7 +65,7 @@ class AgenteTabla:
         """
         # Comprobaciones.
         if not acciones:
-            raise "No se ha indicado la tabla de acciones"
+            raise ValueError("No se ha indicado la tabla de acciones")
 
         # Guardamos la tabla de secuencia de percepciones y acciones.
         self.acciones = acciones
@@ -124,7 +124,7 @@ class AgenteReactivoSimple:
         """
         # Comprobaciones.
         if not reglas:
-            raise "No se han indicado las reglas"
+            raise ValueError("No se han indicado las reglas")
 
         # Guardamos las reglas con los pares percepción-acción.
         self.reglas = reglas
@@ -180,9 +180,9 @@ class AgenteBasadoModelos:
         """
         # Comprobaciones.
         if not modelo:
-            raise "No se ha indicado un modelo"
+            raise ValueError("No se ha indicado un modelo")
         if not reglas:
-            raise "No se ha indicado las reglas"
+            raise ValueError("No se ha indicado las reglas")
 
         # Guardamos los argumentos pasados.
         self.modelo = modelo

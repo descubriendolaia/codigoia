@@ -29,7 +29,7 @@ def anchura(
     """
     # Comprobaciones.
     if not problema:
-        raise "No se indicó una definición de problema a resolver"
+        raise ValueError("No se indicó una definición de problema a resolver")
 
     # Obtenemos el nodo raíz.
     estado = problema.estado_inicial.nombre
@@ -163,7 +163,7 @@ def coste_uniforme(
     """
     # Comprobaciones.
     if not problema:
-        raise "No se indicó una definición de problema a resolver"
+        raise ValueError("No se indicó una definición de problema a resolver")
 
     # Obtenemos el nodo raíz.
     estado = problema.estado_inicial.nombre
@@ -314,7 +314,7 @@ def profundidad(
     """
     # Comprobaciones.
     if not problema:
-        raise "No se indicó una definición de problema a resolver"
+        raise ValueError("No se indicó una definición de problema a resolver")
 
     # Obtenemos el nodo raíz.
     estado = problema.estado_inicial.nombre
@@ -453,11 +453,11 @@ def profundidad_recursiva(
     """
     # Comprobaciones.
     if not problema:
-        raise "No se indicó una definición de problema a resolver"
+        raise ValueError("No se indicó una definición de problema a resolver")
     if type(limite) is int and limite < 0:
-        raise "Debe indicar un límite positivo"
+        raise ValueError("Debe indicar un límite positivo")
     if tipo_limite not in ("profundidad", "coste"):
-        raise "El tipo de límite debe ser 'profundidad' o 'coste'"
+        raise ValueError("El tipo de límite debe ser 'profundidad' o 'coste'")
 
     # Obtenemos el nodo raíz.
     estado = problema.estado_inicial.nombre
@@ -597,7 +597,8 @@ def _bpp_recursiva(nodo,
                             msg = "   Coste Acción: {0}"
                             print(msg.format(coste))
                     else:
-                        raise "Tipo de límite debe ser 'profundidad' o 'coste'"
+                        err = "'tipo_limite' debe ser 'profundidad' o 'coste'"
+                        raise ValueError(err)
 
                 # Indicamos el nuevo límite.
                 if log:
@@ -643,9 +644,9 @@ def profundidad_iterativa(
     """
     # Comprobaciones.
     if not problema:
-        raise "No se indicó una definición de problema a resolver"
+        raise ValueError("No se indicó una definición de problema a resolver")
     if type(limite) is int and limite < 0:
-        raise "Debe indicar un límite positivo"
+        raise ValueError("Debe indicar un límite positivo")
 
     # Si no indican límite, es una búsqueda en profundidad normal.
     if limite is None:
@@ -704,9 +705,9 @@ def coste_iterativo(
     """
     # Comprobaciones.
     if not problema:
-        raise "No se indicó una definición de problema a resolver"
+        raise ValueError("No se indicó una definición de problema a resolver")
     if type(limite) is int and limite < 0:
-        raise "Debe indicar un límite positivo"
+        raise ValueError("Debe indicar un límite positivo")
 
     # Si no indican límite, es una búsqueda en profundidad normal.
     if limite is None:
@@ -764,9 +765,9 @@ def bidireccional(
     """
     # Comprobaciones.
     if not problema:
-        raise "No se indicó una definición de problema a resolver"
+        raise ValueError("No se indicó una definición de problema a resolver")
     if len(problema.estados_objetivos) > 1:
-        raise "El problema sólo puede tener un único objetivo"
+        raise ValueError("El problema sólo puede tener un único objetivo")
 
     # Obtenemos el nodo raíz del primer árbol.
     estadoI = problema.estado_inicial.nombre
@@ -1021,11 +1022,11 @@ def crea_nodo_hijo(problema,
     """
     # Comprobaciones.
     if not problema:
-        raise "No se indicó una definición de problema"
+        raise ValueError("No se indicó una definición de problema")
     if not padre:
-        raise "No se indicó el nodo padre"
+        raise ValueError("No se indicó el nodo padre")
     if not accion:
-        raise "No se indicó la acción"
+        raise ValueError("No se indicó la acción")
 
     # Creamos el nuevo estado.
     nuevo_estado = problema.resultado(estado=padre.estado,

@@ -23,10 +23,22 @@ class Accion:
         """
         # Comprobaciones.
         if not nombre:
-            raise "No se ha indicado el nombre de la acción"
+            raise ValueError("No se ha indicado el nombre de la acción")
 
         # Guardamos los parámetros pasados.
         self.nombre = nombre
+
+    def __str__(self):
+        """
+        Representación en modo texto de la acción.
+        """
+        return self.nombre
+
+    def __repr__(self):
+        """
+        Representación de la acción para depuración.
+        """
+        return "Accion({0})".format(self)
 
 
 # %% --- ESTADO ---
@@ -47,7 +59,7 @@ class Estado:
         """
         # Comprobaciones.
         if not nombre:
-            raise "No se ha indicado el nombre del estado"
+            raise ValueError("No se ha indicado el nombre del estado")
 
         # Puede que no haya acciones a aplicar.
         if acciones is None:
@@ -56,6 +68,18 @@ class Estado:
         # Guardamos los parámetros pasados.
         self.nombre = nombre
         self.acciones = acciones
+
+    def __str__(self):
+        """
+        Representación en modo texto del estado.
+        """
+        return self.nombre
+
+    def __repr__(self):
+        """
+        Representación del texto para depuración.
+        """
+        return "Estado({0})".format(self)
 
 
 # %% --- PROBLEMA ---
@@ -90,11 +114,11 @@ class Problema:
         """
         # Comprobaciones.
         if not estado_inicial:
-            raise "No se ha indicado un estado inicial"
+            raise ValueError("No se ha indicado un estado inicial")
         if not estados_objetivos:
-            raise "No se ha indicado al menos un estado objetivo"
+            raise ValueError("No se ha indicado al menos un estado objetivo")
         if not acciones:
-            raise "No se ha indicado ninguna acción"
+            raise ValueError("No se ha indicado ninguna acción")
 
         # Guardamos los parámetros pasados.
         self.estado_inicial = estado_inicial
@@ -120,6 +144,20 @@ class Problema:
                 for objetivo in self.estados_objetivos:
                     self.heuristicas[estado][objetivo] = 0
 
+    def __str__(self):
+        """
+        Representación en modo texto del problema.
+        """
+        msg = "Estado Inicial: {0}; Objetivos: {1}"
+        return msg.format(self.estado_inicial.nombre,
+                          self.estados_objetivos)
+
+    def __repr__(self):
+        """
+        Representación del problema para depuración.
+        """
+        return "Problema({0})".format(self)
+
     def es_objetivo(self,
                     estado):
         """
@@ -143,9 +181,9 @@ class Problema:
         """
         # Comprobaciones.
         if not estado:
-            raise "No se indicó estado al que aplicar acción"
+            raise ValueError("No se indicó estado al que aplicar acción")
         if not accion:
-            raise "No se indicó acción a aplicar"
+            raise ValueError("No se indicó acción a aplicar")
 
         # Miramos si está definido ese estado en las acciones.
         if estado.nombre not in self.acciones.keys():
@@ -172,9 +210,9 @@ class Problema:
         """
         # Comprobaciones.
         if not estado:
-            raise "No se ha indicado estado a calcular un coste de acción"
+            raise ValueError("No se ha indicado estado a calcular un coste")
         if not accion:
-            raise "No se ha indicado acción para calcular su coste"
+            raise ValueError("No se ha indicado acción para calcular su coste")
 
         # El estado debe estar en la tabla de costes.
         if estado.nombre not in self.costes.keys():
@@ -199,7 +237,7 @@ class Problema:
         """
         # Comprobaciones.
         if not nodo:
-            raise "No se ha indicado un nodo para calcular el coste de camino"
+            raise ValueError("No se indicó nodo a calcular su coste de camino")
 
         # Coste total a devolver.
         total = 0
@@ -243,7 +281,7 @@ class Nodo:
         """
         # Comprobaciones.
         if not estado:
-            raise "No ha indicado el estado asociado el nodo"
+            raise ValueError("No ha indicado el estado asociado el nodo")
 
         # Pueden no indicar hijos.
         if hijos is None:
@@ -268,6 +306,18 @@ class Nodo:
         # Irá recalculándose cuando se llame al método "expandir".
         self.valores = {}
 
+    def __str__(self):
+        """
+        Representación en modo texto del nodo.
+        """
+        return self.estado.nombre
+
+    def __repr__(self):
+        """
+        Representación del nodo para depuración.
+        """
+        return "Nodo({0})".format(self)
+
     def agregar(self,
                 hijo):
         """
@@ -278,7 +328,7 @@ class Nodo:
         """
         # Comprobaciones
         if not hijo:
-            raise "No se ha indicado nodo hijo a agregar"
+            raise ValueError("No se ha indicado nodo hijo a agregar")
 
         # Indicamos que el padre será el nodo actual.
         hijo.padre = self
@@ -300,13 +350,13 @@ class Nodo:
         """
         # Comprobaciones.
         if not problema:
-            raise "No se ha indicado una defición de problema"
+            raise ValueError("No se ha indicado una defición de problema")
         if not problema.acciones:
-            raise "El problema no tiene definidas las acciones"
+            raise ValueError("El problema no tiene definidas las acciones")
         if not problema.costes:
-            raise "El problema no tiene definidos los costes"
+            raise ValueError("El problema no tiene definidos los costes")
         if not problema.heuristicas:
-            raise "El problema no tiene definidas las heurísticas"
+            raise ValueError("El problema no tiene definidas las heurísticas")
 
         # Reiniciamos la lista de los hijos.
         self.hijos = []
@@ -367,7 +417,7 @@ class Nodo:
         """
         # Comprobaciones.
         if not objetivo:
-            raise "Debe indicar un objetivo para obtener el de menor valor"
+            raise ValueError("No se indicó objetivo")
 
         # Si no hay hijos aun, terminamos.
         if not self.hijos:
