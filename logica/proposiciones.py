@@ -1056,11 +1056,16 @@ if __name__ == "__main__":
     print("----------------------------")
     print()
     # Proposiciones más complejas.
-    compleja = (P & Q) >> R & Q << R
-    compleja.ver_tabla_verdad()
-    print("Es Tautología: {0}".format(compleja.es_tautologia()))
-    print("Es Contradicción: {0}".format(compleja.es_contradiccion()))
-    print("Es Contingente: {0}".format(compleja.es_contingente()))
+    compleja1 = (P & Q) >> R & Q << R
+    compleja1.ver_tabla_verdad()
+    print("Es Tautología: {0}".format(compleja1.es_tautologia()))
+    print("Es Contradicción: {0}".format(compleja1.es_contradiccion()))
+    print("Es Contingente: {0}".format(compleja1.es_contingente()))
+    print()
+
+    # Proposición aun más compleja.
+    compleja2 = (P & Q) >> ((R & ~Q) | (R >> ~Q))
+    compleja2.ver_tabla_verdad()
     print()
 
     print("-------------------")
@@ -1200,7 +1205,7 @@ if __name__ == "__main__":
     print()
     # Cambiamos la P por una T
     T = Variable("T")
-    sustituida = compleja.sustituye(P, T)
+    sustituida = compleja1.sustituye(P, T)
     sustituida.ver_tabla_verdad()
 
     # Cambiamos la R por un True
