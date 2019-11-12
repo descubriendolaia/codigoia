@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Diferentes algoritmos de búsqueda no informada en grafos.
-La principla diferencia es el tipo de lista a usar para almacenar el siguiente
+La principal diferencia es el tipo de lista a usar para almacenar el siguiente
 nodo a visitar (FIFO, LIFO, prioridad, etc.).
 """
 from grafos import Accion, Estado, Problema, Nodo
@@ -32,10 +32,7 @@ def anchura(
         raise ValueError("No se indicó una definición de problema a resolver")
 
     # Obtenemos el nodo raíz.
-    estado = problema.estado_inicial.nombre
-    acciones = problema.acciones[estado] if problema.acciones else {}
-    raiz = Nodo(estado=problema.estado_inicial,
-                acciones=acciones)
+    raiz = crea_nodo_raiz(problema=problema)
 
     # Miramos si el raíz es ya un objetivo.
     if problema.es_objetivo(estado=raiz.estado):
@@ -166,10 +163,7 @@ def coste_uniforme(
         raise ValueError("No se indicó una definición de problema a resolver")
 
     # Obtenemos el nodo raíz.
-    estado = problema.estado_inicial.nombre
-    acciones = problema.acciones[estado] if problema.acciones else {}
-    raiz = Nodo(estado=problema.estado_inicial,
-                acciones=acciones)
+    raiz = crea_nodo_raiz(problema=problema)
 
     # Definimos la frontera (FIFO) y agregamos el nodo raíz.
     frontera = [raiz, ]
@@ -317,10 +311,7 @@ def profundidad(
         raise ValueError("No se indicó una definición de problema a resolver")
 
     # Obtenemos el nodo raíz.
-    estado = problema.estado_inicial.nombre
-    acciones = problema.acciones[estado] if problema.acciones else {}
-    raiz = Nodo(estado=problema.estado_inicial,
-                acciones=acciones)
+    raiz = crea_nodo_raiz(problema=problema)
 
     # Miramos si el raíz es ya un objetivo.
     if problema.es_objetivo(estado=raiz.estado):
@@ -460,10 +451,7 @@ def profundidad_recursiva(
         raise ValueError("El tipo de límite debe ser 'profundidad' o 'coste'")
 
     # Obtenemos el nodo raíz.
-    estado = problema.estado_inicial.nombre
-    acciones = problema.acciones[estado] if problema.acciones else {}
-    raiz = Nodo(estado=problema.estado_inicial,
-                acciones=acciones)
+    raiz = crea_nodo_raiz(problema=problema)
 
     # Definimos el conjunto de los estados explorados.
     explorados = set()
@@ -504,15 +492,16 @@ def _bpp_recursiva(nodo,
               Si no encuentra solución, devuelve "None".
     """
     # Mostramos la situación actual.
-    print("----- NUEVA LLAMADA RECURSIVA -----")
-    if not nodo.padre:
-        msg = "Estado Raíz: {0}"
-        print(msg.format(nodo.estado.nombre))
-    else:
-        msg = "Padre: {0} --- {1} ---> Estado: {2}"
-        print(msg.format(nodo.padre.estado.nombre,
-                         nodo.accion.nombre,
-                         nodo.estado.nombre))
+    if log:
+        print("----- NUEVA LLAMADA RECURSIVA -----")
+        if not nodo.padre:
+            msg = "Estado Raíz: {0}"
+            print(msg.format(nodo.estado.nombre))
+        else:
+            msg = "Padre: {0} --- {1} ---> Estado: {2}"
+            print(msg.format(nodo.padre.estado.nombre,
+                             nodo.accion.nombre,
+                             nodo.estado.nombre))
 
     # Miramos si el raíz es ya un objetivo.
     if problema.es_objetivo(estado=nodo.estado):
@@ -1013,12 +1002,44 @@ def bidireccional(
 
 # %% --- FUNCIONES AUXILIARES ---
 
+def crea_nodo_raiz(problema):
+    """
+    Método auxiliar que ayudará a crear nodos raíz de los métodos que
+    implementan algoritmos de búsqueda informada.
+    """
+    # Comprobaciones.
+    if not problema:
+        raise ValueError("No se indicó una definición de problema")
+
+    # Obtenemos el estado inicial del problema.
+    estado_raiz = problema.estado_inicial
+
+    # Miramos si el estado tiene acciones asociadas.
+    acciones_raiz = {}
+    if estado_raiz.nombre in problema.acciones.keys():
+        acciones_raiz = problema.acciones[estado_raiz.nombre]
+
+    # Creamos el nodo raíz.
+    raiz = Nodo(estado=estado_raiz,
+                acciones=acciones_raiz)
+
+    # No habrá aun coste de camino.
+    raiz.coste = 0
+
+    # Devolvemos el nodo raíz creado.
+    return raiz
+
+
 def crea_nodo_hijo(problema,
                    padre,
                    accion):
     """
     Método auxiliar que ayudará a crear nodos hijos a los métodos que
     implementan algoritmos de búsqueda no informada.
+    Argumentos:
+    - problema: definición del problema a resolver.
+    - padre: nodo padre del nodo hijo a crear. Se agrega a los hijos de él.
+    - accion: acción que ha provocado la creación de este nodo hijo.
     """
     # Comprobaciones.
     if not problema:
