@@ -300,7 +300,7 @@ print(msg.format(prob_a_y_b, prob_a))
 print()
 
 # Donde hay que tener en cuenta que, si dos sucesos A y B son independientes
-# entre sí: P(A|B) = P(A), es decir, B no afecta para nada a B.
+# entre sí: P(A|B) = P(A), es decir, B no afecta para nada a A.
 # Datos: P(A=5,B=3) = P(A=5|B=3)·P(B=3) = P(A=5)·P(B=3) = 1/6 · 1/6 = 1/36
 
 # Probabilida de sacar un 5 en un dado.
@@ -347,7 +347,8 @@ print()
 # conjuntas con el resto de variables, siempre y cuando el resto de variables
 # sean todas independientes entre sí y exhaustivas es:
 # P(B) = sum(P(Ai,B)) = sum(P(B|Ai)·P(Ai))
-# Donde Ai son el resto de variables. Para el caso de 2 variables boolenas:
+# Donde Ai son todos los posibles valores de A. Para el caso de 1 variable
+# boolena, con sólo 2 valores:
 # P(B) = P(B|A)·P(A) + P(B|¬A)·P(¬A)
 print("***********************************")
 print("*** PROBABILIDAD TOTAL/MARGINAL ***")

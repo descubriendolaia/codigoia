@@ -136,7 +136,7 @@ def anchura(
 
         # Si nos piden ir paso a paso.
         if paso_a_paso:
-            input("Pulse cualquier tecla para continuar.")
+            input("Pulsa la tecla 'Enter' para continuar.")
 
 
 # %% --- COSTE UNIFORME ---
@@ -282,7 +282,7 @@ def coste_uniforme(
 
         # Si nos piden ir paso a paso.
         if paso_a_paso:
-            input("Pulse cualquier tecla para continuar.")
+            input("Pulsa la tecla 'Enter' para continuar.")
 
 
 # %% --- PRIMERO EN PROFUNDIDAD ---
@@ -415,7 +415,7 @@ def profundidad(
 
         # Si nos piden ir paso a paso.
         if paso_a_paso:
-            input("Pulse cualquier tecla para continuar.")
+            input("Pulsa la tecla 'Enter' para continuar.")
 
 
 def profundidad_recursiva(
@@ -550,7 +550,7 @@ def _bpp_recursiva(nodo,
         else:
             # Si nos piden ir paso a paso.
             if paso_a_paso:
-                input("Pulse cualquier tecla para continuar.")
+                input("Pulsa la tecla 'Enter' para continuar.")
 
             # Si se indicó un límite máximo
             lim = None
@@ -997,7 +997,7 @@ def bidireccional(
 
         # Si nos piden ir paso a paso.
         if paso_a_paso:
-            input("Pulse cualquier tecla para continuar.")
+            input("Pulsa la tecla 'Enter' para continuar.")
 
 
 # %% --- FUNCIONES AUXILIARES ---

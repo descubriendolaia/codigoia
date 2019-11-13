@@ -161,7 +161,7 @@ def voraz(
 
         # Si nos piden ir paso a paso.
         if paso_a_paso:
-            input("Pulse cualquier tecla para continuar.")
+            input("Pulsa la tecla 'Enter' para continuar.")
 
 
 # %% --- FUNCIONES AUXILIARES ---
