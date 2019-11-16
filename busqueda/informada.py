@@ -1108,10 +1108,11 @@ if __name__ == "__main__":
 
     # Indicamos los algoritmos que queremos lanzar.
     lanza_voraz = False
-    lanza_aestrella = True
+    lanza_a_estrella = False
+    lanza_ao_estrella = True
 
     # Indica si se mostrará lo que hace cada algoritmo.
-    log = True
+    log = False
     paso_a_paso = False
 
     # Indicamos el problema a resolver.
@@ -1134,7 +1135,7 @@ if __name__ == "__main__":
                          segundos=tiempo)
 
     # Búsqueda A*.
-    if lanza_aestrella:
+    if lanza_a_estrella:
         print("**************")
         print("***** A* *****")
         print("**************")
@@ -1145,3 +1146,96 @@ if __name__ == "__main__":
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
+
+    # Búsqueda AO*.
+    # Esta búsqueda no tiene una función asociada, sino que es una técnica que
+    # se apoya en la búsqueda A*. El problema a resolver será ir desde Nohoi
+    # hasta Theer pero probando a ir por Nokshos o por Khandan.
+    if lanza_ao_estrella:
+        print("***************")
+        print("***** AO* *****")
+        print("***************")
+        inicio = time()
+        # Dividimos el problema de ir de Nohoi hasta Theer en 2 subproblemas:
+        # 1. Ir de Nohoi hasta Nokshos.
+        # 2. Ir de Nohoi hasta Khandan.
+        # Luego se probará a ir desde estas dos ciudades a Theer.
+        # Por último, se sumarán los costes de las dos trayectorias posibles y,
+        # la que tenga un menor coste, será la elegida.
+
+        # EL primero será el de ir desde Nohoi hasta Nokshos.
+        problema_nohoi_nokshos = Problema(estado_inicial=nohoi,
+                                          estados_objetivos=[nokshos],
+                                          acciones=acciones,
+                                          costes=costes,
+                                          heuristicas=heuristicas)
+        solucion_nohoi_nokshos = aestrella(problema=problema_nohoi_nokshos,
+                                           log=log,
+                                           paso_a_paso=paso_a_paso)
+        coste_nohoi_nokshos = solucion_nohoi_nokshos.coste
+        msg = "Coste Nohoi -> Nokshos: {0}"
+        print(msg.format(coste_nohoi_nokshos))
+
+        # El segundo será el de ir desde Nohoi hasta Khandan.
+        problema_nohoi_khandan = Problema(estado_inicial=nohoi,
+                                          estados_objetivos=[khandan],
+                                          acciones=acciones,
+                                          costes=costes,
+                                          heuristicas=heuristicas)
+        solucion_nohoi_khandan = aestrella(problema=problema_nohoi_khandan,
+                                           log=log,
+                                           paso_a_paso=paso_a_paso)
+        coste_nohoi_khandan = solucion_nohoi_khandan.coste
+        msg = "Coste Nohoi -> Khandan: {0}"
+        print(msg.format(coste_nohoi_khandan))
+
+        # Miramos cuando se tarda desde Nokshos hasta Theer.
+        problema_nokshos_theer = Problema(estado_inicial=nokshos,
+                                          estados_objetivos=[theer],
+                                          acciones=acciones,
+                                          costes=costes,
+                                          heuristicas=heuristicas)
+        solucion_nokshos_theer = aestrella(problema=problema_nokshos_theer,
+                                           log=log,
+                                           paso_a_paso=paso_a_paso)
+        coste_nokshos_theer = solucion_nokshos_theer.coste
+        msg = "Coste Nokshos -> Theer: {0}"
+        print(msg.format(coste_nokshos_theer))
+
+        # Y cuando se tarda desde Khandan hasta Theer.
+
+        problema_khandan_theer = Problema(estado_inicial=khandan,
+                                          estados_objetivos=[theer],
+                                          acciones=acciones,
+                                          costes=costes,
+                                          heuristicas=heuristicas)
+        solucion_khandan_theer = aestrella(problema=problema_khandan_theer,
+                                           log=log,
+                                           paso_a_paso=paso_a_paso)
+        coste_khandan_theer = solucion_khandan_theer.coste
+        msg = "Coste Khandan -> Theer: {0}"
+        print(msg.format(coste_khandan_theer))
+
+        # Comparamos los valorse de las dos trayectorias probadas.
+        coste_por_nokshos = coste_nohoi_nokshos + coste_nokshos_theer
+        coste_por_khandan = coste_nohoi_khandan + coste_khandan_theer
+        msg = "Coste Nohoi -> Nokshos -> Theer: {0} + {1} = {2}"
+        print(msg.format(coste_nohoi_nokshos,
+                         coste_nokshos_theer,
+                         coste_por_nokshos))
+        msg = "Coste Nohoi -> Khandan -> Theer: {0} + {1} = {2}"
+        print(msg.format(coste_nohoi_khandan,
+                         coste_khandan_theer,
+                         coste_por_khandan))
+
+        # Indicamos la trayectorio con menor coste.
+        msg = "Para ir de Nohoi a Theer es mejor ir por: {0}"
+        if(coste_por_nokshos <= coste_por_khandan):
+            print(msg.format("Nokshos"))
+            msg = "Coste: {0}"
+            print(msg.format(coste_por_nokshos))
+        else:
+            print(msg.format("Khandan"))
+            msg = "Coste: {0}"
+            print(msg.format(coste_por_khandan))
+        tiempo = time() - inicio
