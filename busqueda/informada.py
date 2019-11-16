@@ -168,12 +168,12 @@ def voraz(
 
 # %% --- A* (A ESTRELLA) ---
 
-def aestrella(
+def a_estrella(
         problema,
         log=False,
         paso_a_paso=False):
     """
-    Búsqueda a* (a estrella).
+    Búsqueda A* (que se lee 'A estrella').
     Tiene en cuenta tanto el coste de camino recorrido como la heurística.
     Argumentos:
     - problema: definición del problema a resolver.
@@ -320,6 +320,203 @@ def aestrella(
         # Si nos piden ir paso a paso.
         if paso_a_paso:
             input("Pulsa la tecla 'Enter' para continuar.")
+
+
+# %% --- A* ITERATIVA ---
+
+def a_estrella_iterativa(
+        problema,
+        nodo=None,
+        limite=0,
+        explorados=None,
+        log=False,
+        paso_a_paso=False):
+    """
+    Búsqueda A* iterativa que buscará a partir de un nodo hasta un límite
+    máximo.
+    Argumentos:
+    - problema: definición del problema a resolver.
+    - nodo: nodo a partir del cual realizar la búsqueda. Si no se indica, se
+            cogerá el nodo raíz del problema.
+    - limite: valor máximo hasta el que explorar. Si no se indica, será el
+              valor que tenga el problema como infinito.
+    - explorados: conjunto de los estados ya explorados.
+    - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
+              él y siguiendo sus nodos padres, se obtendrá la solución.
+              Si no encuentra solución, devuelve "None".
+    """
+    # Comprobaciones.
+    if not problema:
+        raise ValueError("No se indicó una definición de problema a resolver")
+
+    # Si no indican nodo, cogemos la raíz del problema.
+    if not nodo:
+        nodo = crea_nodo_raiz(problema=problema)
+
+    # Si no hay explorados, creamos el conjunto.
+    if explorados is None:
+        explorados = set()
+    else:
+        # Agregamos su estado al conjunto de explorados.
+        explorados.add(nodo.estado)
+        if log:
+            log_explorados = [estado.nombre
+                              for estado in explorados]
+            msg = "Explorados: {0}"
+            print(msg.format(log_explorados))
+
+    # Si no indican límite, cogemos el infinito del problema.
+    if limite <= 0:
+        limite = problema.infinito
+
+    # Mostramos información si nos lo piden.
+    if log:
+        msg = "----- NUEVO CICLO: LÍMITE {0} -----"
+        print(msg.format(limite))
+        msg = "Nodo: {0}"
+        print(msg.format(nodo.estado.nombre))
+
+    # Si el valor del nodo supera el límite, devolvemos el valor
+    valor_nodo = min([nodo.valores[objetivo.nombre]
+                      for objetivo in problema.estados_objetivos])
+    if log:
+        msg = "Valor Mínimo: {0}"
+        print(msg.format(valor_nodo))
+    if valor_nodo > limite:
+        if log:
+            msg = "Límite Superado: {0} > {1}"
+            print(msg.format(valor_nodo,
+                             limite))
+        return None, valor_nodo
+
+    # Miramos si el nodo es ya un objetivo.
+    if problema.es_objetivo(estado=nodo.estado):
+        if log:
+            msg = "Objetivo: {0}"
+            print(msg.format(nodo.estado.nombre))
+        return nodo, limite
+
+    # Si el nodo no tiene acciones, pasamos al siguiente.
+    if not nodo.acciones:
+        if log:
+            print("No hay Acciones")
+        return None, limite
+
+    # Indicará el hijo con menor valor.
+    minimo = problema.infinito
+
+    # Por cada una de las acciones que se pueden hacer.
+    for nombre_accion in nodo.acciones.keys():
+        # Indicamos la acción.
+        if log:
+            msg = "   Accion: {0}"
+            print(msg.format(nombre_accion))
+
+        # Creamos un nodo hijo.
+        accion = Accion(nombre=nombre_accion)
+        hijo = crea_nodo_hijo(problema=problema,
+                              padre=nodo,
+                              accion=accion)
+        nombre_hijo = hijo.estado.nombre
+        if log:
+            msg = "   Hijo: {0}"
+            print(msg.format(nombre_hijo))
+
+        # Si el estado del hijo no ha sido explorado
+        if hijo.estado in explorados:
+            # Indicamos que ese estado ya ha sido explorado.
+            if log:
+                msg = "   {0} ya ha sido explorado"
+                print(msg.format(hijo.estado.nombre))
+        else:
+            # Si nos piden ir paso a paso.
+            if paso_a_paso:
+                input("Pulsa la tecla 'Enter' para continuar.")
+
+            # Lanzamos la búsqueda desde el hijo.
+            nod_hijo, lim_hijo = a_estrella_iterativa(problema=problema,
+                                                      nodo=hijo,
+                                                      limite=limite,
+                                                      explorados=explorados,
+                                                      log=log,
+                                                      paso_a_paso=paso_a_paso)
+
+            # Si devuelve un nodo, es la solución.
+            if nod_hijo:
+                return nod_hijo, lim_hijo
+
+            # Si el límite es menor al mínimo, lo cogemos.
+            if lim_hijo < minimo:
+                minimo = lim_hijo
+                if log:
+                    msg = "Nuevo Mínimo: {0}"
+                    print(msg.format(minimo))
+
+    # Devolvemos el mínimo como nuevo límite.
+    return None, minimo
+
+
+# %% --- IDA* ---
+
+def ida_estrella(
+        problema,
+        log=False,
+        paso_a_paso=False):
+    """
+    Búsqueda IDA* (Iterative Deepening A*) que es una mejora de A* en la que
+    iremos aumentando progresivamente el límite máximo del valor.
+    Argumentos:
+    - problema: definición del problema a resolver.
+    - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
+              él y siguiendo sus nodos padres, se obtendrá la solución.
+              Si no encuentra solución, devuelve "None".
+    """
+    # Comprobaciones.
+    if not problema:
+        raise ValueError("No se indicó una definición de problema a resolver")
+
+    # Obtenemos el nodo raíz.
+    raiz = crea_nodo_raiz(problema=problema)
+
+    # Como límite inicial, cogeremos la heurística del nodo raíz ya que, como
+    # mínimo, la solución está esa distancia.
+    limite = min([raiz.heuristicas[objetivo.nombre]
+                  for objetivo in problema.estados_objetivos])
+    if log:
+        msg = "Límite Inicial: {0}"
+        print(msg.format(limite))
+
+    # Entramos en el bucle principal.
+    while True:
+        # Indicamos que vamos a empezar el ciclo.
+        if log:
+            msg = "===== EMPEZAMOS: LÍMITE {0} ====="
+            print(msg.format(limite))
+
+        # Definimos el conjunto de los estados explorados.
+        explorados = set()
+        if log:
+            print("Explorados reiniciado")
+
+        # Probamos con ese límite.
+        nodo, limite = a_estrella_iterativa(problema=problema,
+                                            nodo=raiz,
+                                            limite=limite,
+                                            explorados=explorados,
+                                            log=log,
+                                            paso_a_paso=paso_a_paso)
+
+        # Si devuelve un nodo, es la solución.
+        if nodo:
+            return nodo
+
+        # Si devuelve un límite infinito, no hay solución.
+        if limite == problema.infinito:
+            return None
 
 
 # %% --- FUNCIONES AUXILIARES ---
@@ -1109,10 +1306,11 @@ if __name__ == "__main__":
     # Indicamos los algoritmos que queremos lanzar.
     lanza_voraz = False
     lanza_a_estrella = False
-    lanza_ao_estrella = True
+    lanza_ao_estrella = False
+    lanza_ida_estrella = True
 
     # Indica si se mostrará lo que hace cada algoritmo.
-    log = False
+    log = True
     paso_a_paso = False
 
     # Indicamos el problema a resolver.
@@ -1140,9 +1338,9 @@ if __name__ == "__main__":
         print("***** A* *****")
         print("**************")
         inicio = time()
-        solucion = aestrella(problema=problema,
-                             log=log,
-                             paso_a_paso=paso_a_paso)
+        solucion = a_estrella(problema=problema,
+                              log=log,
+                              paso_a_paso=paso_a_paso)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
@@ -1169,9 +1367,9 @@ if __name__ == "__main__":
                                           acciones=acciones,
                                           costes=costes,
                                           heuristicas=heuristicas)
-        solucion_nohoi_nokshos = aestrella(problema=problema_nohoi_nokshos,
-                                           log=log,
-                                           paso_a_paso=paso_a_paso)
+        solucion_nohoi_nokshos = a_estrella(problema=problema_nohoi_nokshos,
+                                            log=log,
+                                            paso_a_paso=paso_a_paso)
         coste_nohoi_nokshos = solucion_nohoi_nokshos.coste
         msg = "Coste Nohoi -> Nokshos: {0}"
         print(msg.format(coste_nohoi_nokshos))
@@ -1182,9 +1380,9 @@ if __name__ == "__main__":
                                           acciones=acciones,
                                           costes=costes,
                                           heuristicas=heuristicas)
-        solucion_nohoi_khandan = aestrella(problema=problema_nohoi_khandan,
-                                           log=log,
-                                           paso_a_paso=paso_a_paso)
+        solucion_nohoi_khandan = a_estrella(problema=problema_nohoi_khandan,
+                                            log=log,
+                                            paso_a_paso=paso_a_paso)
         coste_nohoi_khandan = solucion_nohoi_khandan.coste
         msg = "Coste Nohoi -> Khandan: {0}"
         print(msg.format(coste_nohoi_khandan))
@@ -1195,9 +1393,9 @@ if __name__ == "__main__":
                                           acciones=acciones,
                                           costes=costes,
                                           heuristicas=heuristicas)
-        solucion_nokshos_theer = aestrella(problema=problema_nokshos_theer,
-                                           log=log,
-                                           paso_a_paso=paso_a_paso)
+        solucion_nokshos_theer = a_estrella(problema=problema_nokshos_theer,
+                                            log=log,
+                                            paso_a_paso=paso_a_paso)
         coste_nokshos_theer = solucion_nokshos_theer.coste
         msg = "Coste Nokshos -> Theer: {0}"
         print(msg.format(coste_nokshos_theer))
@@ -1209,9 +1407,9 @@ if __name__ == "__main__":
                                           acciones=acciones,
                                           costes=costes,
                                           heuristicas=heuristicas)
-        solucion_khandan_theer = aestrella(problema=problema_khandan_theer,
-                                           log=log,
-                                           paso_a_paso=paso_a_paso)
+        solucion_khandan_theer = a_estrella(problema=problema_khandan_theer,
+                                            log=log,
+                                            paso_a_paso=paso_a_paso)
         coste_khandan_theer = solucion_khandan_theer.coste
         msg = "Coste Khandan -> Theer: {0}"
         print(msg.format(coste_khandan_theer))
@@ -1239,3 +1437,16 @@ if __name__ == "__main__":
             msg = "Coste: {0}"
             print(msg.format(coste_por_khandan))
         tiempo = time() - inicio
+
+    # Búsqueda IDA*.
+    if lanza_ida_estrella:
+        print("****************")
+        print("***** IDA* *****")
+        print("****************")
+        inicio = time()
+        solucion = ida_estrella(problema=problema,
+                                log=log,
+                                paso_a_paso=paso_a_paso)
+        tiempo = time() - inicio
+        muestra_solucion(objetivo=solucion,
+                         segundos=tiempo)
