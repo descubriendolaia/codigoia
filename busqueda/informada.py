@@ -59,7 +59,9 @@ def voraz(
             return None
 
         # Obtenemos el siguiente nodo.
-        nodo = frontera.pop(0)
+        nodo = sacar_siguiente(frontera=frontera,
+                               metrica="heuristica",
+                               objetivos=problema.estados_objetivos)
         if log:
             msg = "Nodo: {0}"
             print(msg.format(nodo.estado.nombre))
@@ -147,6 +149,162 @@ def voraz(
                         frontera[indice] = hijo
                         if log:
                             msg = "      Nueva Heurística: {0}"
+                            print(msg.format(minimo_hijo))
+                    else:
+                        # Indicamos que no se sustituye.
+                        if log:
+                            print("      Sustituido: NO")
+            else:
+                # Lo agregamos a la frontera.
+                frontera.append(hijo)
+                if log:
+                    msg = "   Añade Frontera: {0}"
+                    print(msg.format(nombre_hijo))
+
+        # Si nos piden ir paso a paso.
+        if paso_a_paso:
+            input("Pulsa la tecla 'Enter' para continuar.")
+
+
+# %% --- A* (A ESTRELLA) ---
+
+def aestrella(
+        problema,
+        log=False,
+        paso_a_paso=False):
+    """
+    Búsqueda a* (a estrella).
+    Tiene en cuenta tanto el coste de camino recorrido como la heurística.
+    Argumentos:
+    - problema: definición del problema a resolver.
+    - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
+              él y siguiendo sus nodos padres, se obtendrá la solución.
+              Si no encuentra solución, devuelve "None".
+    """
+    # Comprobaciones.
+    if not problema:
+        raise ValueError("No se indicó una definición de problema a resolver")
+
+    # Obtenemos el nodo raíz.
+    raiz = crea_nodo_raiz(problema=problema)
+
+    # Definimos la frontera y agregamos el nodo raíz.
+    frontera = [raiz, ]
+
+    # Definimos el conjunto de los estados explorados.
+    explorados = set()
+
+    # Entramos en el bucle principal.
+    while True:
+        # Mostramos la frontera y explorada.
+        if log:
+            log_frontera = [nodo.estado.nombre
+                            for nodo in frontera]
+            log_explorados = [estado.nombre
+                              for estado in explorados]
+            print("----- NUEVO CICLO -----")
+            msg = "Frontera: {0}"
+            print(msg.format(log_frontera))
+            msg = "Explorados: {0}"
+            print(msg.format(log_explorados))
+
+        # Si frontera está vacía, terminamos.
+        if not frontera:
+            return None
+
+        # Obtenemos el siguiente nodo.
+        nodo = sacar_siguiente(frontera=frontera,
+                               metrica="valor",
+                               objetivos=problema.estados_objetivos)
+        if log:
+            msg = "Nodo: {0}"
+            print(msg.format(nodo.estado.nombre))
+            log_frontera = [nodo.estado.nombre
+                            for nodo in frontera]
+            msg = "Frontera: {0}"
+            print(msg.format(log_frontera))
+
+        # Miramos si el nodo es ya un objetivo.
+        if problema.es_objetivo(estado=nodo.estado):
+            if log:
+                msg = "Objetivo: {0}"
+                print(msg.format(nodo.estado.nombre))
+            return nodo
+
+        # Agregamos su estado al conjunto de explorados.
+        explorados.add(nodo.estado)
+        if log:
+            log_explorados = [estado.nombre
+                              for estado in explorados]
+            msg = "Explorados: {0}"
+            print(msg.format(log_explorados))
+
+        # Si el nodo no tiene acciones, pasamos al siguiente.
+        if not nodo.acciones:
+            if log:
+                print("No hay Acciones")
+            continue
+
+        # Por cada una de las acciones que se pueden hacer.
+        for nombre_accion in nodo.acciones.keys():
+            # Indicamos la acción.
+            if log:
+                msg = "   Accion: {0}"
+                print(msg.format(nombre_accion))
+
+            # Creamos un nodo hijo.
+            accion = Accion(nombre=nombre_accion)
+            hijo = crea_nodo_hijo(problema=problema,
+                                  padre=nodo,
+                                  accion=accion)
+            nombre_hijo = hijo.estado.nombre
+            if log:
+                msg = "   Hijo: {0}"
+                print(msg.format(nombre_hijo))
+
+            # Si el estado del hijo no ha sido explorado
+            # y tampoco está en la frontera.
+            estados_frontera = [nodo.estado
+                                for nodo in frontera]
+            if hijo.estado in explorados or hijo.estado in estados_frontera:
+                # Miramos si el estado está en algún nodo de la frontera.
+                buscar = [nodo
+                          for nodo in frontera
+                          if nodo.estado == hijo.estado]
+                if buscar:
+                    # Indicamos que el estado ya existía en la frontera.
+                    if log:
+                        msg = "   Estado En Frontera: {0}"
+                        print(msg.format(nombre_hijo))
+
+                    # Obtenemos los mejores valores.
+                    valores_hijo = [hijo.valores[objetivo.nombre]
+                                    for objetivo
+                                    in problema.estados_objetivos]
+                    valores_buscar = [buscar[0].valores[objetivo.nombre]
+                                      for objetivo
+                                      in problema.estados_objetivos]
+                    minimo_hijo = min(valores_hijo)
+                    minimo_buscar = min(valores_buscar)
+
+                    # Si tiene mejor valor el hijo que el de la frontera.
+                    if log:
+                        msg = "      Valor Hijo: {0}"
+                        print(msg.format(minimo_hijo))
+                        msg = "      Valor Frontera: {0}"
+                        print(msg.format(minimo_buscar))
+                    if minimo_hijo < minimo_buscar:
+                        # Indicamos que vamos a sustituir el nodo frontera.
+                        if log:
+                            print("      Sustituido: SÍ")
+
+                        # Sustituimos el de la frontera por el del hijo.
+                        indice = frontera.index(buscar[0])
+                        frontera[indice] = hijo
+                        if log:
+                            msg = "      Nuevo Valor: {0}"
                             print(msg.format(minimo_hijo))
                     else:
                         # Indicamos que no se sustituye.
@@ -254,6 +412,81 @@ def crea_nodo_hijo(problema,
 
     # Devolvemos el hijo.
     return hijo
+
+
+def sacar_siguiente(frontera,
+                    metrica="valor",
+                    criterio="menor",
+                    objetivos=None):
+    """
+    De todos nodos en la frontera, saca y devuelve el siguiente nodo según una
+    métrica y un criterio.
+    Argumentos:
+    - frontera: frontera de la que obtener el siguiente nodo.
+    - metrica: con qué cantidad se harán los cálculos. Los valores posibles
+               son 'valor', 'heuristica', 'coste'.
+    - criterio: si se obtendrá el 'menor' o el 'mayor'.
+    - objetivos: estados objetivos para los que hacer los cálculos en caso
+                 de que la métrica no sea 'coste'.
+    """
+    # Comprobaciones.
+    if metrica not in ("valor", "heuristica", "coste"):
+        msg = "Se indicó una métrica desconocida: {0}"
+        raise ValueError(msg.format(metrica))
+    if criterio not in ("menor", "mayor"):
+        msg = "Se indicó un criterio desconocido: {0}"
+        raise ValueError(msg.format(criterio))
+    if "coste" != metrica and not objetivos:
+        raise ValueError("No se indicó objetivo")
+
+    # Si no hay nada en la frontera, terminamos.
+    if not frontera:
+        return None
+
+    # Cogemos el primer nodo en la frontera como el mejor.
+    mejor = frontera[0]
+
+    # Recorremos el resto de nodo para ver si alguno es mejor.
+    for nodo in frontera[1:]:
+        # Por cada uno de los objetivos.
+        for objetivo in objetivos:
+            # Si nos piden el valor
+            if "valor" == metrica:
+                # Si este nodo es mejor que el actual, lo cogemos.
+                valor_nodo = nodo.valores[objetivo.nombre]
+                valor_mejor = mejor.valores[objetivo.nombre]
+                if ("menor" == criterio and
+                    valor_nodo < valor_mejor):
+                    mejor = nodo
+                elif ("mayor" == criterio and
+                      valor_nodo > valor_mejor):
+                    mejor = nodo
+            # Si nos piden la heurística.
+            elif "heuristica" == metrica:
+                # Si este nodo es mejor que el actual, lo cogemos.
+                heuristica_nodo = nodo.heuristicas[objetivo.nombre]
+                heuristica_mejor = mejor.heuristicas[objetivo.nombre]
+                if ("menor" == criterio and
+                    heuristica_nodo < heuristica_mejor):
+                    mejor = nodo
+                elif ("mayor" == criterio and
+                      heuristica_nodo > heuristica_mejor):
+                    mejor = nodo
+            # Si nos piden el coste
+            elif "coste" == metrica:
+                # Si este hijo es mejor que el actual, lo cogemos.
+                if ("menor" == criterio and
+                    nodo.coste_camino < mejor.coste_camino):
+                    mejor = nodo
+                elif ("mayor" == criterio and
+                      nodo.coste_camino > mejor.coste_camino):
+                    mejor = nodo
+
+    # Quitamos el nodo de la frontera.
+    frontera.remove(mejor)
+
+    # Devolvemos el mejor.
+    return mejor
 
 
 def muestra_solucion(objetivo=None,
@@ -874,7 +1107,8 @@ if __name__ == "__main__":
     # ------------------------------------------------------------------------
 
     # Indicamos los algoritmos que queremos lanzar.
-    lanza_voraz = True
+    lanza_voraz = False
+    lanza_aestrella = True
 
     # Indica si se mostrará lo que hace cada algoritmo.
     log = True
@@ -895,6 +1129,19 @@ if __name__ == "__main__":
         solucion = voraz(problema=problema,
                          log=log,
                          paso_a_paso=paso_a_paso)
+        tiempo = time() - inicio
+        muestra_solucion(objetivo=solucion,
+                         segundos=tiempo)
+
+    # Búsqueda A*.
+    if lanza_aestrella:
+        print("**************")
+        print("***** A* *****")
+        print("**************")
+        inicio = time()
+        solucion = aestrella(problema=problema,
+                             log=log,
+                             paso_a_paso=paso_a_paso)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)

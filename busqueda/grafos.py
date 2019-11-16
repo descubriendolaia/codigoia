@@ -95,7 +95,7 @@ class Problema:
                  acciones,
                  costes=None,
                  heuristicas=None,
-                 coste_infinito=99999):
+                 infinito=99999):
         """
         Crea una nueva instancia de la clase.
         Argumentos:
@@ -110,7 +110,7 @@ class Problema:
         - heuristicas: diccionario donde la clave es el nombre de un estado y
                        el valor es otro diccionario con la clave el nombre de
                        un estado objetivo y como valor un número.
-        - coste_infinito: valor del mayor coste posible.
+        - infinito: mayor cantidad posible a manejar (costes, heurísticas...)
         """
         # Comprobaciones.
         if not estado_inicial:
@@ -126,7 +126,7 @@ class Problema:
         self.acciones = acciones
         self.costes = costes
         self.heuristicas = heuristicas
-        self.coste_infinito = coste_infinito
+        self.infinito = infinito
 
         # Si no hay costes, ponemos todos los costes a 1.
         if not self.costes:
@@ -136,13 +136,13 @@ class Problema:
                 for accion in self.acciones[estado].keys():
                     self.costes[estado][accion] = 1
 
-        # Si no hay heurísticas, ponemos todas a 0.
+        # Si no hay heurísticas, ponemos todas a infinito.
         if not self.heuristicas:
             self.heuristicas = {}
             for estado in self.acciones.keys():
                 self.heuristicas[estado] = {}
                 for objetivo in self.estados_objetivos:
-                    self.heuristicas[estado][objetivo] = 0
+                    self.heuristicas[estado][objetivo] = infinito
 
     def __str__(self):
         """
@@ -407,33 +407,75 @@ class Nodo:
         # Devolvemos los hijos generados.
         return self.hijos
 
-    def hijo_menor(self,
-                   objetivo):
+    def hijo_mejor(self,
+                   metrica="valor",
+                   criterio="menor",
+                   objetivos=None):
         """
-        De todos los hijos, devuelve el que tiene menor valor al objetivo
-        indicado (necesita que ya se hayan expandido antes).
+        De todos los hijos, devuelve el que tiene mejor cantidad a los
+        objetivos indicados (necesita que ya se hayan expandido antes).
         Argumentos:
-        - objetivo: estado objetivo para el que hacer los cálculos.
+        - metrica: con qué cantidad se calculará el menor. Los valores posibles
+                   son 'valor', 'heuristica', 'coste'.
+        - criterio: si se obtendrá el 'menor' o el 'mayor'.
+        - objetivos: estados objetivos para los que hacer los cálculos en caso
+                     de que la métrica no sea 'coste'.
         """
         # Comprobaciones.
-        if not objetivo:
+        if metrica not in ("valor", "heuristica", "coste"):
+            msg = "Se indicó una métrica desconocida: {0}"
+            raise ValueError(msg.format(metrica))
+        if criterio not in ("menor", "mayor"):
+            msg = "Se indicó un criterio desconocido: {0}"
+            raise ValueError(msg.format(criterio))
+        if "coste" != metrica and not objetivos:
             raise ValueError("No se indicó objetivo")
 
         # Si no hay hijos aun, terminamos.
         if not self.hijos:
             return None
 
-        # Cogemos el primer hijo como el menor, de momento.
-        menor = self.hijos[0]
+        # Cogemos el primer hijo como el mejor, de momento.
+        mejor = self.hijos[0]
 
-        # Recorremos el resto de hijos para ver si alguno es menor.
+        # Recorremos el resto de hijos para ver si alguno es mejor.
         for hijo in self.hijos[1:]:
-            # Si este hijo es menor que el actual, lo cogemos.
-            if hijo.valores[objetivo] < menor.valores[objetivo]:
-                menor = hijo
+            # Por cada uno de los objetivos.
+            for objetivo in objetivos:
+                # Si nos piden el valor
+                if "valor" == metrica:
+                    # Si este hijo es mejor que el actual, lo cogemos.
+                    valor_hijo = hijo.valores[objetivo]
+                    valor_mejor = mejor.valores[objetivo]
+                    if ("menor" == criterio and
+                        valor_hijo < valor_mejor):
+                        mejor = hijo
+                    elif ("mayor" == criterio and
+                          valor_hijo > valor_mejor):
+                        mejor = hijo
+                # Si nos piden la heurística.
+                elif "heuristica" == metrica:
+                    # Si este hijo es mejor que el actual, lo cogemos.
+                    heuristica_hijo = hijo.heuristicas[objetivo]
+                    heuristica_mejor = mejor.heuristicas[objetivo]
+                    if ("menor" == criterio and
+                        heuristica_hijo < heuristica_mejor):
+                        mejor = hijo
+                    elif ("mayor" == criterio and
+                          heuristica_hijo > heuristica_mejor):
+                        mejor = hijo
+                # Si nos piden el coste
+                elif "coste" == metrica:
+                    # Si este hijo es mejor que el actual, lo cogemos.
+                    if ("menor" == criterio and
+                        hijo.coste_camino < mejor.coste_camino):
+                        mejor = hijo
+                    elif ("mayor" == criterio and
+                          hijo.coste_camino > mejor.coste_camino):
+                        mejor = hijo
 
-        # Devolvemos el menor.
-        return menor
+        # Devolvemos el mejor.
+        return mejor
 
 
 # %% --- MAIN ---
@@ -638,7 +680,7 @@ if __name__ == "__main__":
     print([hijo.estado.nombre for hijo in hijos_faro])
 
     # Mostramos el hijo con menor valor.
-    menor = nodo_faro.hijo_menor(objetivo="Barcelona")
+    menor = nodo_faro.hijo_mejor(objetivos=["Barcelona"])
     print("Hijo Menor Valor: {0} - {1}".format(
             menor.estado.nombre,
             menor.valores["Barcelona"]))
@@ -672,7 +714,7 @@ if __name__ == "__main__":
     print([hijo.estado.nombre for hijo in hijos_sevilla])
 
     # Mostramos el hijo con menor valor.
-    menor = nodo_sevilla.hijo_menor(objetivo="Barcelona")
+    menor = nodo_sevilla.hijo_mejor(objetivos=["Barcelona"])
     print("Hijo Menor Valor: {0} - {1}".format(
             menor.estado.nombre,
             menor.valores["Barcelona"]))
@@ -710,7 +752,7 @@ if __name__ == "__main__":
     print([hijo.estado.nombre for hijo in hijos_madrid])
 
     # Mostramos el hijo con menor valor.
-    menor = nodo_madrid.hijo_menor(objetivo="Barcelona")
+    menor = nodo_madrid.hijo_mejor(objetivos=["Barcelona"])
     print("Hijo Menor Valor: {0} - {1}".format(
             menor.estado.nombre,
             menor.valores["Barcelona"]))
@@ -744,7 +786,7 @@ if __name__ == "__main__":
     print([hijo.estado.nombre for hijo in hijos_valencia])
 
     # Mostramos el hijo con menor valor.
-    menor = nodo_valencia.hijo_menor(objetivo="Barcelona")
+    menor = nodo_valencia.hijo_mejor(objetivos=["Barcelona"])
     print("Hijo Menor Valor: {0} - {1}".format(
             menor.estado.nombre,
             menor.valores["Barcelona"]))
