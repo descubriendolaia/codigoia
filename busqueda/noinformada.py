@@ -1069,8 +1069,11 @@ def crea_nodo_hijo(problema,
                                    accion=accion)
     hijo.coste = coste
 
-    # Lo agregamos al nodo actual como hijo.
-    padre.agregar(hijo=hijo)
+    # Le asignamos el nodo padre.
+    hijo.padre = padre
+
+    # Agregamos el hijo.
+    padre.hijos.append(hijo)
 
     # Devolvemos el hijo.
     return hijo
@@ -1374,17 +1377,17 @@ if __name__ == "__main__":
     # ------------------------------------------------------------------------
 
     # Indicamos los algoritmos que queremos lanzar.
-    lanza_anchura = False
-    lanza_coste_uniforme = False
-    lanza_profundidad = False
-    lanza_profundidad_recursiva = False
-    lanza_profundidad_limitada = False
-    lanza_profundidad_iterativa = False
-    lanza_coste_iterativo = False
-    lanza_bidireccional = False
+    lanza_anchura = True
+    lanza_coste_uniforme = True
+    lanza_profundidad = True
+    lanza_profundidad_recursiva = True
+    lanza_profundidad_limitada = True
+    lanza_profundidad_iterativa = True
+    lanza_coste_iterativo = True
+    lanza_bidireccional = True
 
     # Indica si se mostrará lo que hace cada algoritmo.
-    log = True
+    log = False
     paso_a_paso = False
 
     # Indicamos el problema a resolver.
@@ -1395,6 +1398,7 @@ if __name__ == "__main__":
 
     # Búsqueda primero en anchura.
     if lanza_anchura:
+        print()
         print("******************************")
         print("***** PRIMERO EN ANCHURA *****")
         print("******************************")
@@ -1408,6 +1412,7 @@ if __name__ == "__main__":
 
     # Búsqueda coste uniforme.
     if lanza_coste_uniforme:
+        print()
         print("**************************")
         print("***** COSTE UNIFORME *****")
         print("**************************")
@@ -1421,6 +1426,7 @@ if __name__ == "__main__":
 
     # Búsqueda primero en profundidad.
     if lanza_profundidad:
+        print()
         print("**********************************")
         print("***** PRIMERO EN PROFUNDIDAD *****")
         print("**********************************")
@@ -1434,6 +1440,7 @@ if __name__ == "__main__":
 
     # Búsqueda primero en profundidad (versión recursiva).
     if lanza_profundidad_recursiva:
+        print()
         print("**********************************************")
         print("***** PRIMERO EN PROFUNDIDAD (RECURSIVA) *****")
         print("**********************************************")
@@ -1447,6 +1454,7 @@ if __name__ == "__main__":
 
     # Búsqueda primero en profundidad (versión limitada).
     if lanza_profundidad_limitada:
+        print()
         print("*********************************************")
         print("***** PRIMERO EN PROFUNDIDAD (LIMITADA) *****")
         print("*********************************************")
@@ -1462,6 +1470,7 @@ if __name__ == "__main__":
 
     # Búsqueda primero en profundidad (versión iterativa).
     if lanza_profundidad_iterativa:
+        print()
         print("**********************************************")
         print("***** PRIMERO EN PROFUNDIDAD (ITERATIVA) *****")
         print("**********************************************")
@@ -1477,6 +1486,7 @@ if __name__ == "__main__":
 
     # Búsqueda coste iterativo.
     if lanza_coste_iterativo:
+        print()
         print("***************************")
         print("***** COSTE ITERATIVO *****")
         print("***************************")
@@ -1493,6 +1503,7 @@ if __name__ == "__main__":
 
     # Búsqueda bidireccional.
     if lanza_bidireccional:
+        print()
         print("**************************")
         print("***** BIDIRECCIONAL *****")
         print("**************************")

@@ -292,7 +292,8 @@ class Nodo:
         self.accion = accion
         self.acciones = acciones
         self.padre = padre
-        self.hijos = hijos
+        self.hijos = []
+        self.hijos.extend(hijos)
 
         # Coste de camino hasta nodo (evitar repetir cálculos)
         # Irá aumentando cuando se llame al método "expandir".
@@ -306,6 +307,11 @@ class Nodo:
         # Irá recalculándose cuando se llame al método "expandir".
         self.valores = {}
 
+        # En algunos algoritmos se necesitan valores auxiliares.
+        # Los vamos a llamar por las letras del alfabeto griego.
+        self.alfa = 0
+        self.beta = 0
+
     def __str__(self):
         """
         Representación en modo texto del nodo.
@@ -317,27 +323,6 @@ class Nodo:
         Representación del nodo para depuración.
         """
         return "Nodo({0})".format(self)
-
-    def agregar(self,
-                hijo):
-        """
-        Agrega el nodo hijo indicado a los hijos del nodo actual.
-        Argumentos:
-        - hijo: nodo a agregar a los hijos del nodo actual.
-        Devuelve: referencia al nodo hijo agregado.
-        """
-        # Comprobaciones
-        if not hijo:
-            raise ValueError("No se ha indicado nodo hijo a agregar")
-
-        # Indicamos que el padre será el nodo actual.
-        hijo.padre = self
-
-        # Agregamos el nodo indicado a los hijos del nodo.
-        self.hijos.append(hijo)
-
-        # Devolvemos el nodo hijo agregado.
-        return hijo
 
     def expandir(self,
                  problema):
@@ -402,7 +387,8 @@ class Nodo:
                             in hijo.heuristicas.items()}
 
             # Lo agregamos al nodo actual como hijo.
-            self.agregar(hijo=hijo)
+            hijo.padre = self
+            self.hijos.append(hijo)
 
         # Devolvemos los hijos generados.
         return self.hijos
@@ -416,19 +402,19 @@ class Nodo:
         objetivos indicados (necesita que ya se hayan expandido antes).
         Argumentos:
         - metrica: con qué cantidad se calculará el menor. Los valores posibles
-                   son 'valor', 'heuristica', 'coste'.
+                   son 'valor', 'heuristica', 'coste', 'alfa', 'beta'.
         - criterio: si se obtendrá el 'menor' o el 'mayor'.
         - objetivos: estados objetivos para los que hacer los cálculos en caso
-                     de que la métrica no sea 'coste'.
+                     de que la métrica no sea 'coste', 'alfa' o 'beta'.
         """
         # Comprobaciones.
-        if metrica not in ("valor", "heuristica", "coste"):
+        if metrica not in ("valor", "heuristica", "coste", "alfa", "beta"):
             msg = "Se indicó una métrica desconocida: {0}"
             raise ValueError(msg.format(metrica))
         if criterio not in ("menor", "mayor"):
             msg = "Se indicó un criterio desconocido: {0}"
             raise ValueError(msg.format(criterio))
-        if "coste" != metrica and not objetivos:
+        if metrica in ("valor", "heuristica") and not objetivos:
             raise ValueError("No se indicó objetivo")
 
         # Si no hay hijos aun, terminamos.
@@ -439,7 +425,7 @@ class Nodo:
         mejor = self.hijos[0]
 
         # Recorremos el resto de hijos para ver si alguno es mejor.
-        for hijo in self.hijos[1:]:
+        for hijo in self.hijos:
             # Por cada uno de los objetivos.
             for objetivo in objetivos:
                 # Si nos piden el valor
@@ -472,6 +458,24 @@ class Nodo:
                         mejor = hijo
                     elif ("mayor" == criterio and
                           hijo.coste_camino > mejor.coste_camino):
+                        mejor = hijo
+                # Si nos piden el auxiliar alfa
+                elif "alfa" == metrica:
+                    # Si este hijo es mejor que el actual, lo cogemos.
+                    if ("menor" == criterio and
+                        hijo.alfa < mejor.alfa):
+                        mejor = hijo
+                    elif ("mayor" == criterio and
+                          hijo.alfa > mejor.alfa):
+                        mejor = hijo
+                # Si nos piden el auxiliar beta
+                elif "beta" == metrica:
+                    # Si este hijo es mejor que el actual, lo cogemos.
+                    if ("menor" == criterio and
+                        hijo.beta < mejor.beta):
+                        mejor = hijo
+                    elif ("mayor" == criterio and
+                          hijo.beta > mejor.beta):
                         mejor = hijo
 
         # Devolvemos el mejor.
@@ -694,7 +698,8 @@ if __name__ == "__main__":
     nodo_sevilla = Nodo(estado=este_sevilla,
                         accion=accE,
                         acciones=acciones_sevilla)
-    nodo_faro.agregar(nodo_sevilla)
+    nodo_sevilla.padre = nodo_faro
+    nodo_faro.hijos.append(nodo_sevilla)
 
     # Indicamos el coste de camino recorrido.
     kms = problema.coste_camino(nodo_sevilla)
@@ -728,7 +733,8 @@ if __name__ == "__main__":
     nodo_madrid = Nodo(estado=norte_madrid,
                        accion=accN,
                        acciones=acciones_madrid)
-    nodo_sevilla.agregar(nodo_madrid)
+    nodo_madrid.padre = nodo_sevilla
+    nodo_sevilla.hijos.append(nodo_madrid)
 
     # Indicamos el coste de camino recorrido.
     kms = problema.coste_camino(nodo_madrid)
@@ -766,7 +772,8 @@ if __name__ == "__main__":
     nodo_valencia = Nodo(estado=este_valencia,
                          accion=accE,
                          acciones=acciones_valencia)
-    nodo_madrid.agregar(nodo_valencia)
+    nodo_valencia.padre = nodo_madrid
+    nodo_madrid.hijos.append(nodo_valencia)
 
     # Indicamos el coste de camino recorrido.
     kms = problema.coste_camino(nodo_valencia)
@@ -800,7 +807,8 @@ if __name__ == "__main__":
     nodo_barcelona = Nodo(estado=norte_barcelona,
                           accion=accN,
                           acciones=acc_barcelona)
-    nodo_valencia.agregar(nodo_barcelona)
+    nodo_barcelona.padre = nodo_valencia
+    nodo_valencia.hijos.append(nodo_barcelona)
 
     # Indicamos el coste de camino recorrido.
     kms = problema.coste_camino(nodo_barcelona)

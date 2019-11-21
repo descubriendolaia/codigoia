@@ -519,6 +519,184 @@ def ida_estrella(
             return None
 
 
+# %% --- RECURSIVA PRIMERO EL MEJOR ---
+
+def recursiva_primero_mejor(
+        problema,
+        log=False,
+        paso_a_paso=False):
+    """
+    Búsqueda recursiva primero el mejor (Recursive Best-First Search).
+    Ampliación de A* donde a cada llamada recursiva se le pasa un coste límite
+    que será el coste estimado del mejor camino alternativo (hermano del nodo
+    escogido).
+    Argumentos:
+    - problema: definición del problema a resolver.
+    - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
+              él y siguiendo sus nodos padres, se obtendrá la solución.
+              Si no encuentra solución, devuelve "None".
+    """
+    # Comprobaciones.
+    if not problema:
+        raise ValueError("No se indicó una definición de problema a resolver")
+
+    # Obtenemos el nodo raíz.
+    raiz = crea_nodo_raiz(problema=problema)
+
+    # La raíz de be tener una alfa mínima.
+    raiz.alfa = 0
+
+    # Como límite inicial cogemos infinito indicado en el problema.
+    limite = problema.infinito
+    if log:
+        msg = "Límite Inicial: {0}"
+        print(msg.format(limite))
+
+    # Definimos el conjunto de los estados explorados.
+    explorados = set()
+
+    # Devolvemos lo que devuelve la función recursiva.
+    return _brpm_recursiva(problema=problema,
+                           nodo=raiz,
+                           limite=limite,
+                           explorados=explorados,
+                           log=log,
+                           paso_a_paso=paso_a_paso)
+
+
+def _brpm_recursiva(problema,
+                    nodo,
+                    limite,
+                    explorados,
+                    log,
+                    paso_a_paso):
+    """
+    Función recursiva para realizar la búsqueda recursiva primero el mejor.
+    Argumentos:
+    - problema: definición del problema a resolver.
+    - nodo: nodo a partir del cual resolver el problema.
+    - limite: coste estimado del mejor camino alternativo.
+    - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
+              él y siguiendo sus nodos padres, se obtendrá la solución.
+              Si no encuentra solución, devuelve "None".
+    """
+    # Mostramos información si nos lo piden.
+    if log:
+        msg = "----- NUEVO CICLO: LÍMITE {0} -----"
+        print(msg.format(limite))
+        msg = "Nodo: {0}"
+        print(msg.format(nodo.estado.nombre))
+
+    # Agregamos su estado al conjunto de explorados.
+    explorados.add(nodo.estado)
+    if log:
+        log_explorados = [estado.nombre
+                          for estado in explorados]
+        msg = "Explorados: {0}"
+        print(msg.format(log_explorados))
+
+    # Si no indican límite, cogemos el infinito del problema.
+    if limite <= 0:
+        limite = problema.infinito
+
+    # Miramos si el nodo es ya un objetivo.
+    if problema.es_objetivo(estado=nodo.estado):
+        if log:
+            msg = "Objetivo: {0}"
+            print(msg.format(nodo.estado.nombre))
+        return nodo, limite
+
+    # Si el nodo no tiene acciones, pasamos al siguiente.
+    if not nodo.acciones:
+        if log:
+            print("No hay Acciones")
+        return None, limite
+
+    # Por cada una de las acciones que se pueden hacer.
+    for nombre_accion in nodo.acciones.keys():
+        # Indicamos la acción.
+        if log:
+            msg = "   Accion: {0}"
+            print(msg.format(nombre_accion))
+
+        # Creamos un nodo hijo, pero sin agregarlo a los hijos del nodo.
+        accion = Accion(nombre=nombre_accion)
+        hijo = crea_nodo_hijo(problema=problema,
+                              padre=nodo,
+                              accion=accion,
+                              agregar=False)
+        nombre_hijo = hijo.estado.nombre
+        if log:
+            msg = "   Hijo: {0}"
+            print(msg.format(nombre_hijo))
+
+        # Si el estado del hijo no ha sido explorado
+        if hijo.estado in explorados:
+            # Indicamos que ese estado ya ha sido explorado.
+            if log:
+                msg = "   {0} ya ha sido explorado"
+                print(msg.format(hijo.estado.nombre))
+        else:
+            # Ahora sí, agregamos el nodo hijo creado.
+            hijo.padre = nodo
+            nodo.hijos.append(hijo)
+
+            # Guardamos el valor de referencia en el nodo hijo.
+            maximo = max([hijo.valores[objetivo.nombre]
+                          for objetivo in problema.estados_objetivos])
+            hijo.alfa = max(maximo, nodo.alfa)
+
+    # Si no se agregó ningún hijo, es un camino sin salida.
+    if not nodo.hijos:
+        return None, problema.infinito
+
+    # Entramos en el bucle principal.
+    while True:
+        # Obtenemos el hijo con menor valor.
+        objetivos = problema.estados_objetivos
+        mejor = nodo.hijo_mejor(metrica="alfa",
+                                objetivos=objetivos)
+
+        # Si el valor del mejor hijo supera el límite, retrocedemos.
+        if mejor.alfa > limite:
+            return None, mejor.alfa
+
+        # Hacemos una copia de los hijos actuales, pera recurperarlos luego.
+        hijos = nodo.hijos[:]
+
+        # Quitamos el mejor para poder coger el siguiente mejor.
+        nodo.hijos.remove(mejor)
+
+        # Si aun tiene hijos.
+        alfa = limite
+        if nodo.hijos:
+            # Nos quedamos con el siguiente mejor.
+            alternativa = nodo.hijo_mejor(metrica="alfa",
+                                          objetivos=objetivos)
+
+            # Entre el valor de la alternativa y el límite, cogemos el menor.
+            alfa = min(limite, alternativa.alfa)
+
+        # Restauramos los hijos que había.
+        nodo.hijos = hijos
+
+        # Hacemos la llamada recursiva con el mejor hijo.
+        resultado, mejor.alfa = _brpm_recursiva(problema=problema,
+                                                nodo=mejor,
+                                                limite=alfa,
+                                                explorados=explorados,
+                                                log=log,
+                                                paso_a_paso=paso_a_paso)
+
+        # Si nos devuelve un nodo, es la solución.
+        if resultado:
+            return resultado, mejor.alfa
+
+
 # %% --- FUNCIONES AUXILIARES ---
 
 def crea_nodo_raiz(problema):
@@ -559,7 +737,8 @@ def crea_nodo_raiz(problema):
 
 def crea_nodo_hijo(problema,
                    padre,
-                   accion):
+                   accion,
+                   agregar=True):
     """
     Método auxiliar que ayudará a crear nodos hijos a los métodos que
     implementan algoritmos de búsqueda informada.
@@ -567,6 +746,7 @@ def crea_nodo_hijo(problema,
     - problema: definición del problema a resolver.
     - padre: nodo padre del nodo hijo a crear. Se agrega a los hijos de él.
     - accion: acción que ha provocado la creación de este nodo hijo.
+    - agregar: si el nodo hijo creado se agregará a los hijos del padre.
     """
     # Comprobaciones.
     if not problema:
@@ -605,7 +785,12 @@ def crea_nodo_hijo(problema,
                     in hijo.heuristicas.items()}
 
     # Lo agregamos al nodo actual como hijo.
-    padre.agregar(hijo=hijo)
+    if agregar:
+        # Le asignamos el padre.
+        hijo.padre = padre
+
+        # Agregamos el hijo.
+        padre.hijos.append(hijo)
 
     # Devolvemos el hijo.
     return hijo
@@ -1304,13 +1489,14 @@ if __name__ == "__main__":
     # ------------------------------------------------------------------------
 
     # Indicamos los algoritmos que queremos lanzar.
-    lanza_voraz = False
-    lanza_a_estrella = False
-    lanza_ao_estrella = False
+    lanza_voraz = True
+    lanza_a_estrella = True
+    lanza_ao_estrella = True
     lanza_ida_estrella = True
+    lanza_recursiva_primer_mejor = True
 
     # Indica si se mostrará lo que hace cada algoritmo.
-    log = True
+    log = False
     paso_a_paso = False
 
     # Indicamos el problema a resolver.
@@ -1321,6 +1507,7 @@ if __name__ == "__main__":
 
     # Búsqueda voraz.
     if lanza_voraz:
+        print()
         print("*****************")
         print("***** VORAZ *****")
         print("*****************")
@@ -1334,6 +1521,7 @@ if __name__ == "__main__":
 
     # Búsqueda A*.
     if lanza_a_estrella:
+        print()
         print("**************")
         print("***** A* *****")
         print("**************")
@@ -1350,6 +1538,7 @@ if __name__ == "__main__":
     # se apoya en la búsqueda A*. El problema a resolver será ir desde Nohoi
     # hasta Theer pero probando a ir por Nokshos o por Khandan.
     if lanza_ao_estrella:
+        print()
         print("***************")
         print("***** AO* *****")
         print("***************")
@@ -1440,6 +1629,7 @@ if __name__ == "__main__":
 
     # Búsqueda IDA*.
     if lanza_ida_estrella:
+        print()
         print("****************")
         print("***** IDA* *****")
         print("****************")
@@ -1447,6 +1637,20 @@ if __name__ == "__main__":
         solucion = ida_estrella(problema=problema,
                                 log=log,
                                 paso_a_paso=paso_a_paso)
+        tiempo = time() - inicio
+        muestra_solucion(objetivo=solucion,
+                         segundos=tiempo)
+
+    # Búsqueda IDA*.
+    if lanza_recursiva_primer_mejor:
+        print()
+        print("***********************************")
+        print("***** RECURSIVA PRIMERO MEJOR *****")
+        print("***********************************")
+        inicio = time()
+        solucion, _ = recursiva_primero_mejor(problema=problema,
+                                              log=log,
+                                              paso_a_paso=paso_a_paso)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
