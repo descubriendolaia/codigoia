@@ -264,8 +264,7 @@ def a_estrella(
                 msg = "   Hijo: {0}"
                 print(msg.format(nombre_hijo))
 
-            # Si el estado del hijo no ha sido explorado
-            # y tampoco está en la frontera.
+            # Si el estado del hijo ha sido explorado o está en la frontera.
             estados_frontera = [nodo.estado
                                 for nodo in frontera]
             if hijo.estado in explorados or hijo.estado in estados_frontera:
@@ -695,6 +694,175 @@ def _brpm_recursiva(problema,
         # Si nos devuelve un nodo, es la solución.
         if resultado:
             return resultado, mejor.alfa
+
+
+# %% --- SMA* ---
+
+def sma_estrella(
+        problema,
+        maximo_nodos=10,
+        log=False,
+        paso_a_paso=False):
+    """
+    Búsqueda A* para memoria limitada (Simplified Memory-Bounded A*).
+    Al alcanzar un tamaño máximo en memoria, elimina el nodo con peor valor.
+    Argumentos:
+    - problema: definición del problema a resolver.
+    - maximo_nodos: número máximo de nodos en la frontera.
+    - log: Si se mostrarán los pasos que se van realizando.
+    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
+              él y siguiendo sus nodos padres, se obtendrá la solución.
+              Si no encuentra solución, devuelve "None".
+    """
+    # Comprobaciones.
+    if not problema:
+        raise ValueError("No se indicó una definición de problema a resolver")
+    if maximo_nodos <= 0:
+        raise ValueError("maximo_nodos debe ser positivo")
+
+    # Obtenemos el nodo raíz.
+    raiz = crea_nodo_raiz(problema=problema)
+
+    # Definimos la frontera y agregamos el nodo raíz.
+    frontera = [raiz, ]
+
+    # Definimos el conjunto de los estados explorados.
+    explorados = set()
+
+    # Entramos en el bucle principal.
+    while True:
+        # Mostramos la frontera y explorada.
+        if log:
+            log_frontera = [nodo.estado.nombre
+                            for nodo in frontera]
+            log_explorados = [estado.nombre
+                              for estado in explorados]
+            print("----- NUEVO CICLO -----")
+            msg = "Frontera: {0}"
+            print(msg.format(log_frontera))
+            msg = "Explorados: {0}"
+            print(msg.format(log_explorados))
+
+        # Si frontera está vacía, terminamos.
+        if not frontera:
+            return None
+
+        # Obtenemos el siguiente nodo.
+        nodo = sacar_siguiente(frontera=frontera,
+                               metrica="valor",
+                               objetivos=problema.estados_objetivos)
+        if log:
+            msg = "Nodo: {0}"
+            print(msg.format(nodo.estado.nombre))
+            log_frontera = [nodo.estado.nombre
+                            for nodo in frontera]
+            msg = "Frontera: {0}"
+            print(msg.format(log_frontera))
+
+        # Miramos si el nodo es ya un objetivo.
+        if problema.es_objetivo(estado=nodo.estado):
+            if log:
+                msg = "Objetivo: {0}"
+                print(msg.format(nodo.estado.nombre))
+            return nodo
+
+        # Agregamos su estado al conjunto de explorados.
+        explorados.add(nodo.estado)
+        if log:
+            log_explorados = [estado.nombre
+                              for estado in explorados]
+            msg = "Explorados: {0}"
+            print(msg.format(log_explorados))
+
+        # Si el nodo no tiene acciones, pasamos al siguiente.
+        if not nodo.acciones:
+            if log:
+                print("No hay Acciones")
+            continue
+
+        # Por cada una de las acciones que se pueden hacer.
+        for nombre_accion in nodo.acciones.keys():
+            # Indicamos la acción.
+            if log:
+                msg = "   Accion: {0}"
+                print(msg.format(nombre_accion))
+
+            # Creamos un nodo hijo.
+            accion = Accion(nombre=nombre_accion)
+            hijo = crea_nodo_hijo(problema=problema,
+                                  padre=nodo,
+                                  accion=accion)
+            nombre_hijo = hijo.estado.nombre
+            if log:
+                msg = "   Hijo: {0}"
+                print(msg.format(nombre_hijo))
+
+            # Si el estado del hijo ha sido explorado o está en la frontera.
+            estados_frontera = [nodo.estado
+                                for nodo in frontera]
+            if hijo.estado in explorados or hijo.estado in estados_frontera:
+                # Miramos si el estado está en algún nodo de la frontera.
+                buscar = [nodo
+                          for nodo in frontera
+                          if nodo.estado == hijo.estado]
+                if buscar:
+                    # Indicamos que el estado ya existía en la frontera.
+                    if log:
+                        msg = "   Estado En Frontera: {0}"
+                        print(msg.format(nombre_hijo))
+
+                    # Obtenemos los mejores valores.
+                    valores_hijo = [hijo.valores[objetivo.nombre]
+                                    for objetivo
+                                    in problema.estados_objetivos]
+                    valores_buscar = [buscar[0].valores[objetivo.nombre]
+                                      for objetivo
+                                      in problema.estados_objetivos]
+                    minimo_hijo = min(valores_hijo)
+                    minimo_buscar = min(valores_buscar)
+
+                    # Si tiene mejor valor el hijo que el de la frontera.
+                    if log:
+                        msg = "      Valor Hijo: {0}"
+                        print(msg.format(minimo_hijo))
+                        msg = "      Valor Frontera: {0}"
+                        print(msg.format(minimo_buscar))
+                    if minimo_hijo < minimo_buscar:
+                        # Indicamos que vamos a sustituir el nodo frontera.
+                        if log:
+                            print("      Sustituido: SÍ")
+
+                        # Sustituimos el de la frontera por el del hijo.
+                        indice = frontera.index(buscar[0])
+                        frontera[indice] = hijo
+                        if log:
+                            msg = "      Nuevo Valor: {0}"
+                            print(msg.format(minimo_hijo))
+                    else:
+                        # Indicamos que no se sustituye.
+                        if log:
+                            print("      Sustituido: NO")
+            else:
+                # Si hemos llegado al máximo de nodos.
+                if len(frontera) > maximo_nodos:
+                    # Quitamos el que tenga mayor valor.
+                    ordenador = lambda x: [x.valores[objetivo.nombre]
+                                           for objetivo
+                                           in problema.estados_objetivos]
+                    frontera = sorted(frontera,
+                                      key=ordenador)
+                    frontera.pop()
+
+                # Lo agregamos a la frontera.
+                frontera.append(hijo)
+                if log:
+                    msg = "   Añade Frontera: {0}"
+                    print(msg.format(nombre_hijo))
+
+        # Si nos piden ir paso a paso.
+        if paso_a_paso:
+            input("Pulsa la tecla 'Enter' para continuar.")
 
 
 # %% --- FUNCIONES AUXILIARES ---
@@ -1494,6 +1662,7 @@ if __name__ == "__main__":
     lanza_ao_estrella = True
     lanza_ida_estrella = True
     lanza_recursiva_primer_mejor = True
+    lanza_sma_estrella = True
 
     # Indica si se mostrará lo que hace cada algoritmo.
     log = False
@@ -1651,6 +1820,21 @@ if __name__ == "__main__":
         solucion, _ = recursiva_primero_mejor(problema=problema,
                                               log=log,
                                               paso_a_paso=paso_a_paso)
+        tiempo = time() - inicio
+        muestra_solucion(objetivo=solucion,
+                         segundos=tiempo)
+
+    # Búsqueda IDA*.
+    if lanza_sma_estrella:
+        print()
+        print("****************")
+        print("***** SMA* *****")
+        print("****************")
+        inicio = time()
+        solucion = sma_estrella(problema=problema,
+                                maximo_nodos=1,
+                                log=log,
+                                paso_a_paso=paso_a_paso)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
