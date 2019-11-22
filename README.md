@@ -11,7 +11,7 @@ más concretamente con la versión 3 de dicho lenguaje.
 Poco a poco se irán subiendo nuevos algoritmos y códigos de ejemplo.
 
 De momento, sólo hay algunos algoritmos:
-* **Enfoque Búsquedas**: sólo búsquedas no informadas en grafos.
+* **Enfoque Búsquedas**: sólo búsquedas no informadas e informadas en grafos.
 * **Enfoque Probabilidad**: reglas básicas de probabilidad.
 * **Enfoque Lógica**: sólo la lógica de proposiciones.
 
