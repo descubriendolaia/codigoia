@@ -89,7 +89,7 @@ def _crea_filas_tabla_verdad(variables):
 
     # Función auxiliar para combinar los valores.
     def _combina(P, valor, R):
-        # Lista de valorse de devolver.
+        # Lista de valores a devolver.
         valores = []
 
         # Del resto de variables.
@@ -113,9 +113,6 @@ def _crea_filas_tabla_verdad(variables):
     valor_T = _combina(P, True, R)
     valor_F = _combina(P, False, R)
     return valor_T + valor_F
-
-# add_P = lambda v: [ dict([(P,v)] + list(r.items())) for r in R ]
-# return add_P(True) + add_P(False)
 
 
 # %% --- PROPOSICIÓN ---
@@ -828,12 +825,12 @@ class Equivale(Proposicion):
                 self.hijas[1].evaluar(**asignaciones))
 
 
-# %% --- ARGUMENTO ---
+# %% --- RAZONAMIENTO ---
 
-class Argumento:
+class Razonamiento:
     """
-    Representa a un argumento en lógica de proposiciones, y permite saber si
-    dicho argumento es válido o no.
+    Representa a un razonamiento en lógica de proposiciones, y permite saber
+    si dicho razonamiento es válido o no.
     """
     def __init__(self, *premisas, conclusion):
         """
@@ -862,22 +859,22 @@ class Argumento:
         Representación de la proposición para depuración.
         """
         # Mostramos la información más relevante.
-        return "Argumento({0})".format(self)
+        return "Razonamiento({0})".format(self)
 
     def variables(self):
         """
-        Obtiene la lista de variables del argumento y las devuelve.
-        Devuelve: lista de variables del argumento.
+        Obtiene la lista de variables del razonamiento y las devuelve.
+        Devuelve: lista de variables del razonamiento.
         """
-        # Devolvemos el conjunto de las variables tanto de las premisas como de
-        # la conclusión (se usa conjunto para evitar repetidos).
+        # Devolvemos el conjunto de las variables tanto de las premisas como
+        # de la conclusión (se usa conjunto para evitar repetidos).
         return frozenset.union(self.conclusion.variables(),
                                *[premisa.variables()
                                  for premisa in self.premisas])
 
     def ver_tabla_verdad(self):
         """
-        Muestra la tabla de verdad del argumento, mostrando por un lado la
+        Muestra la tabla de verdad del razonamiento, mostrando por un lado la
         tabla de verdad de las premisas y por otro el de la conclusión.
         """
         # Ordenamos las varibles.
@@ -917,7 +914,7 @@ class Argumento:
 
         # Recorremos las filas de la tabla de verdad.
         for fila in filas:
-            # Evluamos las premisas.
+            # Evalumos las premisas.
             valores_premisas = [premisa.evaluar(**fila)
                                 for premisa in self.premisas]
 
@@ -925,7 +922,8 @@ class Argumento:
             valor_conclusion = self.conclusion.evaluar(**fila)
 
             # Marca para indicar que las premisas son correctas.
-            todas = all(valor for valor in valores_premisas)
+            todas = all(valor
+                        for valor in valores_premisas)
             estrella = "*" if todas else ""
 
             # Formateamos cada variable.
@@ -964,11 +962,11 @@ class Argumento:
         - otra: parte con la que sustituir a la una.
         Devuelve: proposición con la sustitución hecha.
         """
-        # Devolvemos un nuevo argumento con las sustituciones hechas, tanto en
-        # las premisas como en la conclusión.
-        return Argumento(*[premisa.sustituye(una, otra)
-                           for premisa in self.premisas],
-                         conclusion=self.conclusion.sustituye(una, otra))
+        # Devolvemos un nuevo razonamiento con las sustituciones hechas, tanto
+        # en las premisas como en la conclusión.
+        return Razonamiento(*[premisa.sustituye(una, otra)
+                              for premisa in self.premisas],
+                             conclusion=self.conclusion.sustituye(una, otra))
 
     def es_valido(self):
         """
@@ -1002,6 +1000,7 @@ if __name__ == "__main__":
     """
     Ejemplos de lógica de proposiciones.
     """
+    print()
     print("-----------------")
     print("--- VARIABLES ---")
     print("-----------------")
@@ -1212,14 +1211,16 @@ if __name__ == "__main__":
     sustituida = sustituida.sustituye(R, True)
     sustituida.ver_tabla_verdad()
 
-    print("-----------------")
-    print("--- ARGUMENTO ---")
-    print("-----------------")
+    print("--------------------")
+    print("--- RAZONAMIENTO ---")
+    print("--------------------")
     print()
-    # Miramos si el argumento es válido.
+    # Miramos si el razonamiento es válido.
     premisa1 = P >> Q
     premisa2 = Q >> R
     conclusion = P >> R
-    argumento = Argumento(premisa1, premisa2, conclusion=conclusion)
-    argumento.ver_tabla_verdad()
-    print("Es Valido: {0}".format(argumento.es_valido()))
+    razonamiento = Razonamiento(premisa1,
+                                premisa2,
+                                conclusion=conclusion)
+    razonamiento.ver_tabla_verdad()
+    print("Es Valido: {0}".format(razonamiento.es_valido()))
