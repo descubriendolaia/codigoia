@@ -255,6 +255,7 @@ if __name__ == "__main__":
 
     # Si se pide lanzar el agente tabla
     if lanza_tabla:
+        print()
         print("************************")
         print("***** AGENTE TABLA *****")
         print("************************")
@@ -305,9 +306,10 @@ if __name__ == "__main__":
 
     # Si se pide lanzar el agente reactivo simple
     if lanza_simple:
-        print("************************")
-        print("***** AGENTE TABLA *****")
-        print("************************")
+        print()
+        print("**********************************")
+        print("***** AGENTE REACTIVO SIMPLE *****")
+        print("**********************************")
 
         # Conjunto de reglas de tipo "si-entonces" para una máquina expendedora
         # excesivamente simple (no funcionará nada bien, ¡bebida gratis!)
@@ -339,6 +341,11 @@ if __name__ == "__main__":
 
     # Si se pide lanzar el agente reactivo basado en modelos
     if lanza_modelos:
+        print()
+        print("*********************************************")
+        print("***** AGENTE REACTIVO BASADO EN MODELOS *****")
+        print("*********************************************")
+
         # Máquna expendedora simple (máquina de estados).
         # Los estados posibles son: sin-moneda, con-moneda, a1-servida,
         # a2-servida, a3-servida.
