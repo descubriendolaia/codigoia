@@ -5,7 +5,10 @@ Diferentes algoritmos de búsqueda no informada en grafos.
 La principal diferencia es el tipo de lista a usar para almacenar el siguiente
 nodo a visitar (FIFO, LIFO, prioridad, etc.).
 """
-from grafos import Accion, Estado, Problema, Nodo
+from grafos import Accion
+from grafos import Estado
+from grafos import Nodo
+from grafos import Problema
 
 
 # %% --- PRIMERO EN ANCHURA ---
@@ -1198,6 +1201,9 @@ if __name__ == "__main__":
     """
     Ejemplos de búsqueda no informada en grafos.
     """
+    # Poder medir los tiempos.
+    from time import time
+
     # ------------------------------------------------------------------------
     # DEFINICIÓN DEL PROGRAMA
     # ------------------------------------------------------------------------
@@ -1392,9 +1398,6 @@ if __name__ == "__main__":
 
     # Indicamos el problema a resolver.
     problema = problema_1
-
-    # Poder medir los tiempos.
-    from time import time
 
     # Búsqueda primero en anchura.
     if lanza_anchura:

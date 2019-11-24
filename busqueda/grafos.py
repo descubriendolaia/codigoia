@@ -433,49 +433,49 @@ class Nodo:
                     # Si este hijo es mejor que el actual, lo cogemos.
                     valor_hijo = hijo.valores[objetivo]
                     valor_mejor = mejor.valores[objetivo]
-                    if ("menor" == criterio and
-                        valor_hijo < valor_mejor):
+                    if("menor" == criterio and
+                       valor_hijo < valor_mejor):
                         mejor = hijo
-                    elif ("mayor" == criterio and
-                          valor_hijo > valor_mejor):
+                    elif("mayor" == criterio and
+                         valor_hijo > valor_mejor):
                         mejor = hijo
                 # Si nos piden la heurística.
                 elif "heuristica" == metrica:
                     # Si este hijo es mejor que el actual, lo cogemos.
                     heuristica_hijo = hijo.heuristicas[objetivo]
                     heuristica_mejor = mejor.heuristicas[objetivo]
-                    if ("menor" == criterio and
-                        heuristica_hijo < heuristica_mejor):
+                    if("menor" == criterio and
+                       heuristica_hijo < heuristica_mejor):
                         mejor = hijo
-                    elif ("mayor" == criterio and
-                          heuristica_hijo > heuristica_mejor):
+                    elif("mayor" == criterio and
+                         heuristica_hijo > heuristica_mejor):
                         mejor = hijo
                 # Si nos piden el coste
                 elif "coste" == metrica:
                     # Si este hijo es mejor que el actual, lo cogemos.
-                    if ("menor" == criterio and
-                        hijo.coste_camino < mejor.coste_camino):
+                    if("menor" == criterio and
+                       hijo.coste_camino < mejor.coste_camino):
                         mejor = hijo
-                    elif ("mayor" == criterio and
-                          hijo.coste_camino > mejor.coste_camino):
+                    elif("mayor" == criterio and
+                         hijo.coste_camino > mejor.coste_camino):
                         mejor = hijo
                 # Si nos piden el auxiliar alfa
                 elif "alfa" == metrica:
                     # Si este hijo es mejor que el actual, lo cogemos.
-                    if ("menor" == criterio and
-                        hijo.alfa < mejor.alfa):
+                    if("menor" == criterio and
+                       hijo.alfa < mejor.alfa):
                         mejor = hijo
-                    elif ("mayor" == criterio and
-                          hijo.alfa > mejor.alfa):
+                    elif("mayor" == criterio and
+                         hijo.alfa > mejor.alfa):
                         mejor = hijo
                 # Si nos piden el auxiliar beta
                 elif "beta" == metrica:
                     # Si este hijo es mejor que el actual, lo cogemos.
-                    if ("menor" == criterio and
-                        hijo.beta < mejor.beta):
+                    if("menor" == criterio and
+                       hijo.beta < mejor.beta):
                         mejor = hijo
-                    elif ("mayor" == criterio and
-                          hijo.beta > mejor.beta):
+                    elif("mayor" == criterio and
+                         hijo.beta > mejor.beta):
                         mejor = hijo
 
         # Devolvemos el mejor.

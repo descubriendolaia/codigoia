@@ -7,7 +7,10 @@ Aparte del coste del camino, se usará una función heurística que estimará el
 coste hasta los objetivos y calculará un valor por el cual se escogerá el
 siguiente nodo a expandir y visitar.
 """
-from grafos import Accion, Estado, Problema, Nodo
+from grafos import Accion
+from grafos import Estado
+from grafos import Nodo
+from grafos import Problema
 
 
 # %% --- VORAZ / GRADIENTE / MÁXIMA PENDIENTE ---
@@ -1005,31 +1008,31 @@ def sacar_siguiente(frontera,
                 # Si este nodo es mejor que el actual, lo cogemos.
                 valor_nodo = nodo.valores[objetivo.nombre]
                 valor_mejor = mejor.valores[objetivo.nombre]
-                if ("menor" == criterio and
-                    valor_nodo < valor_mejor):
+                if("menor" == criterio and
+                   valor_nodo < valor_mejor):
                     mejor = nodo
-                elif ("mayor" == criterio and
-                      valor_nodo > valor_mejor):
+                elif("mayor" == criterio and
+                     valor_nodo > valor_mejor):
                     mejor = nodo
             # Si nos piden la heurística.
             elif "heuristica" == metrica:
                 # Si este nodo es mejor que el actual, lo cogemos.
                 heuristica_nodo = nodo.heuristicas[objetivo.nombre]
                 heuristica_mejor = mejor.heuristicas[objetivo.nombre]
-                if ("menor" == criterio and
-                    heuristica_nodo < heuristica_mejor):
+                if("menor" == criterio and
+                   heuristica_nodo < heuristica_mejor):
                     mejor = nodo
-                elif ("mayor" == criterio and
-                      heuristica_nodo > heuristica_mejor):
+                elif("mayor" == criterio and
+                     heuristica_nodo > heuristica_mejor):
                     mejor = nodo
             # Si nos piden el coste
             elif "coste" == metrica:
                 # Si este hijo es mejor que el actual, lo cogemos.
-                if ("menor" == criterio and
-                    nodo.coste_camino < mejor.coste_camino):
+                if("menor" == criterio and
+                   nodo.coste_camino < mejor.coste_camino):
                     mejor = nodo
-                elif ("mayor" == criterio and
-                      nodo.coste_camino > mejor.coste_camino):
+                elif("mayor" == criterio and
+                     nodo.coste_camino > mejor.coste_camino):
                     mejor = nodo
 
     # Quitamos el nodo de la frontera.
@@ -1112,6 +1115,9 @@ if __name__ == "__main__":
     """
     Ejemplos de búsqueda informada en grafos.
     """
+    # Poder medir los tiempos.
+    from time import time
+
     # ------------------------------------------------------------------------
     # DEFINICIÓN DEL PROGRAMA
     # ------------------------------------------------------------------------
@@ -1670,9 +1676,6 @@ if __name__ == "__main__":
 
     # Indicamos el problema a resolver.
     problema = problema_1
-
-    # Poder medir los tiempos.
-    from time import time
 
     # Búsqueda voraz.
     if lanza_voraz:
