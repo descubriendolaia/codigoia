@@ -668,7 +668,7 @@ def _brpm_recursiva(problema,
             return None, mejor.alfa
 
         # Hacemos una copia de los hijos actuales, pera recurperarlos luego.
-        hijos = nodo.hijos[:]
+        hijos = nodo.hijos.copy()
 
         # Quitamos el mejor para poder coger el siguiente mejor.
         nodo.hijos.remove(mejor)

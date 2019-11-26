@@ -3,9 +3,9 @@
 """
 Métodos de inferencia en lógica de proposiciones.
 """
-from proposiciones import Proposicion
-from proposiciones import Constante
-from proposiciones import Variable
+from motor import Proposicion
+from motor import Constante
+from motor import Variable
 
 
 # %% --- FUNCIONES AUXILIARES ---
@@ -46,9 +46,9 @@ def tabla_verdad(*premisas,
     análisis de todas la combinaciones posibles de valores de símbolos en una
     tabla de verdad.
     Argumentos:
-    - variables: variables que se han usado en las premisas y la conclusión.
     - premisas: todos los argumentos, salvo el último, serán las premisas.
     - conclusion: el último argumento es la conclusión a ver si es válida.
+    - variables: variables que se han usado en las premisas y la conclusión.
     - simbolos: lista de variables que un quedan por probar sus valores.
     - modelo: conjunto de combinaciones de valores de variables ya probadas.
     """
@@ -72,7 +72,7 @@ def tabla_verdad(*premisas,
     # Si no han pasado los símbolos, la iniciamos con las variables.
     if simbolos is None:
         simbolos = []
-        simbolos.extend(variables[:])
+        simbolos.extend(variables.copy())
 
     # Si no han pasdo un modelo, lo iniciamos.
     if modelo is None:
@@ -108,16 +108,32 @@ def tabla_verdad(*premisas,
     tabla_T = tabla_verdad(*premisas,
                            conclusion=conclusion,
                            variables=variables,
-                           simbolos=list(simbolos),
+                           simbolos=simbolos.copy(),
                            modelo=modelo_T)
     tabla_F = tabla_verdad(*premisas,
                            conclusion=conclusion,
                            variables=variables,
-                           simbolos=list(simbolos),
+                           simbolos=simbolos.copy(),
                            modelo=modelo_F)
 
     # Indicamos si ambos son ciertos.
     return tabla_T and tabla_F
+
+
+# %% --- DEDUCCIÓN CON REGLAS DE INFERENCIA ---
+
+def deduccion(*premisas,
+              conclusion,
+              variables=None):
+    """
+    Realiza inferencia en lógica de proposiones mediante la aplicación de
+    equivalencias y reglas de deducción. Se va a implementar como una búsqueda
+    en grafo.
+    Argumentos:
+    - premisas: todos los argumentos, salvo el último, serán las premisas.
+    - conclusion: el último argumento es la conclusión a ver si es válida.
+    - variables: variables que se han usado en las premisas y la conclusión.
+    """
 
 
 # %% --- MAIN ---
