@@ -13,7 +13,7 @@ Poco a poco se irán subiendo nuevos algoritmos y códigos de ejemplo.
 De momento, sólo hay algunos algoritmos:
 * **Enfoque Búsquedas**: sólo búsquedas no informadas e informadas en grafos.
 * **Enfoque Probabilidad**: reglas básicas de probabilidad.
-* **Enfoque Lógica**: sólo la lógica de proposiciones.
+* **Enfoque Lógica**: sólo la lógica de proposiciones con tablas de verdad.
 
 Pero, en breve, se irán subiendo más en cada uno de los enfoques.
 
@@ -25,9 +25,12 @@ Pero, en breve, se irán subiendo más en cada uno de los enfoques.
   * **informada.py** Algoritmos de búsqueda informada en grafos.
   * **noinformada.py** Algoritmos de búsqueda no informada en grafos.
 * **logica/** Incluye los algoritmos del enfoque lógico-simbólico.
-  * **proposiciones.py** Lógica de Proposiciones.
+  * **proposiciones/** Lógica de Proposiciones:
+    * **motor.py** Clases para trabajar con la lógica desde python.
+    * **inferencia.py** Funciones para realizar inferencias con la lógica.
 * **redesbayesianas/** Incluye los algoritmos del enfoque probabilístico.
   * **probabilidad.py** Reglas básicas de la probabilidad.
+  * **inferencia.py** Funciones para realizar inferencias con la probabilidad.
 
 [dia]: https://www.youtube.com/c/descubriendolainteligenciaartificial
        "Canal de Youtube Descubriendo la Inteligencia Artficial"
