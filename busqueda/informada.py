@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Diferentes algoritmos de búsqueda informada en grafos.
+
 Parten del algoritmo de búsqueda en grafos de coste uniforme y lo amplían.
 Aparte del coste del camino, se usará una función heurística que estimará el
 coste hasta los objetivos y calculará un valor por el cual se escogerá el
@@ -13,7 +14,7 @@ from grafos import Nodo
 from grafos import Problema
 
 
-# %% --- VORAZ / GRADIENTE / MÁXIMA PENDIENTE ---
+# %% --- VORAZ / GRADIENTE / MÁXIMA PENDIENTE ---------------------------------
 
 def voraz(
         problema,
@@ -21,11 +22,14 @@ def voraz(
         paso_a_paso=False):
     """
     Búsqueda en grafos voraz (greedy search).
+
     No tiene en cuenta el coste del camino recorrido, sólo la heurística.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -169,7 +173,7 @@ def voraz(
             input("Pulsa la tecla 'Enter' para continuar.")
 
 
-# %% --- A* (A ESTRELLA) ---
+# %% --- A* (A ESTRELLA) ------------------------------------------------------
 
 def a_estrella(
         problema,
@@ -177,11 +181,14 @@ def a_estrella(
         paso_a_paso=False):
     """
     Búsqueda A* (que se lee 'A estrella').
+
     Tiene en cuenta tanto el coste de camino recorrido como la heurística.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -324,7 +331,7 @@ def a_estrella(
             input("Pulsa la tecla 'Enter' para continuar.")
 
 
-# %% --- A* ITERATIVA ---
+# %% --- A* ITERATIVA ---------------------------------------------------------
 
 def a_estrella_iterativa(
         problema,
@@ -334,8 +341,8 @@ def a_estrella_iterativa(
         log=False,
         paso_a_paso=False):
     """
-    Búsqueda A* iterativa que buscará a partir de un nodo hasta un límite
-    máximo.
+    Búsqueda A* iterativa que buscará hasta un límite máximo.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - nodo: nodo a partir del cual realizar la búsqueda. Si no se indica, se
@@ -345,6 +352,7 @@ def a_estrella_iterativa(
     - explorados: conjunto de los estados ya explorados.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -460,19 +468,23 @@ def a_estrella_iterativa(
     return None, minimo
 
 
-# %% --- IDA* ---
+# %% --- IDA* -----------------------------------------------------------------
 
 def ida_estrella(
         problema,
         log=False,
         paso_a_paso=False):
     """
-    Búsqueda IDA* (Iterative Deepening A*) que es una mejora de A* en la que
-    iremos aumentando progresivamente el límite máximo del valor.
+    Búsqueda IDA* (Iterative Deepening A*).
+
+    Es una mejora de A* en la que iremos aumentando progresivamente el
+    límite máximo del valor.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -521,7 +533,7 @@ def ida_estrella(
             return None
 
 
-# %% --- RECURSIVA PRIMERO EL MEJOR ---
+# %% --- RECURSIVA PRIMERO EL MEJOR -------------------------------------------
 
 def recursiva_primero_mejor(
         problema,
@@ -529,13 +541,16 @@ def recursiva_primero_mejor(
         paso_a_paso=False):
     """
     Búsqueda recursiva primero el mejor (Recursive Best-First Search).
+
     Ampliación de A* donde a cada llamada recursiva se le pasa un coste límite
     que será el coste estimado del mejor camino alternativo (hermano del nodo
     escogido).
+
     Argumentos:
     - problema: definición del problema a resolver.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -576,12 +591,14 @@ def _brpm_recursiva(problema,
                     paso_a_paso):
     """
     Función recursiva para realizar la búsqueda recursiva primero el mejor.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - nodo: nodo a partir del cual resolver el problema.
     - limite: coste estimado del mejor camino alternativo.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -699,7 +716,7 @@ def _brpm_recursiva(problema,
             return resultado, mejor.alfa
 
 
-# %% --- SMA* ---
+# %% --- SMA* -----------------------------------------------------------------
 
 def sma_estrella(
         problema,
@@ -708,12 +725,15 @@ def sma_estrella(
         paso_a_paso=False):
     """
     Búsqueda A* para memoria limitada (Simplified Memory-Bounded A*).
+
     Al alcanzar un tamaño máximo en memoria, elimina el nodo con peor valor.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - maximo_nodos: número máximo de nodos en la frontera.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -868,12 +888,19 @@ def sma_estrella(
             input("Pulsa la tecla 'Enter' para continuar.")
 
 
-# %% --- FUNCIONES AUXILIARES ---
+# %% --- FUNCIONES AUXILIARES -------------------------------------------------
 
 def crea_nodo_raiz(problema):
     """
-    Método auxiliar que ayudará a crear nodos raíz de los métodos que
-    implementan algoritmos de búsqueda informada.
+    Método auxiliar que ayudará a crear nodos raíz.
+
+    Será usado por los métodos que implementan algoritmos de búsqueda
+    informada.
+
+    Argumentos:
+    - problemas: definición del problema a crear su nodo raíz.
+
+    Devuelve: el nodo raíz creado.
     """
     # Comprobaciones.
     if not problema:
@@ -898,9 +925,7 @@ def crea_nodo_raiz(problema):
     raiz.heuristicas = problema.heuristicas[estado_raiz.nombre]
 
     # Calculamos el valor sólo con la heurística.
-    raiz.valores = {estado: heuristica
-                    for estado, heuristica
-                    in raiz.heuristicas.items()}
+    raiz.valores = dict(raiz.heuristicas.items())
 
     # Devolvemos el nodo raíz creado.
     return raiz
@@ -911,13 +936,18 @@ def crea_nodo_hijo(problema,
                    accion,
                    agregar=True):
     """
+    Creación de nodos hijos.
+
     Método auxiliar que ayudará a crear nodos hijos a los métodos que
     implementan algoritmos de búsqueda informada.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - padre: nodo padre del nodo hijo a crear. Se agrega a los hijos de él.
     - accion: acción que ha provocado la creación de este nodo hijo.
     - agregar: si el nodo hijo creado se agregará a los hijos del padre.
+
+    Devuelve: nodo hijo creado.
     """
     # Comprobaciones.
     if not problema:
@@ -972,8 +1002,11 @@ def sacar_siguiente(frontera,
                     criterio="menor",
                     objetivos=None):
     """
+    Devuelve el siguiente nodo de la frontera según un criterio.
+
     De todos nodos en la frontera, saca y devuelve el siguiente nodo según una
     métrica y un criterio.
+
     Argumentos:
     - frontera: frontera de la que obtener el siguiente nodo.
     - metrica: con qué cantidad se harán los cálculos. Los valores posibles
@@ -981,6 +1014,9 @@ def sacar_siguiente(frontera,
     - criterio: si se obtendrá el 'menor' o el 'mayor'.
     - objetivos: estados objetivos para los que hacer los cálculos en caso
                  de que la métrica no sea 'coste'.
+
+    Devuelve: siguiente nodo según métrica y criterio indicado.
+              Devuelve None si no hay más nodos en la frontera.
     """
     # Comprobaciones.
     if metrica not in ("valor", "heuristica", "coste"):
@@ -989,7 +1025,7 @@ def sacar_siguiente(frontera,
     if criterio not in ("menor", "mayor"):
         msg = "Se indicó un criterio desconocido: {0}"
         raise ValueError(msg.format(criterio))
-    if "coste" != metrica and not objetivos:
+    if metrica != 'coste' and not objetivos:
         raise ValueError("No se indicó objetivo")
 
     # Si no hay nada en la frontera, terminamos.
@@ -1004,34 +1040,34 @@ def sacar_siguiente(frontera,
         # Por cada uno de los objetivos.
         for objetivo in objetivos:
             # Si nos piden el valor
-            if "valor" == metrica:
+            if metrica == 'valor':
                 # Si este nodo es mejor que el actual, lo cogemos.
                 valor_nodo = nodo.valores[objetivo.nombre]
                 valor_mejor = mejor.valores[objetivo.nombre]
-                if("menor" == criterio and
+                if(criterio == 'menor' and
                    valor_nodo < valor_mejor):
                     mejor = nodo
-                elif("mayor" == criterio and
+                elif(criterio == 'mayor' and
                      valor_nodo > valor_mejor):
                     mejor = nodo
             # Si nos piden la heurística.
-            elif "heuristica" == metrica:
+            elif metrica == 'heuristica':
                 # Si este nodo es mejor que el actual, lo cogemos.
                 heuristica_nodo = nodo.heuristicas[objetivo.nombre]
                 heuristica_mejor = mejor.heuristicas[objetivo.nombre]
-                if("menor" == criterio and
+                if(criterio == 'menor' and
                    heuristica_nodo < heuristica_mejor):
                     mejor = nodo
-                elif("mayor" == criterio and
+                elif(criterio == 'mayor' and
                      heuristica_nodo > heuristica_mejor):
                     mejor = nodo
             # Si nos piden el coste
-            elif "coste" == metrica:
+            elif metrica == 'coste':
                 # Si este hijo es mejor que el actual, lo cogemos.
-                if("menor" == criterio and
+                if(criterio == 'menor' and
                    nodo.coste_camino < mejor.coste_camino):
                     mejor = nodo
-                elif("mayor" == criterio and
+                elif(criterio == 'mayor' and
                      nodo.coste_camino > mejor.coste_camino):
                     mejor = nodo
 
@@ -1043,17 +1079,15 @@ def sacar_siguiente(frontera,
 
 
 def muestra_solucion(objetivo=None,
-                     es_bidireccional=False,
-                     bidireccional=(None, None),
                      segundos=0):
     """
     Muestra la solución encuentrada a partir de un nodo objetivo.
+
     Argumentos:
     - objetivo: nodo objetivo encontrado por un algoritmo.
-    - es_bidireccional: la solución es diferente al resto.
-    - bidireccional: esta búsqueda devuelve un par de nodos con estados comunes
-                     que deben combinarse para obtener la solución final.
-    - tiempo: cantidad de tiempo que ha tardado en ejecutarse el algoritmo.
+    - segundos: cantidad de tiempo que ha tardado en ejecutarse el algoritmo.
+
+    Devuelve: nada.
     """
     # Mostramos la solución.
     print()
@@ -1062,9 +1096,9 @@ def muestra_solucion(objetivo=None,
     print("--------------------")
 
     # Si nos pasan el tiempo.
-    if tiempo > 0:
+    if segundos > 0:
         msg = "Tiempo: {0} milisegundos"
-        print(msg.format(tiempo*1000))
+        print(msg.format(segundos*1000))
         print("--------------------")
 
     # Si no hay objetivo, no hay solución.
@@ -1080,7 +1114,7 @@ def muestra_solucion(objetivo=None,
         estado = nodo.estado.nombre
         valores = [nodo.valores[objetivo.nombre]
                    for objetivo
-                   in problema.estados_objetivos]
+                   in problema_resolver.estados_objetivos]
         valor = min(valores)
         print(msg.format(estado, valor))
 
@@ -1089,18 +1123,18 @@ def muestra_solucion(objetivo=None,
         print(msg.format(coste_total))
 
         msg = "  Heurística: {0}"
-        heuristicas = [nodo.heuristicas[objetivo.nombre]
-                       for objetivo
-                       in problema.estados_objetivos]
-        heuristica = min(heuristicas)
+        heuristicas_objetivos = [nodo.heuristicas[objetivo.nombre]
+                                 for objetivo
+                                 in problema_resolver.estados_objetivos]
+        heuristica = min(heuristicas_objetivos)
         print(msg.format(heuristica))
 
         # Mostramos la acción que llevó a ese nodo.
         if nodo.accion:
             accion = nodo.accion.nombre
             padre = nodo.padre.estado
-            coste = problema.coste_accion(estado=padre,
-                                          accion=nodo.accion)
+            coste = problema_resolver.coste_accion(estado=padre,
+                                                   accion=nodo.accion)
             if accion:
                 msg = "<--- {0} [{1}] ---"
                 print(msg.format(accion, coste))
@@ -1109,12 +1143,11 @@ def muestra_solucion(objetivo=None,
         nodo = nodo.padre
 
 
-# %% --- MAIN ---
+# %% --- MAIN -----------------------------------------------------------------
 
 if __name__ == "__main__":
-    """
-    Ejemplos de búsqueda informada en grafos.
-    """
+    # Ejemplos de búsqueda informada en grafos.
+
     # Poder medir los tiempos.
     from time import time
 
@@ -1663,44 +1696,44 @@ if __name__ == "__main__":
     # ------------------------------------------------------------------------
 
     # Indicamos los algoritmos que queremos lanzar.
-    lanza_voraz = True
-    lanza_a_estrella = True
-    lanza_ao_estrella = True
-    lanza_ida_estrella = True
-    lanza_recursiva_primer_mejor = True
-    lanza_sma_estrella = True
+    LANZA_VORAZ = True
+    LANZA_A_ESTRELLA = True
+    LANZA_AO_ESTRELLA = True
+    LANZA_IDA_ESTRELLA = True
+    LANZA_RECURSIVA_PRIMER_MEJOR = True
+    LANZA_SMA_ESTRELLA = True
 
     # Indica si se mostrará lo que hace cada algoritmo.
-    log = False
-    paso_a_paso = False
+    LOG = False
+    PASO_A_PASO = False
 
     # Indicamos el problema a resolver.
-    problema = problema_1
+    problema_resolver = problema_1
 
     # Búsqueda voraz.
-    if lanza_voraz:
+    if LANZA_VORAZ:
         print()
         print("*****************")
         print("***** VORAZ *****")
         print("*****************")
         inicio = time()
-        solucion = voraz(problema=problema,
-                         log=log,
-                         paso_a_paso=paso_a_paso)
+        solucion = voraz(problema=problema_resolver,
+                         log=LOG,
+                         paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
 
     # Búsqueda A*.
-    if lanza_a_estrella:
+    if LANZA_A_ESTRELLA:
         print()
         print("**************")
         print("***** A* *****")
         print("**************")
         inicio = time()
-        solucion = a_estrella(problema=problema,
-                              log=log,
-                              paso_a_paso=paso_a_paso)
+        solucion = a_estrella(problema=problema_resolver,
+                              log=LOG,
+                              paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
@@ -1709,7 +1742,7 @@ if __name__ == "__main__":
     # Esta búsqueda no tiene una función asociada, sino que es una técnica que
     # se apoya en la búsqueda A*. El problema a resolver será ir desde Nohoi
     # hasta Theer pero probando a ir por Nokshos o por Khandan.
-    if lanza_ao_estrella:
+    if LANZA_AO_ESTRELLA:
         print()
         print("***************")
         print("***** AO* *****")
@@ -1729,11 +1762,11 @@ if __name__ == "__main__":
                                           costes=costes,
                                           heuristicas=heuristicas)
         solucion_nohoi_nokshos = a_estrella(problema=problema_nohoi_nokshos,
-                                            log=log,
-                                            paso_a_paso=paso_a_paso)
+                                            log=LOG,
+                                            paso_a_paso=PASO_A_PASO)
         coste_nohoi_nokshos = solucion_nohoi_nokshos.coste
-        msg = "Coste Nohoi -> Nokshos: {0}"
-        print(msg.format(coste_nohoi_nokshos))
+        MSG = "Coste Nohoi -> Nokshos: {0}"
+        print(MSG.format(coste_nohoi_nokshos))
 
         # El segundo será el de ir desde Nohoi hasta Khandan.
         problema_nohoi_khandan = Problema(estado_inicial=nohoi,
@@ -1742,11 +1775,11 @@ if __name__ == "__main__":
                                           costes=costes,
                                           heuristicas=heuristicas)
         solucion_nohoi_khandan = a_estrella(problema=problema_nohoi_khandan,
-                                            log=log,
-                                            paso_a_paso=paso_a_paso)
+                                            log=LOG,
+                                            paso_a_paso=PASO_A_PASO)
         coste_nohoi_khandan = solucion_nohoi_khandan.coste
-        msg = "Coste Nohoi -> Khandan: {0}"
-        print(msg.format(coste_nohoi_khandan))
+        MSG = "Coste Nohoi -> Khandan: {0}"
+        print(MSG.format(coste_nohoi_khandan))
 
         # Miramos cuando se tarda desde Nokshos hasta Theer.
         problema_nokshos_theer = Problema(estado_inicial=nokshos,
@@ -1755,11 +1788,11 @@ if __name__ == "__main__":
                                           costes=costes,
                                           heuristicas=heuristicas)
         solucion_nokshos_theer = a_estrella(problema=problema_nokshos_theer,
-                                            log=log,
-                                            paso_a_paso=paso_a_paso)
+                                            log=LOG,
+                                            paso_a_paso=PASO_A_PASO)
         coste_nokshos_theer = solucion_nokshos_theer.coste
-        msg = "Coste Nokshos -> Theer: {0}"
-        print(msg.format(coste_nokshos_theer))
+        MSG = "Coste Nokshos -> Theer: {0}"
+        print(MSG.format(coste_nokshos_theer))
 
         # Y cuando se tarda desde Khandan hasta Theer.
 
@@ -1769,75 +1802,75 @@ if __name__ == "__main__":
                                           costes=costes,
                                           heuristicas=heuristicas)
         solucion_khandan_theer = a_estrella(problema=problema_khandan_theer,
-                                            log=log,
-                                            paso_a_paso=paso_a_paso)
+                                            log=LOG,
+                                            paso_a_paso=PASO_A_PASO)
         coste_khandan_theer = solucion_khandan_theer.coste
-        msg = "Coste Khandan -> Theer: {0}"
-        print(msg.format(coste_khandan_theer))
+        MSG = "Coste Khandan -> Theer: {0}"
+        print(MSG.format(coste_khandan_theer))
 
         # Comparamos los valorse de las dos trayectorias probadas.
         coste_por_nokshos = coste_nohoi_nokshos + coste_nokshos_theer
         coste_por_khandan = coste_nohoi_khandan + coste_khandan_theer
-        msg = "Coste Nohoi -> Nokshos -> Theer: {0} + {1} = {2}"
-        print(msg.format(coste_nohoi_nokshos,
+        MSG = "Coste Nohoi -> Nokshos -> Theer: {0} + {1} = {2}"
+        print(MSG.format(coste_nohoi_nokshos,
                          coste_nokshos_theer,
                          coste_por_nokshos))
-        msg = "Coste Nohoi -> Khandan -> Theer: {0} + {1} = {2}"
-        print(msg.format(coste_nohoi_khandan,
+        MSG = "Coste Nohoi -> Khandan -> Theer: {0} + {1} = {2}"
+        print(MSG.format(coste_nohoi_khandan,
                          coste_khandan_theer,
                          coste_por_khandan))
 
         # Indicamos la trayectorio con menor coste.
-        msg = "Para ir de Nohoi a Theer es mejor ir por: {0}"
-        if(coste_por_nokshos <= coste_por_khandan):
-            print(msg.format("Nokshos"))
-            msg = "Coste: {0}"
-            print(msg.format(coste_por_nokshos))
+        MSG = "Para ir de Nohoi a Theer es mejor ir por: {0}"
+        if coste_por_nokshos <= coste_por_khandan:
+            print(MSG.format("Nokshos"))
+            MSG = "Coste: {0}"
+            print(MSG.format(coste_por_nokshos))
         else:
-            print(msg.format("Khandan"))
-            msg = "Coste: {0}"
-            print(msg.format(coste_por_khandan))
+            print(MSG.format("Khandan"))
+            MSG = "Coste: {0}"
+            print(MSG.format(coste_por_khandan))
         tiempo = time() - inicio
 
     # Búsqueda IDA*.
-    if lanza_ida_estrella:
+    if LANZA_IDA_ESTRELLA:
         print()
         print("****************")
         print("***** IDA* *****")
         print("****************")
         inicio = time()
-        solucion = ida_estrella(problema=problema,
-                                log=log,
-                                paso_a_paso=paso_a_paso)
+        solucion = ida_estrella(problema=problema_resolver,
+                                log=LOG,
+                                paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
 
     # Búsqueda IDA*.
-    if lanza_recursiva_primer_mejor:
+    if LANZA_RECURSIVA_PRIMER_MEJOR:
         print()
         print("***********************************")
         print("***** RECURSIVA PRIMERO MEJOR *****")
         print("***********************************")
         inicio = time()
-        solucion, _ = recursiva_primero_mejor(problema=problema,
-                                              log=log,
-                                              paso_a_paso=paso_a_paso)
+        solucion, _ = recursiva_primero_mejor(problema=problema_resolver,
+                                              log=LOG,
+                                              paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
 
     # Búsqueda IDA*.
-    if lanza_sma_estrella:
+    if LANZA_SMA_ESTRELLA:
         print()
         print("****************")
         print("***** SMA* *****")
         print("****************")
         inicio = time()
-        solucion = sma_estrella(problema=problema,
+        solucion = sma_estrella(problema=problema_resolver,
                                 maximo_nodos=1,
-                                log=log,
-                                paso_a_paso=paso_a_paso)
+                                log=LOG,
+                                paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)

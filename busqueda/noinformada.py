@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Diferentes algoritmos de búsqueda no informada en grafos.
+
 La principal diferencia es el tipo de lista a usar para almacenar el siguiente
 nodo a visitar (FIFO, LIFO, prioridad, etc.).
 """
@@ -11,7 +12,7 @@ from grafos import Nodo
 from grafos import Problema
 
 
-# %% --- PRIMERO EN ANCHURA ---
+# %% --- PRIMERO EN ANCHURA ---------------------------------------------------
 
 def anchura(
         problema,
@@ -19,13 +20,16 @@ def anchura(
         paso_a_paso=False):
     """
     Búsqueda en grafos primero en anchura (breadth-first search).
+
     Se expande al completo cada nivel antes de expandir los del siguiente.
     Para ello, se usará una "Lista FIFO".
     Este algoritmo no tiene en cuenta los costes.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -142,7 +146,7 @@ def anchura(
             input("Pulsa la tecla 'Enter' para continuar.")
 
 
-# %% --- COSTE UNIFORME ---
+# %% --- COSTE UNIFORME -------------------------------------------------------
 
 def coste_uniforme(
         problema,
@@ -150,13 +154,16 @@ def coste_uniforme(
         paso_a_paso=False):
     """
     Búsqueda en grafos de coste uniforme (uniform-cost search).
+
     Basado en primero en anchura pero teniendo en cuenta los costes.
     Expande el nodo con menor coste asociado.
     Para ello, se usará una FIFO.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -288,7 +295,7 @@ def coste_uniforme(
             input("Pulsa la tecla 'Enter' para continuar.")
 
 
-# %% --- PRIMERO EN PROFUNDIDAD ---
+# %% --- PRIMERO EN PROFUNDIDAD -----------------------------------------------
 
 def profundidad(
         problema,
@@ -296,15 +303,18 @@ def profundidad(
         paso_a_paso=False):
     """
     Búsqueda en grafos primero en profundidad (depth-first search).
+
     Se expande el nodo raíz, luego uno de sus hijos, luego uno de los hijos
     del hijo hasta llegar a un nodo hoja. Si no hay solución, se retrocede
     y se prueba con el siguiente hijo.
     Para ello, se usará una "Lista LIFO".
     Este algoritmo no tiene en cuenta los costes.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -428,9 +438,11 @@ def profundidad_recursiva(
         log=False,
         paso_a_paso=False):
     """
-    Versión recursiva de la búsqueda en grafos primero en profundidad. También
-    permite la búsqueda en profundidad limitada (Depth-Limited Search) si se
-    indica un valor positivo en 'limite'.
+    Versión recursiva de la búsqueda en grafos primero en profundidad.
+
+    También permite la búsqueda en profundidad limitada (Depth-Limited Search)
+    si se indica un valor positivo en 'limite'.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - limite: profundidad máxima de expansión del árbol en una rama, es decir,
@@ -441,6 +453,7 @@ def profundidad_recursiva(
                    de realizar esa acción.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -448,7 +461,7 @@ def profundidad_recursiva(
     # Comprobaciones.
     if not problema:
         raise ValueError("No se indicó una definición de problema a resolver")
-    if type(limite) is int and limite < 0:
+    if isinstance(limite, int) and limite < 0:
         raise ValueError("Debe indicar un límite positivo")
     if tipo_limite not in ("profundidad", "coste"):
         raise ValueError("El tipo de límite debe ser 'profundidad' o 'coste'")
@@ -478,6 +491,7 @@ def _bpp_recursiva(nodo,
                    paso_a_paso):
     """
     Función recursiva para realizar la búsqueda primero en profundidad.
+
     Argumentos:
     - nodo: nodo a expandir sus hijos de forma recursiva.
     - problema: definición del problema a resolver.
@@ -490,6 +504,7 @@ def _bpp_recursiva(nodo,
     - explorados: conjunto de estados ya explorados.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -557,7 +572,7 @@ def _bpp_recursiva(nodo,
 
             # Si se indicó un límite máximo
             lim = None
-            if type(limite) is int:
+            if isinstance(limite, int):
                 # Si se indicó log, mostrar el límite.
                 if log:
                     msg = "   Limite: {0}"
@@ -568,29 +583,29 @@ def _bpp_recursiva(nodo,
                     if log:
                         print("   Límite máximo alcanzado (corte)")
                     return None
-                else:
-                    # Indicamos el tipo de límite.
+
+                # Indicamos el tipo de límite.
+                if log:
+                    msg = "   Tipo de Límite: {0}"
+                    print(msg.format(tipo_limite))
+
+                # Si es límite por profundidad
+                if tipo_limite == 'profundidad':
+                    # Descenderemos un nivel.
+                    lim = limite - 1
+                elif tipo_limite == 'coste':
+                    # Restamos el coste de realizar la acción.
+                    coste = problema.coste_accion(estado=nodo.estado,
+                                                  accion=accion)
+                    lim = limite - coste
+
+                    # Indicamos el coste.
                     if log:
-                        msg = "   Tipo de Límite: {0}"
-                        print(msg.format(tipo_limite))
-
-                    # Si es límite por profundidad
-                    if "profundidad" == tipo_limite:
-                        # Descenderemos un nivel.
-                        lim = limite - 1
-                    elif "coste" == tipo_limite:
-                        # Restamos el coste de realizar la acción.
-                        coste = problema.coste_accion(estado=nodo.estado,
-                                                      accion=accion)
-                        lim = limite - coste
-
-                        # Indicamos el coste.
-                        if log:
-                            msg = "   Coste Acción: {0}"
-                            print(msg.format(coste))
-                    else:
-                        err = "'tipo_limite' debe ser 'profundidad' o 'coste'"
-                        raise ValueError(err)
+                        msg = "   Coste Acción: {0}"
+                        print(msg.format(coste))
+                else:
+                    err = "'tipo_limite' debe ser 'profundidad' o 'coste'"
+                    raise ValueError(err)
 
                 # Indicamos el nuevo límite.
                 if log:
@@ -614,7 +629,7 @@ def _bpp_recursiva(nodo,
     return None
 
 
-# %% --- PRIMERO EN PROFUNDIDAD ITERATIVA ---
+# %% --- PRIMERO EN PROFUNDIDAD ITERATIVA -------------------------------------
 
 def profundidad_iterativa(
         problema,
@@ -622,14 +637,17 @@ def profundidad_iterativa(
         log=False,
         paso_a_paso=False):
     """
-    La versión iterativa de la búsqueda en profundidad irá aumentando el límite
-    máximo de la búsqueda en profundidad limitada hasta alcanzar un objetivo o
-    hasta alcancar un límite máximo.
+    Versión iterativa de la búsqueda en profundidad.
+
+    Irá aumentando el límite máximo de la búsqueda en profundidad limitada
+    hasta alcanzar un objetivo o hasta alcancar un límite máximo.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - limite: profundidad máxima de expansión del árbol. None es sin límite.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -637,7 +655,7 @@ def profundidad_iterativa(
     # Comprobaciones.
     if not problema:
         raise ValueError("No se indicó una definición de problema a resolver")
-    if type(limite) is int and limite < 0:
+    if isinstance(limite, int) and limite < 0:
         raise ValueError("Debe indicar un límite positivo")
 
     # Si no indican límite, es una búsqueda en profundidad normal.
@@ -647,33 +665,33 @@ def profundidad_iterativa(
         return profundidad_recursiva(problema=problema,
                                      log=log,
                                      paso_a_paso=paso_a_paso)
-    else:
-        # Vamos ampliando el límite poco a poco.
-        for i in range(1, limite + 1):
-            # Indicamos el límite a probar.
-            if log:
-                print()
-                print("***********************")
-                msg = "*** Límite {0} "
-                print(msg.format(i))
-                print("***********************")
 
-            # Lanzamos la recursiva con cada uno de los límites.
-            resultado = profundidad_recursiva(problema=problema,
-                                              limite=i,
-                                              tipo_limite="profundidad",
-                                              log=log,
-                                              paso_a_paso=paso_a_paso)
+    # Vamos ampliando el límite poco a poco.
+    for i in range(1, limite + 1):
+        # Indicamos el límite a probar.
+        if log:
+            print()
+            print("***********************")
+            msg = "*** Límite {0} "
+            print(msg.format(i))
+            print("***********************")
 
-            # Si ha solución, la devolvemos.
-            if resultado:
-                return resultado
+        # Lanzamos la recursiva con cada uno de los límites.
+        resultado = profundidad_recursiva(problema=problema,
+                                          limite=i,
+                                          tipo_limite="profundidad",
+                                          log=log,
+                                          paso_a_paso=paso_a_paso)
+
+        # Si ha solución, la devolvemos.
+        if resultado:
+            return resultado
 
     # Si llegamos aquí es que no hay solución.
     return None
 
 
-# %% --- COSTE ITERATIVO ---
+# %% --- COSTE ITERATIVO ------------------------------------------------------
 
 def coste_iterativo(
         problema,
@@ -682,15 +700,19 @@ def coste_iterativo(
         log=False,
         paso_a_paso=False):
     """
-    Versión de búsqued en profundidad iterativa pero teniendo en cuenta los
+    Búsqueda en profundidad iterativa pero con costes.
+
+    Versión de búsqueda en profundidad iterativa pero teniendo en cuenta los
     costes de las acciones. Aquí el límite se refiere a un coste de camino
     máximo, en vez de una profundidad máxima.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - limite: coste máximo de camino. None es sin límite.
     - paso: en cuanto se ampliará el límite en cada iteración.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "None".
@@ -698,7 +720,7 @@ def coste_iterativo(
     # Comprobaciones.
     if not problema:
         raise ValueError("No se indicó una definición de problema a resolver")
-    if type(limite) is int and limite < 0:
+    if isinstance(limite, int) and limite < 0:
         raise ValueError("Debe indicar un límite positivo")
 
     # Si no indican límite, es una búsqueda en profundidad normal.
@@ -708,49 +730,53 @@ def coste_iterativo(
         return profundidad_recursiva(problema=problema,
                                      log=log,
                                      paso_a_paso=paso_a_paso)
-    else:
-        # Vamos ampliando el límite poco a poco.
-        for i in range(1, limite + 1, paso):
-            # Indicamos el límite a probar.
-            if log:
-                print()
-                print("***********************")
-                msg = "*** Límite {0}"
-                print(msg.format(i))
-                print("***********************")
 
-            # Lanzamos la recursiva con cada uno de los límites.
-            resultado = profundidad_recursiva(problema=problema,
-                                              limite=i,
-                                              tipo_limite="coste",
-                                              log=log,
-                                              paso_a_paso=paso_a_paso)
+    # Vamos ampliando el límite poco a poco.
+    for i in range(1, limite + 1, paso):
+        # Indicamos el límite a probar.
+        if log:
+            print()
+            print("***********************")
+            msg = "*** Límite {0}"
+            print(msg.format(i))
+            print("***********************")
 
-            # Si ha solución, la devolvemos.
-            if resultado:
-                return resultado
+        # Lanzamos la recursiva con cada uno de los límites.
+        resultado = profundidad_recursiva(problema=problema,
+                                          limite=i,
+                                          tipo_limite="coste",
+                                          log=log,
+                                          paso_a_paso=paso_a_paso)
+
+        # Si ha solución, la devolvemos.
+        if resultado:
+            return resultado
 
     # Si llegamos aquí es que no hay solución.
     return None
 
 
-# %% --- BIDIRECCIONAL ---
+# %% --- BIDIRECCIONAL --------------------------------------------------------
 
 def bidireccional(
         problema,
         log=False,
         paso_a_paso=False):
     """
+    Búsqueda que comienza en los nodos inicial y final a la vez.
+
     No sólo se lanzará una búsqueda desde el origen, también se lanzará otra
     búsqueda desde el objetivo. Este generará 2 árboles de búsqueda que, si
     en sus fronteras hay algún estado común, entonces habrán encontrado un
     camino entre ambos estatos. En esta implementación se usará la búsqueda
     en anchura para ambos árboles, aunque uno de los árboles podría ser una
     búsqueda en profundidad iterativa.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - log: Si se mostrarán los pasos que se van realizando.
     - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
+
     Devuelve: referencia a los nodos con el estado común. A partir de
               ellos y siguiendo sus nodos padres, se obtendrá la solución.
               Si no encuentra solución, devuelve "(None, None)".
@@ -762,111 +788,113 @@ def bidireccional(
         raise ValueError("El problema sólo puede tener un único objetivo")
 
     # Obtenemos el nodo raíz del primer árbol.
-    estadoI = problema.estado_inicial.nombre
-    accionesI = problema.acciones[estadoI] if problema.acciones else {}
-    raizI = Nodo(estado=problema.estado_inicial,
-                 acciones=accionesI)
+    estado_i = problema.estado_inicial.nombre
+    acciones_i = problema.acciones[estado_i] if problema.acciones else {}
+    raiz_i = Nodo(estado=problema.estado_inicial,
+                  acciones=acciones_i)
 
     # Obtenemos el nodo raíz del segundo árbol.
-    estadoF = problema.estados_objetivos[0].nombre
-    accionesF = problema.acciones[estadoF] if problema.acciones else {}
-    raizF = Nodo(estado=problema.estados_objetivos[0],
-                 acciones=accionesF)
+    estado_f = problema.estados_objetivos[0].nombre
+    acciones_f = problema.acciones[estado_f] if problema.acciones else {}
+    raiz_f = Nodo(estado=problema.estados_objetivos[0],
+                  acciones=acciones_f)
 
     # Miramos si la primera raíz es ya un objetivo.
-    if problema.es_objetivo(estado=raizI.estado):
+    if problema.es_objetivo(estado=raiz_i.estado):
         if log:
             msg = "Objetivo: {0}"
-            print(msg.format(raizI.estado.nombre))
-        return (raizI, raizF)
+            print(msg.format(raiz_i.estado.nombre))
+        return (raiz_i, raiz_f)
 
     # Miramos si la segunda raíz es ya el inicio.
-    if problema.estado_inicial == raizF.estado:
+    if problema.estado_inicial == raiz_f.estado:
         if log:
             msg = "Inicio: {0}"
-            print(msg.format(raizF.estado.nombre))
-        return (raizI, raizF)
+            print(msg.format(raiz_f.estado.nombre))
+        return (raiz_i, raiz_f)
 
     # Definimos las fronteras (FIFO) y agregamos los nodos raíz.
-    fronteraI = [raizI, ]
-    fronteraF = [raizF, ]
+    frontera_i = [raiz_i, ]
+    frontera_f = [raiz_f, ]
 
     # Definimos las listas de nodos de los estados explorados.
-    exploradosI = []
-    exploradosF = []
+    explorados_i = []
+    explorados_f = []
 
     # Entramos en el bucle principal.
     while True:
         # Mostramos las frontera y los explorados.
         if log:
-            log_fronteraI = [nodo.estado.nombre
-                             for nodo in fronteraI]
-            log_fronteraF = [nodo.estado.nombre
-                             for nodo in fronteraF]
-            log_exploradosI = set([nodo.estado.nombre
-                                   for nodo in exploradosI])
-            log_exploradosF = set([nodo.estado.nombre
-                                   for nodo in exploradosF])
+            log_frontera_i = [nodo.estado.nombre
+                              for nodo in frontera_i]
+            log_frontera_f = [nodo.estado.nombre
+                              for nodo in frontera_f]
+            log_explorados_i = {nodo.estado.nombre
+                                for nodo
+                                in explorados_i}
+            log_explorados_f = {nodo.estado.nombre
+                                for nodo
+                                in explorados_f}
             print("----- NUEVO CICLO -----")
             msg = "Frontera Inicial: {0}"
-            print(msg.format(log_fronteraI))
+            print(msg.format(log_frontera_i))
             msg = "Frontera Objetivo: {0}"
-            print(msg.format(log_fronteraF))
+            print(msg.format(log_frontera_f))
             msg = "Explorados Inicial: {0}"
-            print(msg.format(log_exploradosI))
+            print(msg.format(log_explorados_i))
             msg = "Explorados Objetivo: {0}"
-            print(msg.format(log_exploradosF))
+            print(msg.format(log_explorados_f))
 
         # Si alguna frontera está vacía, terminamos.
-        if not fronteraI or not fronteraF:
+        if not frontera_i or not frontera_f:
             return (None, None)
 
         # Obtenemos el siguiente nodo del primer árbol.
-        nodoI = fronteraI.pop(0)
+        nodo_i = frontera_i.pop(0)
         if log:
             msg = "Nodo Inicial: {0}"
-            print(msg.format(nodoI.estado.nombre))
-            log_fronteraI = [nodo.estado.nombre
-                             for nodo in fronteraI]
+            print(msg.format(nodo_i.estado.nombre))
+            log_frontera_i = [nodo.estado.nombre
+                              for nodo in frontera_i]
             msg = "Frontera Inicial: {0}"
-            print(msg.format(log_fronteraI))
+            print(msg.format(log_frontera_i))
 
         # Obtenemos el siguiente nodo del segundo árbol.
-        nodoF = fronteraF.pop(0)
+        nodo_f = frontera_f.pop(0)
         if log:
             msg = "Nodo Objetivo: {0}"
-            print(msg.format(nodoF.estado.nombre))
-            log_fronteraF = [nodo.estado.nombre
-                             for nodo in fronteraF]
+            print(msg.format(nodo_f.estado.nombre))
+            log_frontera_f = [nodo.estado.nombre
+                              for nodo in frontera_f]
             msg = "Frontera Objetivo: {0}"
-            print(msg.format(log_fronteraF))
+            print(msg.format(log_frontera_f))
 
         # Agregamos su estado al conjunto de explorados del primero.
-        exploradosI.append(nodoI)
+        explorados_i.append(nodo_i)
         if log:
-            log_exploradosI = [nodo.estado.nombre
-                               for nodo in exploradosI]
+            log_explorados_i = [nodo.estado.nombre
+                                for nodo in explorados_i]
             msg = "Explorados Inicial: {0}"
-            print(msg.format(log_exploradosI))
+            print(msg.format(log_explorados_i))
 
         # Agregamos su estado al conjunto de explorados del segundo.
-        exploradosF.append(nodoF)
+        explorados_f.append(nodo_f)
         if log:
-            log_exploradosF = [nodo.estado.nombre
-                               for nodo in exploradosF]
+            log_explorados_f = [nodo.estado.nombre
+                                for nodo in explorados_f]
             msg = "Explorados Objetivo: {0}"
-            print(msg.format(log_exploradosF))
+            print(msg.format(log_explorados_f))
 
         # Si alguno de los nodos no tiene acciones, lo indicamos.
-        if not nodoI.acciones:
+        if not nodo_i.acciones:
             if log:
                 print("No hay Acciones (Inicial)")
-        if not nodoF.acciones:
+        if not nodo_f.acciones:
             if log:
                 print("No hay Acciones (Objetivo)")
 
         # Por cada una de las acciones del primer árbol que se pueden hacer.
-        for nombre_accion in nodoI.acciones.keys():
+        for nombre_accion in nodo_i.acciones.keys():
             # Indicamos la acción.
             if log:
                 msg = "   Accion (Inicial): {0}"
@@ -875,7 +903,7 @@ def bidireccional(
             # Creamos un nodo hijo.
             accion = Accion(nombre=nombre_accion)
             hijo = crea_nodo_hijo(problema=problema,
-                                  padre=nodoI,
+                                  padre=nodo_i,
                                   accion=accion)
             nombre_hijo = hijo.estado.nombre
             if log:
@@ -885,9 +913,9 @@ def bidireccional(
             # Si el estado del hijo no ha sido explorado
             # y tampoco está en la frontera.
             estados_frontera = [nodo.estado
-                                for nodo in fronteraI]
+                                for nodo in frontera_i]
             estados_explorados = [nodo.estado
-                                  for nodo in exploradosI]
+                                  for nodo in explorados_i]
             if(hijo.estado in estados_explorados or
                hijo.estado in estados_frontera):
                 # Indicamos que ya estaba.
@@ -908,13 +936,13 @@ def bidireccional(
                     return (hijo, None)
 
                 # Sino, lo agregamos a la frontera.
-                fronteraI.append(hijo)
+                frontera_i.append(hijo)
                 if log:
                     msg = "   Añade Frontera (Inicial): {0}"
                     print(msg.format(nombre_hijo))
 
         # Por cada una de las acciones del segundo árbol que se pueden hacer.
-        for nombre_accion in nodoF.acciones.keys():
+        for nombre_accion in nodo_f.acciones.keys():
             # Indicamos la acción.
             if log:
                 msg = "   Accion (Objetivo): {0}"
@@ -923,7 +951,7 @@ def bidireccional(
             # Creamos un nodo hijo.
             accion = Accion(nombre=nombre_accion)
             hijo = crea_nodo_hijo(problema=problema,
-                                  padre=nodoF,
+                                  padre=nodo_f,
                                   accion=accion)
             nombre_hijo = hijo.estado.nombre
             if log:
@@ -933,14 +961,14 @@ def bidireccional(
             # Si el estado del hijo no ha sido explorado
             # y tampoco está en la frontera.
             estados_frontera = [nodo.estado
-                                for nodo in fronteraF]
+                                for nodo in frontera_f]
             estados_explorados = [nodo.estado
-                                  for nodo in exploradosF]
+                                  for nodo in explorados_f]
             if(hijo.estado in estados_explorados or
                hijo.estado in estados_frontera):
                 # Indicamos que ya estaba.
                 if log:
-                    if hijo.estado in exploradosF:
+                    if hijo.estado in explorados_f:
                         msg = "   {0} ya ha sido explorado (Objetivo)"
                         print(msg.format(hijo.estado.nombre))
                     if hijo.estado in estados_frontera:
@@ -956,21 +984,21 @@ def bidireccional(
                     return (None, hijo)
 
                 # Sino, lo agregamos a la frontera.
-                fronteraF.append(hijo)
+                frontera_f.append(hijo)
                 if log:
                     msg = "   Añade Frontera (Objetivo): {0}"
                     print(msg.format(nombre_hijo))
 
         # Miramos si en las fronteras o explorados hay algún estado común.
-        estadosI = set(nodo.estado
-                       for nodo in fronteraI)
-        estadosF = set(nodo.estado
-                       for nodo in fronteraF)
-        estadosI = estadosI.union(set(nodo.estado
-                                      for nodo in exploradosI))
-        estadosF = estadosF.union(set(nodo.estado
-                                      for nodo in exploradosF))
-        comunes = estadosI.intersection(estadosF)
+        estados_i = set(nodo.estado
+                        for nodo in frontera_i)
+        estados_f = set(nodo.estado
+                        for nodo in frontera_f)
+        estados_i = estados_i.union(set(nodo.estado
+                                        for nodo in explorados_i))
+        estados_f = estados_f.union(set(nodo.estado
+                                        for nodo in explorados_f))
+        comunes = estados_i.intersection(estados_f)
 
         # Si hay comunes, los devolvemos como la solución.
         if comunes:
@@ -978,37 +1006,44 @@ def bidireccional(
             comun = comunes.pop()
 
             # Obtenemos los frontera y explorados de cada árbol.
-            nodos_arbolI = []
-            nodos_arbolF = []
-            nodos_arbolI.extend(fronteraI)
-            nodos_arbolF.extend(fronteraF)
-            nodos_arbolI.extend(exploradosI)
-            nodos_arbolF.extend(exploradosF)
+            nodos_arbol_i = []
+            nodos_arbol_f = []
+            nodos_arbol_i.extend(frontera_i)
+            nodos_arbol_f.extend(frontera_f)
+            nodos_arbol_i.extend(explorados_i)
+            nodos_arbol_f.extend(explorados_f)
 
             # Obtenemos el común del primer árbol.
-            comunI = [nodo
-                      for nodo in nodos_arbolI
-                      if nodo.estado == comun][0]
+            comun_i = [nodo
+                       for nodo in nodos_arbol_i
+                       if nodo.estado == comun][0]
 
             # Obtenemos el común del segundo árbol.
-            comunF = [nodo
-                      for nodo in nodos_arbolF
-                      if nodo.estado == comun][0]
+            comun_f = [nodo
+                       for nodo in nodos_arbol_f
+                       if nodo.estado == comun][0]
 
             # Devolvemos los nodos con el estado común.
-            return (comunI, comunF)
+            return (comun_i, comun_f)
 
         # Si nos piden ir paso a paso.
         if paso_a_paso:
             input("Pulsa la tecla 'Enter' para continuar.")
 
 
-# %% --- FUNCIONES AUXILIARES ---
+# %% --- FUNCIONES AUXILIARES -------------------------------------------------
 
 def crea_nodo_raiz(problema):
     """
+    Crea y devuelve el nodo raíz del problema indicado.
+
     Método auxiliar que ayudará a crear nodos raíz de los métodos que
     implementan algoritmos de búsqueda informada.
+
+    Argumentos:
+    - problema: problema a obtener su nodo raíz.
+
+    Devuelve: nodo raíz creado.
     """
     # Comprobaciones.
     if not problema:
@@ -1037,12 +1072,17 @@ def crea_nodo_hijo(problema,
                    padre,
                    accion):
     """
+    Crea y devuelve el nodo hijo.
+
     Método auxiliar que ayudará a crear nodos hijos a los métodos que
     implementan algoritmos de búsqueda no informada.
+
     Argumentos:
     - problema: definición del problema a resolver.
     - padre: nodo padre del nodo hijo a crear. Se agrega a los hijos de él.
     - accion: acción que ha provocado la creación de este nodo hijo.
+
+    Devuelve: nodo hijo creado tras aplicar acción al padre.
     """
     # Comprobaciones.
     if not problema:
@@ -1084,16 +1124,20 @@ def crea_nodo_hijo(problema,
 
 def muestra_solucion(objetivo=None,
                      es_bidireccional=False,
-                     bidireccional=(None, None),
+                     nodos_bidireccional=(None, None),
                      segundos=0):
     """
     Muestra la solución encuentrada a partir de un nodo objetivo.
+
     Argumentos:
     - objetivo: nodo objetivo encontrado por un algoritmo.
     - es_bidireccional: la solución es diferente al resto.
-    - bidireccional: esta búsqueda devuelve un par de nodos con estados comunes
-                     que deben combinarse para obtener la solución final.
-    - tiempo: cantidad de tiempo que ha tardado en ejecutarse el algoritmo.
+    - nodos_bidireccional: esta búsqueda devuelve un par de nodos con estados
+                           comunes que deben combinarse para obtener la
+                           solución final.
+    - segundos: cantidad de tiempo que ha tardado en ejecutarse el algoritmo.
+
+    Devuelve: nada.
     """
     # Mostramos la solución.
     print()
@@ -1102,9 +1146,9 @@ def muestra_solucion(objetivo=None,
     print("--------------------")
 
     # Si nos pasan el tiempo.
-    if tiempo > 0:
+    if segundos > 0:
         msg = "Tiempo: {0} milisegundos"
-        print(msg.format(tiempo*1000))
+        print(msg.format(segundos*1000))
         print("--------------------")
 
     # ------------------- #
@@ -1114,38 +1158,38 @@ def muestra_solucion(objetivo=None,
     # Si nos pasan la solución de la bidireccional.
     if es_bidireccional:
         # Obtenemos los nodos con el estado común.
-        nodoI = bidireccional[0]
-        nodoF = bidireccional[1]
+        nodo_i = nodos_bidireccional[0]
+        nodo_f = nodos_bidireccional[1]
 
         # Guardamos los costes para mostrarlos al final.
-        costeI = nodoI.coste if nodoI else 0
-        costeF = nodoF.coste if nodoF else 0
+        coste_i = nodo_i.coste if nodo_i else 0
+        coste_f = nodo_f.coste if nodo_f else 0
 
         # Definimos una lista que indicará el camino completo.
         camino = []
 
         # Si hay nodo en el primer árbol
-        if nodoI:
+        if nodo_i:
             # Lo recorremos hasta la raíz
-            while nodoI:
+            while nodo_i:
                 # Agregamos cada nodo al camino (orden inverso).
-                camino.insert(0, nodoI)
+                camino.insert(0, nodo_i)
 
                 # Ascendemos en el árbol.
-                nodoI = nodoI.padre
+                nodo_i = nodo_i.padre
 
         # Si hay nodo en el segúndo árbol.
-        if nodoF:
+        if nodo_f:
             # No repetimos el nodo común.
-            nodoF = nodoF.padre
+            nodo_f = nodo_f.padre
 
             # Lo recorremos hasta la raíz.
-            while nodoF:
+            while nodo_f:
                 # Agregamos cada nodo al camino.
-                camino.append(nodoF)
+                camino.append(nodo_f)
 
                 # Ascendemos en el árbol.
-                nodoF = nodoF.padre
+                nodo_f = nodo_f.padre
 
         # Si no hay camino, lo indicamos.
         if not camino:
@@ -1160,7 +1204,7 @@ def muestra_solucion(objetivo=None,
 
         # Mostramos al final el coste total.
         msg = "Coste Total: {0}"
-        print(msg.format(costeI + costeF))
+        print(msg.format(coste_i + coste_f))
 
     # --------------------- #
     # -- RESTO BÚSQUEDAS -- #
@@ -1185,8 +1229,8 @@ def muestra_solucion(objetivo=None,
             if nodo.accion:
                 accion = nodo.accion.nombre
                 padre = nodo.padre.estado
-                coste = problema.coste_accion(estado=padre,
-                                              accion=nodo.accion)
+                coste = problema_resolver.coste_accion(estado=padre,
+                                                       accion=nodo.accion)
                 if accion:
                     msg = "<--- {0} [{1}] ---"
                     print(msg.format(accion, coste))
@@ -1195,12 +1239,11 @@ def muestra_solucion(objetivo=None,
             nodo = nodo.padre
 
 
-# %% --- MAIN ---
+# %% --- MAIN -----------------------------------------------------------------
 
 if __name__ == "__main__":
-    """
-    Ejemplos de búsqueda no informada en grafos.
-    """
+    # Ejemplos de búsqueda no informada en grafos.
+
     # Poder medir los tiempos.
     from time import time
 
@@ -1383,138 +1426,138 @@ if __name__ == "__main__":
     # ------------------------------------------------------------------------
 
     # Indicamos los algoritmos que queremos lanzar.
-    lanza_anchura = True
-    lanza_coste_uniforme = True
-    lanza_profundidad = True
-    lanza_profundidad_recursiva = True
-    lanza_profundidad_limitada = True
-    lanza_profundidad_iterativa = True
-    lanza_coste_iterativo = True
-    lanza_bidireccional = True
+    LANZA_ANCHURA = True
+    LANZA_COSTE_UNIFORME = True
+    LANZA_PROFUNDIDAD = True
+    LANZA_PROFUNDIDAD_RECURSIVA = True
+    LANZA_PROFUNDIDAD_LIMITADA = True
+    LANZA_PROFUNDIDAD_ITERATIVA = True
+    LANZA_COSTE_ITERATIVO = True
+    LANZA_BIDIRECCIONAL = True
 
     # Indica si se mostrará lo que hace cada algoritmo.
-    log = False
-    paso_a_paso = False
+    LOG = False
+    PASO_A_PASO = False
 
     # Indicamos el problema a resolver.
-    problema = problema_1
+    problema_resolver = problema_1
 
     # Búsqueda primero en anchura.
-    if lanza_anchura:
+    if LANZA_ANCHURA:
         print()
         print("******************************")
         print("***** PRIMERO EN ANCHURA *****")
         print("******************************")
         inicio = time()
-        solucion = anchura(problema=problema,
-                           log=log,
-                           paso_a_paso=paso_a_paso)
+        solucion = anchura(problema=problema_resolver,
+                           log=LOG,
+                           paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
 
     # Búsqueda coste uniforme.
-    if lanza_coste_uniforme:
+    if LANZA_COSTE_UNIFORME:
         print()
         print("**************************")
         print("***** COSTE UNIFORME *****")
         print("**************************")
         inicio = time()
-        solucion = coste_uniforme(problema=problema,
-                                  log=log,
-                                  paso_a_paso=paso_a_paso)
+        solucion = coste_uniforme(problema=problema_resolver,
+                                  log=LOG,
+                                  paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
 
     # Búsqueda primero en profundidad.
-    if lanza_profundidad:
+    if LANZA_PROFUNDIDAD:
         print()
         print("**********************************")
         print("***** PRIMERO EN PROFUNDIDAD *****")
         print("**********************************")
         inicio = time()
-        solucion = profundidad(problema=problema,
-                               log=log,
-                               paso_a_paso=paso_a_paso)
+        solucion = profundidad(problema=problema_resolver,
+                               log=LOG,
+                               paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
 
     # Búsqueda primero en profundidad (versión recursiva).
-    if lanza_profundidad_recursiva:
+    if LANZA_PROFUNDIDAD_RECURSIVA:
         print()
         print("**********************************************")
         print("***** PRIMERO EN PROFUNDIDAD (RECURSIVA) *****")
         print("**********************************************")
         inicio = time()
-        solucion = profundidad_recursiva(problema=problema,
-                                         log=log,
-                                         paso_a_paso=paso_a_paso)
+        solucion = profundidad_recursiva(problema=problema_resolver,
+                                         log=LOG,
+                                         paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
 
     # Búsqueda primero en profundidad (versión limitada).
-    if lanza_profundidad_limitada:
+    if LANZA_PROFUNDIDAD_LIMITADA:
         print()
         print("*********************************************")
         print("***** PRIMERO EN PROFUNDIDAD (LIMITADA) *****")
         print("*********************************************")
         inicio = time()
-        limite = 10  # Indicar un número mayor que cero.
-        solucion = profundidad_recursiva(problema=problema,
-                                         limite=limite,
-                                         log=log,
-                                         paso_a_paso=paso_a_paso)
+        LIMITE = 10  # Indicar un número mayor que cero.
+        solucion = profundidad_recursiva(problema=problema_resolver,
+                                         limite=LIMITE,
+                                         log=LOG,
+                                         paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
 
     # Búsqueda primero en profundidad (versión iterativa).
-    if lanza_profundidad_iterativa:
+    if LANZA_PROFUNDIDAD_ITERATIVA:
         print()
         print("**********************************************")
         print("***** PRIMERO EN PROFUNDIDAD (ITERATIVA) *****")
         print("**********************************************")
         inicio = time()
-        limite = 10  # Indicar un número mayor que cero.
-        solucion = profundidad_iterativa(problema=problema,
-                                         limite=limite,
-                                         log=log,
-                                         paso_a_paso=paso_a_paso)
+        LIMITE = 10  # Indicar un número mayor que cero.
+        solucion = profundidad_iterativa(problema=problema_resolver,
+                                         limite=LIMITE,
+                                         log=LOG,
+                                         paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
 
     # Búsqueda coste iterativo.
-    if lanza_coste_iterativo:
+    if LANZA_COSTE_ITERATIVO:
         print()
         print("***************************")
         print("***** COSTE ITERATIVO *****")
         print("***************************")
         inicio = time()
-        limite = 500  # Indicar un número mayor que cero.
-        solucion = coste_iterativo(problema=problema,
-                                   limite=limite,
+        LIMITE = 500  # Indicar un número mayor que cero.
+        solucion = coste_iterativo(problema=problema_resolver,
+                                   limite=LIMITE,
                                    paso=100,
-                                   log=log,
-                                   paso_a_paso=paso_a_paso)
+                                   log=LOG,
+                                   paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(objetivo=solucion,
                          segundos=tiempo)
 
     # Búsqueda bidireccional.
-    if lanza_bidireccional:
+    if LANZA_BIDIRECCIONAL:
         print()
         print("**************************")
         print("***** BIDIRECCIONAL *****")
         print("**************************")
         inicio = time()
-        solucion = bidireccional(problema=problema,
-                                 log=log,
-                                 paso_a_paso=paso_a_paso)
+        solucion = bidireccional(problema=problema_resolver,
+                                 log=LOG,
+                                 paso_a_paso=PASO_A_PASO)
         tiempo = time() - inicio
         muestra_solucion(es_bidireccional=True,
-                         bidireccional=solucion,
+                         nodos_bidireccional=solucion,
                          segundos=tiempo)

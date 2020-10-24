@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Ejemplos de Inferencia en Probabilidad.
+
 Ejemplos de inferencias realizadas mediante probabilidad y que luego serán la
 base de las redes bayesianas.
 """
 
 
-# %% --- INDEPENDENCIA MARGINAL O ABSOLUTA ---
+# %% --- INDEPENDENCIA MARGINAL O ABSOLUTA ------------------------------------
 
 # Si dos sucesos A y B son independientes entre sí:
 # P(A|B) = P(A)
@@ -18,26 +20,26 @@ print()
 
 # Datos: P(A=5,B=3) = P(A=5|B=3)·P(B=3) = P(A=5)·P(B=3) = 1/6 · 1/6 = 1/36
 # Probabilida de sacar un 5 en un dado.
-prob_5 = 1 / 6
-msg = "Probabilida de sacar un 5 en un dado: {0}"
-print(msg.format(prob_5))
+PROB_5 = 1 / 6
+MSG = "Probabilida de sacar un 5 en un dado: {0}"
+print(MSG.format(PROB_5))
 
 # Probabilida de sacar un 3 en un dado
-prob_3 = 1 / 6
-msg = "Probabilida de sacar un 3 en un dado: {0}"
-print(msg.format(prob_3))
+PROB_3 = 1 / 6
+MSG = "Probabilida de sacar un 3 en un dado: {0}"
+print(MSG.format(PROB_3))
 
 # Probabilidad de sacar un 3 y un 5 a la vez en dos dados.
-prob_3_y_5 = prob_3 * prob_5
-msg = "Probabilidad de sacar un 3 y un 5 a la vez en dos dados: {0}"
-print(msg.format(prob_3_y_5))
+PROB_3_Y_5 = PROB_3 * PROB_5
+MSG = "Probabilidad de sacar un 3 y un 5 a la vez en dos dados: {0}"
+print(MSG.format(PROB_3_Y_5))
 
 # Esta última fórmula se puede ampliar cuando todas la variables son
 # independientes entre sí: P(A|B,C,D,...) = P(A)
 # P(A,B,C,D,E,...) = P(A)·P(B)·P(C)·P(D)·P(E)·...
 
 
-# %% --- INDEPENDENCIA CONDICIONAL ---
+# %% --- INDEPENDENCIA CONDICIONAL --------------------------------------------
 
 # Si A y B son independientes:
 # P(A|B,C) = P(A|C)
@@ -58,22 +60,22 @@ print()
 # tiene gripe:
 
 # Probabilidad de tener fiebre si se tiene gripe: P(F|G)
-p_fiebre_tras_gripe = 0.89231
-msg = "Probabilidad de tener fiebre si se tienen gripe: {0}"
-print(msg.format(p_fiebre_tras_gripe))
+P_FIEBRE_TRAS_GRIPE = 0.89231
+MSG = "Probabilidad de tener fiebre si se tienen gripe: {0}"
+print(MSG.format(P_FIEBRE_TRAS_GRIPE))
 
 # Probabilidad de tener dolor de garganta si se tiene gripe: P(D|G)
-p_garganta_tras_gripe = 0.94213
-msg = "Probabilidad de tener dolor de garganta si se tienen gripe: {0}"
-print(msg.format(p_garganta_tras_gripe))
+P_GARGANTA_TRAS_GRIPE = 0.94213
+MSG = "Probabilidad de tener dolor de garganta si se tienen gripe: {0}"
+print(MSG.format(P_GARGANTA_TRAS_GRIPE))
 
 # Probabilida de tener ambas cosas si se tiene gripe: P(F|G)·P(D|G)
-p_fiebre_garganta_tras_gripe = p_fiebre_tras_gripe * p_garganta_tras_gripe
-msg = "Probabilidad de tener ambos si se tienen gripe: {0}"
-print(msg.format(p_fiebre_garganta_tras_gripe))
+P_FIEBRE_GARGANTA_TRAS_GRIPE = P_FIEBRE_TRAS_GRIPE * P_GARGANTA_TRAS_GRIPE
+MSG = "Probabilidad de tener ambos si se tienen gripe: {0}"
+print(MSG.format(P_FIEBRE_GARGANTA_TRAS_GRIPE))
 
 
-# %% --- REGLA DE BAYES ---
+# %% --- REGLA DE BAYES -------------------------------------------------------
 
 # La independencia condicional se puede aplicar a la Regla de Bayes para
 # simplificar (y mucho, en algunos casos) los cálculos:
@@ -113,32 +115,32 @@ print()
 # Todas estas probabilidades son relativamente fáciles de obtener y calcular.
 
 # ProbabilidaS de tener gripe: P(G) y P(¬G)
-prob_g = 0.30000
-prob_no_g = 1 - 0.30000
-msg = "Probabilida de tener gripe: {0}"
-print(msg.format(prob_g))
-msg = "Probabilida de NO tener gripe: {0}"
-print(msg.format(prob_no_g))
+PROB_G = 0.30000
+PROB_NO_G = 1 - 0.30000
+MSG = "Probabilida de tener gripe: {0}"
+print(MSG.format(PROB_G))
+MSG = "Probabilida de NO tener gripe: {0}"
+print(MSG.format(PROB_NO_G))
 
 # Probabilidades de tener fiebre si se tiene gripe: P(F|G)
-prob_f_tras_g = 0.60000
-msg = "Probabilidad de tener fiebre si se tiene gripe: {0}"
-print(msg.format(prob_f_tras_g))
+PROB_F_TRAS_G = 0.60000
+MSG = "Probabilidad de tener fiebre si se tiene gripe: {0}"
+print(MSG.format(PROB_F_TRAS_G))
 
 # Probabilidad de tener fiebre cuanto NO se tiene gripe: P(F|¬G)
-prob_f_tras_no_g = 0.07000
-msg = "Probabilidad de tener fiebre cuanto NO se tiene gripe: {0}"
-print(msg.format(prob_f_tras_no_g))
+PROB_F_TRAS_NO_G = 0.07000
+MSG = "Probabilidad de tener fiebre cuanto NO se tiene gripe: {0}"
+print(MSG.format(PROB_F_TRAS_NO_G))
 
 # Probabilidades de tener dolor de garganta si se tiene gripe: P(D|G)
-prob_d_tras_g = 0.80000
-msg = "Probabilidad de tener dolor de garganta si se tiene gripe: {0}"
-print(msg.format(prob_d_tras_g))
+PROB_D_TRAS_G = 0.80000
+MSG = "Probabilidad de tener dolor de garganta si se tiene gripe: {0}"
+print(MSG.format(PROB_D_TRAS_G))
 
 # Probabilidad de tener dolor de garganta cuanto NO se tiene gripe: P(D|¬G)
-prob_d_tras_no_g = 0.10000
-msg = "Probabilidad de tener dolor de garganta cuanto NO se tiene gripe: {0}"
-print(msg.format(prob_d_tras_no_g))
+PROB_D_TRAS_NO_G = 0.10000
+MSG = "Probabilidad de tener dolor de garganta cuanto NO se tiene gripe: {0}"
+print(MSG.format(PROB_D_TRAS_NO_G))
 
 # Calculamos el factor de normalización.
 # P(F) = P(F|G)·P(G) + P(F|¬G)·P(¬G)
@@ -149,19 +151,19 @@ print(msg.format(prob_d_tras_no_g))
 #             P(F|¬G)·P(¬G)·P(D|G)·P(G)
 #             P(F|¬G)·P(¬G)·P(D|¬G)·P(¬G)
 # alfa = 1 / P(F)·P(G)
-f_g = prob_f_tras_g * prob_g
-f_no_g = prob_f_tras_no_g * prob_no_g
-d_g = prob_d_tras_g * prob_g
-d_no_g = prob_d_tras_no_g * prob_no_g
-alfa = 1 / ((f_g * d_g) +
-            (f_g * d_no_g) +
-            (f_no_g + d_g) +
-            (f_no_g * d_no_g))
-msg = "Factor alfa de normalización: {0}"
-print(msg.format(alfa))
+F_G = PROB_F_TRAS_G * PROB_G
+F_NO_G = PROB_F_TRAS_NO_G * PROB_NO_G
+D_G = PROB_D_TRAS_G * PROB_G
+D_NO_G = PROB_D_TRAS_NO_G * PROB_NO_G
+ALFA = 1 / ((F_G * D_G) +
+            (F_G * D_NO_G) +
+            (F_NO_G + D_G) +
+            (F_NO_G * D_NO_G))
+MSG = "Factor alfa de normalización: {0}"
+print(MSG.format(ALFA))
 
 # Probabilidad de tener gripe si se tiene fiebre y dolor de garganta:
 # P(G|F,D) = [P(F|G)·P(D|G)·P(G)] / [P(F)·P(D)] = alfa·P(F|G)·P(D|G)·P(G)
-prob_g_tras_f_y_d = alfa * prob_f_tras_g * prob_d_tras_g * prob_g
-msg = "Probabilidad de tener gripe si se tiene fiebre y dolor de garganta: {0}"
-print(msg.format(prob_g_tras_f_y_d))
+PROB_G_TRAS_F_Y_D = ALFA * PROB_F_TRAS_G * PROB_D_TRAS_G * PROB_G
+MSG = "Probabilidad de tener gripe si se tiene fiebre y dolor de garganta: {0}"
+print(MSG.format(PROB_G_TRAS_F_Y_D))

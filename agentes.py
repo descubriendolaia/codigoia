@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Agentes Racionales en la Inteligencia Artificial.
+
 Existen varios tipos de agentes racionales:
 
 - Agente Tabla: el ídeal, si se pudiera emplementar. Consta de una tabla con
@@ -48,20 +50,21 @@ Fecha: 01/10/2019
 """
 
 
-# %% --- AGENTE TABLA ---
+# %% --- AGENTE TABLA ---------------------------------------------------------
 
 class AgenteTabla:
-    """
-    Clase que representa a un agente racional de tipo tabla.
-    """
+    """Agente racional de tipo tabla."""
 
     def __init__(self,
                  acciones):
         """
         Crea una nueva instancia de la clase.
+
         Argumentos:
         - acciones: diccionario cuya clave será una secuencia de percepciones
                     separadas por comas y cuyo valor es la acción a realizar.
+
+        Devuelve: nada.
         """
         # Comprobaciones.
         if not acciones:
@@ -77,14 +80,19 @@ class AgenteTabla:
                percepcion,
                accion_basica=""):
         """
+        Actua según la percepción, devolviendo una acción.
+
         Recibe una percepción y devuelve la acción a realizar según la
         secuencia de percepciones que ha recibido.
+
         Si la secuencia de percepciones no se encuentra en la tabla de
         acciones, reinicia la secuencia para empezar de nuevo.
+
         Argumentos:
         - percepcion: nombre de la percepción recibida.
         - accion_basica: la acción a realizar si no se encuentra la secuencia
                          de percepciones en la tabla de acciones.
+
         Devuelve: nombre de la acción a realizar.
         """
         # Si no hay percepción, terminamos.
@@ -103,24 +111,24 @@ class AgenteTabla:
         # recibidas hasta el momento.
         if self.percepciones in self.acciones.keys():
             return self.acciones[self.percepciones]
-        else:
-            self.percepciones = ""
-            return accion_basica
+        self.percepciones = ""
+        return accion_basica
 
 
-# %% -- AGENTE REACTIVO SIMPLE --
+# %% -- AGENTE REACTIVO SIMPLE ------------------------------------------------
 
 class AgenteReactivoSimple:
-    """
-    Clase que representa a un agente racional de tipo reactivo simple.
-    """
+    """Agente racional de tipo reactivo simple."""
 
     def __init__(self,
                  reglas):
         """
         Crea una nueva instancia de la clase.
+
         Argumentos:
         - reglas: relaciones entre las percepciones y las acciones a realizar.
+
+        Devuelve: nada.
         """
         # Comprobaciones.
         if not reglas:
@@ -133,13 +141,18 @@ class AgenteReactivoSimple:
                percepcion,
                accion_basica=""):
         """
+        Actua según la percepción, devolviendo una acción.
+
         Recibe una percepción y devuelve la acción a realizar según la
         secuencia de percepciones que ha recibido.
+
         Si la secuencia de percepciones no se encuentra en la tabla de
         acciones, reinicia la secuencia para empezar de nuevo.
+
         Argumentos:
         - percepcion: nombre de la percepción recibida.
         - accion_basica: acción a realizar si no se reconoce la percepción.
+
         Devuelve: nombre de la acción a realizar.
         """
         # Si no hay percepción, terminamos.
@@ -153,16 +166,13 @@ class AgenteReactivoSimple:
         # sólo la percepción actual.
         if percepcion in self.reglas.keys():
             return self.reglas[percepcion]
-        else:
-            return accion_basica
+        return accion_basica
 
 
-# %% -- AGENTE BASADO EN MODELOS --
+# %% -- AGENTE BASADO EN MODELOS ----------------------------------------------
 
 class AgenteBasadoModelos:
-    """
-    Clase que representa a un agente racional de tipo basado en modelos.
-    """
+    """Agente racional de tipo basado en modelos."""
 
     def __init__(self,
                  modelo,
@@ -171,12 +181,15 @@ class AgenteBasadoModelos:
                  accion_inicial=""):
         """
         Crea una nueva instancia de la clase.
+
         Argumentos:
         - modelo: diccionario donde la clave es una tupla con un estado,
                   una acción y una percepción, y el valor es un nuevo estado.
         - reglas: relación entre cada estado y la acción a ejecutar en él.
         - estado_inicial: nombre del estado inicial.
         - accion_inicial: nombre de la accion inicial.
+
+        Devuelve: nada.
         """
         # Comprobaciones.
         if not modelo:
@@ -189,6 +202,7 @@ class AgenteBasadoModelos:
         self.reglas = reglas
         self.estado_inicial = estado_inicial or ""
         self.accion_inicial = accion_inicial or ""
+        self.accion = None
 
         # Nos situamos en el estado inicial.
         self.estado = self.estado_inicial
@@ -199,12 +213,17 @@ class AgenteBasadoModelos:
     def actuar(self,
                percepcion):
         """
+        Actua según la percepción, devolviendo una acción.
+
         Recibe una percepción y devuelve la acción a realizar según la
         secuencia de percepciones que ha recibido.
+
         Si la secuencia de percepciones no se encuentra en la tabla de
         acciones, reinicia la secuencia para empezar de nuevo.
+
         Argumentos:
         - percepcion: nombre de la percepción recibida.
+
         Devuelve: nombre de la acción a realizar.
         """
         # Si no hay percepción, terminamos.
@@ -238,23 +257,22 @@ class AgenteBasadoModelos:
         return accion
 
 
-# %% --- MAIN ---
+# %% --- MAIN -----------------------------------------------------------------
 
 if __name__ == "__main__":
-    """
-    Ejemplos de agentes tabla y reactivos.
-    """
+    # Ejemplos de agentes tabla y reactivos.
+
     # Indicamos los algoritmos que queremos lanzar.
-    lanza_tabla = False
-    lanza_simple = False
-    lanza_modelos = True
+    LANZA_TABLA = True
+    LANZA_SIMPLE = True
+    LANZA_MODELOS = True
 
     # ------------------------------------------------------------------------
     # AGENTE TABLA
     # ------------------------------------------------------------------------
 
     # Si se pide lanzar el agente tabla
-    if lanza_tabla:
+    if LANZA_TABLA:
         print()
         print("************************")
         print("***** AGENTE TABLA *****")
@@ -266,7 +284,7 @@ if __name__ == "__main__":
         # La primera percepción debe ser: moneda
         # Hay que alternar la moneda con los códigos.
         # Puede servir hasta un máximo de 2 bebidas.
-        acciones = {"moneda": "pedir-codigo",
+        ACCIONES = {"moneda": "pedir-codigo",
                     "moneda,a1": "servir-bebida1",
                     "moneda,a2": "servir-bebida2",
                     "moneda,a3": "servir-bebida3",
@@ -285,27 +303,27 @@ if __name__ == "__main__":
 
         # Máquina expendedora como agente tabla
         print("-- Agente Tabla: Máquina Expendedora -- ")
-        expendedora = AgenteTabla(acciones=acciones)
+        expendedora = AgenteTabla(acciones=ACCIONES)
 
         # Pedimos percepciones hasta que indique cadena vacía.
-        percepcion = input("Indicar Percepcion:")
-        while percepcion:
+        PERCEPCION = input("Indicar Percepcion:")
+        while PERCEPCION:
             # Obtenemos la acción a realizar.
-            accion = expendedora.actuar(percepcion=percepcion,
+            ACCION = expendedora.actuar(percepcion=PERCEPCION,
                                         accion_basica="esperar")
 
             # La mostramos
-            print(accion)
+            print(ACCION)
 
             # Pedimos la siguiente percepción.
-            percepcion = input("Indicar Percepcion:")
+            PERCEPCION = input("Indicar Percepcion:")
 
     # ------------------------------------------------------------------------
     # AGENTE REACTIVO SIMPLE
     # ------------------------------------------------------------------------
 
     # Si se pide lanzar el agente reactivo simple
-    if lanza_simple:
+    if LANZA_SIMPLE:
         print()
         print("**********************************")
         print("***** AGENTE REACTIVO SIMPLE *****")
@@ -313,34 +331,34 @@ if __name__ == "__main__":
 
         # Conjunto de reglas de tipo "si-entonces" para una máquina expendedora
         # excesivamente simple (no funcionará nada bien, ¡bebida gratis!)
-        reglas = {"moneda": "pedir-codigo",
+        REGLAS = {"moneda": "pedir-codigo",
                   "a1": "servir-bebida1",
                   "a2": "servir-bebida2",
                   "a3": "servir-bebida3"}
 
         # Máquina expendedora como agente reactivo simple.
         print("-- Agente Reactivo Simple: Máquina Expendedora -- ")
-        expendedora = AgenteReactivoSimple(reglas=reglas)
+        expendedora = AgenteReactivoSimple(reglas=REGLAS)
 
         # Pedimos percepciones hasta que indique cadena vacía.
-        percepcion = input("Indicar Percepcion:")
-        while percepcion:
+        PERCEPCION = input("Indicar Percepcion:")
+        while PERCEPCION:
             # Obtenemos la acción a realizar.
-            accion = expendedora.actuar(percepcion=percepcion,
+            ACCION = expendedora.actuar(percepcion=PERCEPCION,
                                         accion_basica="esperar")
 
             # La mostramos
-            print(accion)
+            print(ACCION)
 
             # Pedimos la siguiente percepción.
-            percepcion = input("Indicar Percepcion:")
+            PERCEPCION = input("Indicar Percepcion:")
 
     # ------------------------------------------------------------------------
     # AGENTE REACTIVO BASADO EN MODELOS
     # ------------------------------------------------------------------------
 
     # Si se pide lanzar el agente reactivo basado en modelos
-    if lanza_modelos:
+    if LANZA_MODELOS:
         print()
         print("*********************************************")
         print("***** AGENTE REACTIVO BASADO EN MODELOS *****")
@@ -352,7 +370,7 @@ if __name__ == "__main__":
         # En cada estado, al ejecutar una acción, se llega a un nuevo estado.
         # Las aciones posibles son: pedir-moneda, pedir-codigo, reiniciar.
         # Las percepciones posibles son: moneda, a1, a2, a3, servida.
-        modelo = {("sin-moneda", "pedir-moneda", "moneda"): "con-moneda",
+        MODELO = {("sin-moneda", "pedir-moneda", "moneda"): "con-moneda",
                   ("con-moneda", "pedir-codigo", "a1"): "a1-servida",
                   ("con-moneda", "pedir-codigo", "a2"): "a2-servida",
                   ("con-moneda", "pedir-codigo", "a3"): "a3-servida",
@@ -361,7 +379,7 @@ if __name__ == "__main__":
                   ("a3-servida", "esperar", "servida"): "sin-moneda"}
 
         # En cada estado hay una nueva acción a ejecutar.
-        reglas = {"sin-moneda": "pedir-moneda",
+        REGLAS = {"sin-moneda": "pedir-moneda",
                   "con-moneda": "pedir-codigo",
                   "a1-servida": "esperar",
                   "a2-servida": "esperar",
@@ -369,19 +387,19 @@ if __name__ == "__main__":
 
         # Máquina expendedora como agente reactivo basado en modelos.
         print("-- Agente Reactivo Basado en Modelos: Máquina Expendedora -- ")
-        expendedora = AgenteBasadoModelos(modelo=modelo,
-                                          reglas=reglas,
+        expendedora = AgenteBasadoModelos(modelo=MODELO,
+                                          reglas=REGLAS,
                                           estado_inicial="sin-moneda",
                                           accion_inicial="pedir-moneda")
 
         # Pedimos percepciones hasta que indique cadena vacía.
-        percepcion = input("Indicar Percepcion:")
-        while percepcion:
+        PERCEPCION = input("Indicar Percepcion:")
+        while PERCEPCION:
             # Obtenemos la acción a realizar.
-            accion = expendedora.actuar(percepcion=percepcion)
+            ACCION = expendedora.actuar(percepcion=PERCEPCION)
 
             # La mostramos
-            print(accion)
+            print(ACCION)
 
             # Pedimos la siguiente percepción.
-            percepcion = input("Indicar Percepcion:")
+            PERCEPCION = input("Indicar Percepcion:")

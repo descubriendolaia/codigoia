@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Bases de la Propabilidad.
+
 Ejemplos de las bases de la probabilidad que luego se usarán en las redes
 bayesianas.
 """
 import random
 
 
-# %% --- AXIOMAS DE KOLGOMOROV ---
+# %% --- AXIOMAS DE KOLGOMOROV ------------------------------------------------
 
 # Existe varias formas de sentar la reglas básicas de la probabilidad. Una
 # bastante común es la definición de aximas hechas por Kolgomorov:
@@ -29,14 +31,14 @@ print()
 #    P(¬E) = 1 - P(E)
 
 # Probabilida de que llueva mañana
-prob_A = 0.78612567
-msg = "Probablidad de que llueva mañana: {0}"
-print(msg.format(prob_A))
+PROB_A = 0.78612567
+MSG = "Probablidad de que llueva mañana: {0}"
+print(MSG.format(PROB_A))
 
 # Probabilidad de que NO llueva mañana.
-prob_B = 1.0 - prob_A
-msg = "Probablidad de que NO llueva mañana: {0}"
-print(msg.format(prob_B))
+PROB_B = 1.0 - PROB_A
+MSG = "Probablidad de que NO llueva mañana: {0}"
+print(MSG.format(PROB_B))
 
 # Otra propiedad importante del tercer axioma es que si dos evento son
 # excluyentes entre sí (no pueden darse a la vez), entonces P(A y B) = 0, ya
@@ -44,32 +46,32 @@ print(msg.format(prob_B))
 print()
 
 # Probabilidad de que salga un 1 en un dado.
-prob_1 = 1 / 6
-msg = "Probabilidad de que salga un 1 en un dado: {0}"
-print(msg.format(prob_1))
+PROB_1 = 1 / 6
+MSG = "Probabilidad de que salga un 1 en un dado: {0}"
+print(MSG.format(PROB_1))
 
 # Probabilidad de que salga un 5 en un dado.
-prob_5 = 1 / 6
-msg = "Probabilidad de que salga un 5 en un dado: {0}"
-print(msg.format(prob_5))
+PROB_5 = 1 / 6
+MSG = "Probabilidad de que salga un 5 en un dado: {0}"
+print(MSG.format(PROB_5))
 
 # No puede salir un 1 y un 5 a la vez en un dado: P(A=1,A=5) = 0
-msg = "Probabilidad de que salga un 1 o un 5 en un dado: {0}"
-prob_1_o_5 = prob_1 + prob_5
-print(msg.format(prob_1_o_5))
+MSG = "Probabilidad de que salga un 1 o un 5 en un dado: {0}"
+PROB_1_OR_5 = PROB_1 + PROB_5
+print(MSG.format(PROB_1_OR_5))
 
 # Probabilidad de que salga un 3 en un dado.
-prob_3 = 1 / 6
-msg = "Probabilidad de que salga un 3 en un dado: {0}"
-print(msg.format(prob_3))
+PROB_3 = 1 / 6
+MSG = "Probabilidad de que salga un 3 en un dado: {0}"
+print(MSG.format(PROB_3))
 
 # No puede salir un 1, un 3 o un 5 a la vez en un dado: P(A=1,A=5,A=3) = 0
-msg = "Probabilidad de que salga un 1, un 3 o un 5 en un dado: {0}"
-prob_1_o_3_o_5 = prob_1 + prob_3 + prob_5
-print(msg.format(prob_1_o_3_o_5))
+MSG = "Probabilidad de que salga un 1, un 3 o un 5 en un dado: {0}"
+PROB_1_OR_3_OR_5 = PROB_1 + PROB_3 + PROB_5
+print(MSG.format(PROB_1_OR_3_OR_5))
 
 
-# %% --- DEFINICIONES ---
+# %% --- DEFINICIONES ---------------------------------------------------------
 
 # Un experimento puede ser sacar un número entero aleatorio entre 1 y 10.
 # El espacio muestral son todos los números enteros que hay entre 1 y 10.
@@ -80,8 +82,8 @@ print("*** EVENTOS ***")
 print("***************")
 print()
 print("--- Evento Simple ---")
-msg = "1 nº aleatorio entre 1 y 10: {0}"
-print(msg.format(evento))
+MSG = "1 nº aleatorio entre 1 y 10: {0}"
+print(MSG.format(evento))
 
 # En este caso, la probabilidad de que salga cualquier número es la misma,
 # por lo que se dice que son "equiprobables".
@@ -89,16 +91,16 @@ print("Probabilidad: 1/10 para todos (equiprobable)")
 print()
 
 # Un evento múltiple es sacar varios números aleatorios:
-evento_1 = random.randint(1, 10)
-evento_2 = random.randint(1, 10)
-evento_3 = random.randint(1, 10)
+EVENTO_1 = random.randint(1, 10)
+EVENTO_2 = random.randint(1, 10)
+EVENTO_3 = random.randint(1, 10)
 print("--- Evento Múltiple ---")
-msg = "3 nº aleatorios entre 0 y 10: ({0}, {1}, {2})"
-print(msg.format(evento_1, evento_2, evento_3))
+MSG = "3 nº aleatorios entre 0 y 10: ({0}, {1}, {2})"
+print(MSG.format(EVENTO_1, EVENTO_2, EVENTO_3))
 print("Probabilidad de 3 unos: (1/10)·(1/10)·(1/10) = 1/1000")
 print()
 
-# %% --- FRECUENCIA RELATIVA ---
+# %% --- FRECUENCIA RELATIVA --------------------------------------------------
 # Número de veces que ocurre un evento frente al número de veces que se repite
 # un experimento. Si se repite un número muy elevado de veces, cada vez nos
 # aproximaremos más y más a la probabilidad real.
@@ -115,15 +117,15 @@ print("Cara: 1")
 print("Cruz: 0")
 
 # Iremos aumentando cada vez más los resultados.
-limites = [10, 100, 1000, 10000, 100000, 1000000]
+LIMITES = [10, 100, 1000, 10000, 100000, 1000000]
 
-for veces in limites:
+for veces in LIMITES:
     # Guardará la lista de resultados de lanzar una moneda varias veces.
     resultados = []
 
     # Contabilizará el número de veces que sale cada resultado.
-    caras = 0
-    cruces = 0
+    CARAS = 0
+    CRUCES = 0
 
     # Lanzamos la moneda varias veces.
     print("Lanzamos la moneda {0} veces:".format(veces))
@@ -133,17 +135,17 @@ for veces in limites:
 
         # Aumentamos las caras o las cruces según el resultado.
         if resultado == 1:
-            caras += 1
+            CARAS += 1
         elif resultado == 0:
-            cruces += 1
+            CRUCES += 1
 
         # Agregamos el resultado a la lista de resultados.
         resultados.append(resultado)
 
     # Moramos los resultado obtenidos.
-    msg = "Resultados: [{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, ...]"
+    MSG = "Resultados: [{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, ...]"
     ejemplos = resultados[:8]
-    print(msg.format(ejemplos[0],
+    print(MSG.format(ejemplos[0],
                      ejemplos[1],
                      ejemplos[2],
                      ejemplos[3],
@@ -153,14 +155,14 @@ for veces in limites:
                      ejemplos[7]))
 
     # Mostramos las frecuencias relativas
-    msg = "  - Caras: {0} -> Frecuencia Relativa: {1}"
-    print(msg.format(caras, caras / veces))
-    msg = "  - Cruces: {0} -> Frecuencia Relativa: {1}"
-    print(msg.format(cruces, cruces / veces))
+    MSG = "  - Caras: {0} -> Frecuencia Relativa: {1}"
+    print(MSG.format(CARAS, CARAS / veces))
+    MSG = "  - Cruces: {0} -> Frecuencia Relativa: {1}"
+    print(MSG.format(CRUCES, CRUCES / veces))
     print()
 
 
-# %% --- PROBABILIDAD A POSTERIORI ---
+# %% --- PROBABILIDAD A POSTERIORI --------------------------------------------
 
 # La probabilidad a priori es la probabilidad en ausencia de más información.
 # La probabilidad a posteriori es la probabilidad cuando aparece nueva
@@ -190,10 +192,12 @@ def frecuencia_relativa(espacio_muestral,
                         limite=10000):
     """
     Permite calcular la probabilidad según una frecuencia relativa.
+
     Argumentos:
     - espacio_muestral: lista con valores posibles del experimento.
     - valor: valor del que obtener la frecuencia relativa.
     - limite: número de veces que se repetirá el experimiento.
+
     Devuelve: frecuencia relativa del valor una vez se repite el experimiento
               un número de veces (indicado por límite).
     """
@@ -204,67 +208,67 @@ def frecuencia_relativa(espacio_muestral,
         limite = 10000
 
     # Guardaremos las veces que se repite cada resultado.
-    resultados = {valor: 0 for valor in espacio_muestral}
+    veces_valor = {valor: 0 for valor in espacio_muestral}
 
     # Asociamos un número con cada resultado.
     longitud = len(espacio_muestral)
     indice = dict(zip(range(0, longitud), espacio_muestral))
 
     # Repetimos varias veces el experimento.
-    for i in range(0, limite):
+    for _ in range(0, limite):
         # Ejecutamos el experimiento.
-        resultado = random.randint(0, longitud-1)
+        aleatorio = random.randint(0, longitud-1)
 
-        # Aumentamos el contador el resultado.
-        valor = indice[resultado]
-        resultados[valor] += 1
+        # Aumentamos el contador del resultado.
+        valor = indice[aleatorio]
+        veces_valor[valor] += 1
 
     # Devolvemos la frecuencia relativa del solicituda.
-    return resultados[valor] / limite
+    return veces_valor[valor] / limite
 
 
 # Definimos el espacio muestral: números enteros entre 1 y 10.
 print("---- P(A) ----")
-numeros = list(range(1, 11))
-print("Espacio Muestral: {0}".format(numeros))
+NUMEROS = list(range(1, 11))
+print("Espacio Muestral: {0}".format(NUMEROS))
 
 # Probabilidad a priori de que salga un 5: P(A=5)
-priori_5 = frecuencia_relativa(espacio_muestral=numeros,
+PRIORI_5 = frecuencia_relativa(espacio_muestral=NUMEROS,
                                valor=5)
-print("Priori 5: P(A=5) = {0}".format(priori_5))
+print("Priori 5: P(A=5) = {0}".format(PRIORI_5))
 print()
 
 # Probabilidad a priori de que salga un 5 y un 3: P(A=5,B=3)
 print("--- P(A,B) ---")
-pares = [(a, b)
+PARES = [(a, b)
          for b in range(1, 11)
          for a in range(1, 11)]
-print("Espacio Muestral: {0}".format(pares))
+print("Espacio Muestral: {0}".format(PARES))
 
 # Probabilidad a priori de que salga un 5: P(A=5)
-priori_5_3 = frecuencia_relativa(espacio_muestral=pares,
+PRIORI_5_3 = frecuencia_relativa(espacio_muestral=PARES,
                                  valor=(5, 3))
-print("Priori 5 y 3: P(A=5,B=3) = {0}".format(priori_5_3))
+print("Priori 5 y 3: P(A=5,B=3) = {0}".format(PRIORI_5_3))
 
 # Vamos a simularlo para ver si da similar.
-aciertos = 0
-limite = 10000
-for n in range(0, limite):
+ACIERTOS = 0
+LIMITE = 10000
+for n in range(0, LIMITE):
     resultado = random.randint(1, 10)
     if resultado == 3:
         resultado = random.randint(1, 10)
         if resultado == 5:
-            aciertos += 1
-print("Simulación de P(A=5,B=3) = {0}".format(aciertos / limite))
+            ACIERTOS += 1
+print("Simulación de P(A=5,B=3) = {0}".format(ACIERTOS / LIMITE))
 print()
 
 # Probabilidad a posteriori: P(A=5|B=3)
 print("--- P(A|B) = P(A,B) / P(A) ---")
-print("Posteriori 5 si 3: P(A=5|B=3) = {0}".format(priori_5_3 / priori_5))
+print("Posteriori 5 si 3: P(A=5|B=3) = {0}".format(PRIORI_5_3 / PRIORI_5))
 print()
 
 
-# %% --- REGLA DEL PRODUCTO / MULTIPLICACIÓN ---
+# %% --- REGLA DEL PRODUCTO / MULTIPLICACIÓN ----------------------------------
 
 # A partir de la definición de probabilidad a posteriori, reordenando términos
 # se puede definir la regla del producto (o de la multiplicación):
@@ -277,26 +281,26 @@ print("**************************")
 print()
 
 # Probabilidad de que haya atascos.
-prob_a = 0.46781
-msg = "Probabilidad de que haya atascos: {0}"
-print(msg.format(prob_a))
+PROB_A = 0.46781
+MSG = "Probabilidad de que haya atascos: {0}"
+print(MSG.format(PROB_A))
 
 # Probabilidad de que mañana llueva: P(A)
-prob_b = 0.81264
-msg = "Probabilidad de que mañana llueva: {0}"
-print(msg.format(prob_b))
+PROB_B = 0.81264
+MSG = "Probabilidad de que mañana llueva: {0}"
+print(MSG.format(PROB_B))
 
 # Probabilidad de que haya atascos después de comenzar a llover: p(B|A)
-prob_a_tras_b = 0.98154
-msg = "Probabilidad de que haya atascos después de comenzar a llover: {0}"
-print(msg.format(prob_a_tras_b))
+PROB_A_TRAS_B = 0.98154
+MSG = "Probabilidad de que haya atascos después de comenzar a llover: {0}"
+print(MSG.format(PROB_A_TRAS_B))
 
 # Probabilidad de que, a la vez, haya atascos y llueva mañana: P(A,B)
-prob_a_y_b = prob_a_tras_b * prob_b
-msg = "Probabilidad de que, a la vez, haya atascos y llueva mañana: {0}"
-print(msg.format(prob_a_y_b))
-msg = "Luego, si llueve aumentan las probabilidades de atascos: {0} > {1}"
-print(msg.format(prob_a_y_b, prob_a))
+PROB_A_Y_B = PROB_A_TRAS_B * PROB_B
+MSG = "Probabilidad de que, a la vez, haya atascos y llueva mañana: {0}"
+print(MSG.format(PROB_A_Y_B))
+MSG = "Luego, si llueve aumentan las probabilidades de atascos: {0} > {1}"
+print(MSG.format(PROB_A_Y_B, PROB_A))
 print()
 
 # Donde hay que tener en cuenta que, si dos sucesos A y B son independientes
@@ -304,27 +308,27 @@ print()
 # Datos: P(A=5,B=3) = P(A=5|B=3)·P(B=3) = P(A=5)·P(B=3) = 1/6 · 1/6 = 1/36
 
 # Probabilida de sacar un 5 en un dado.
-prob_5 = 1 / 6
-msg = "Probabilida de sacar un 5 en un dado: {0}"
-print(msg.format(prob_5))
+PROB_5 = 1 / 6
+MSG = "Probabilida de sacar un 5 en un dado: {0}"
+print(MSG.format(PROB_5))
 
 # Probabilida de sacar un 3 en un dado
-prob_3 = 1 / 6
-msg = "Probabilida de sacar un 3 en un dado: {0}"
-print(msg.format(prob_3))
+PROB_3 = 1 / 6
+MSG = "Probabilida de sacar un 3 en un dado: {0}"
+print(MSG.format(PROB_3))
 
 # Probabilidad de sacar un 3 y un 5 a la vez en dos dados.
-prob_3_y_5 = prob_3 * prob_5
-msg = "Probabilidad de sacar un 3 y un 5 a la vez en dos dados: {0}"
-print(msg.format(prob_3_y_5))
+PROB_3_Y_5 = PROB_3 * PROB_5
+MSG = "Probabilidad de sacar un 3 y un 5 a la vez en dos dados: {0}"
+print(MSG.format(PROB_3_Y_5))
 
 # Debe ser muy similiar si lo hacemos por el enfoque frecuentista.
-espacio = [(a, b) for a in range(1, 7) for b in range(1, 7)]
-prob_3_y_5 = frecuencia_relativa(espacio_muestral=espacio,
+ESPACIO = [(a, b) for a in range(1, 7) for b in range(1, 7)]
+PROB_3_Y_5 = frecuencia_relativa(espacio_muestral=ESPACIO,
                                  valor=(3, 5),
                                  limite=100000)
-msg = "Muy similar al enfoque frecuentista: {0}"
-print(msg.format(prob_3_y_5))
+MSG = "Muy similar al enfoque frecuentista: {0}"
+print(MSG.format(PROB_3_Y_5))
 print()
 
 # Esta regla se puede ampliar a múltiples sucesos:
@@ -341,7 +345,7 @@ print()
 # las redes bayesianas.
 
 
-# %% --- PROBABILIDAD TOTAL / MARGINAL ---
+# %% --- PROBABILIDAD TOTAL / MARGINAL ----------------------------------------
 
 # Se puede calcular la probabilidad de un evento a partir de las probabilidades
 # conjuntas con el resto de variables, siempre y cuando el resto de variables
@@ -356,32 +360,32 @@ print("***********************************")
 print()
 
 # Probabilida de tener gripe: P(G)
-prob_g = 0.30000
-msg = "Probabilida de tener gripe: {0}"
-print(msg.format(prob_g))
+PROB_G = 0.30000
+MSG = "Probabilida de tener gripe: {0}"
+print(MSG.format(PROB_G))
 
 # Probabilidad de NO tener gripe: P(¬G)
-prob_no_g = 1 - prob_g
-msg = "Probabilidad de NO tener gripe:  {0}"
-print(msg.format(prob_no_g))
+PROB_NO_G = 1 - PROB_G
+MSG = "Probabilidad de NO tener gripe:  {0}"
+print(MSG.format(PROB_NO_G))
 
 # Probabilidad de tener fiebre si se tiene gripe: P(F|G)
-prob_f_tras_g = 0.60000
-msg = "Probabilidad de tener fiebre si se tiene gripe: {0}"
-print(msg.format(prob_f_tras_g))
+PROB_F_TRAS_G = 0.60000
+MSG = "Probabilidad de tener fiebre si se tiene gripe: {0}"
+print(MSG.format(PROB_F_TRAS_G))
 
 # Probabilidad de tener fiebre cuanto NO se tiene gripe: P(F|¬G)
-prob_f_tras_no_g = 0.07000
-msg = "Probabilidad de tener fiebre cuanto NO se tiene gripe: {0}"
-print(msg.format(prob_f_tras_no_g))
+PROB_F_TRAS_NO_G = 0.07000
+MSG = "Probabilidad de tener fiebre cuanto NO se tiene gripe: {0}"
+print(MSG.format(PROB_F_TRAS_NO_G))
 
 # Probabilidad de tener fibre: P(F) = P(F|G)·P(G) + P(F|¬G)·P(¬G)
-proba_f = (prob_f_tras_g * prob_g) + (prob_f_tras_no_g * prob_no_g)
-msg = "Probabilidad de tener fibre: {0}"
-print(msg.format(proba_f))
+PROB_F = (PROB_F_TRAS_G * PROB_G) + (PROB_F_TRAS_NO_G * PROB_NO_G)
+MSG = "Probabilidad de tener fibre: {0}"
+print(MSG.format(PROB_F))
 
 
-# %% --- REGLA DE BAYES ---
+# %% --- REGLA DE BAYES -------------------------------------------------------
 
 # A partir de la regla del producto, reordenando términos en la expresión
 # P(A|B)·P(B) = P(B|A)·P(A), se puede definir la Regla de Bayes:
@@ -395,75 +399,75 @@ print("**********************")
 print()
 
 # Probabilida de tener gripe: P(G)
-prob_g = 0.30000
-msg = "Probabilida de tener gripe: {0}"
-print(msg.format(prob_g))
+PROB_G = 0.30000
+MSG = "Probabilida de tener gripe: {0}"
+print(MSG.format(PROB_G))
 
 # Probabilidad de NO tener gripe: P(¬G)
-prob_no_g = 1 - prob_g
-msg = "Probabilidad de NO tener gripe:  {0}"
-print(msg.format(prob_no_g))
+PROB_NO_G = 1 - PROB_G
+MSG = "Probabilidad de NO tener gripe:  {0}"
+print(MSG.format(PROB_NO_G))
 print()
 
 # Probabilidad de tener fiebre si se tiene gripe: P(F|G)
-prob_f_tras_g = 0.60000
-msg = "Probabilidad de tener fiebre si se tiene gripe: {0}"
-print(msg.format(prob_f_tras_g))
+PROB_F_TRAS_G = 0.60000
+MSG = "Probabilidad de tener fiebre si se tiene gripe: {0}"
+print(MSG.format(PROB_F_TRAS_G))
 
 # Probabilidad de tener fiebre cuanto NO se tiene gripe: P(F|¬G)
-prob_f_tras_no_g = 0.07000
-msg = "Probabilidad de tener fiebre cuanto NO se tiene gripe: {0}"
-print(msg.format(prob_f_tras_no_g))
+PROB_F_TRAS_NO_G = 0.07000
+MSG = "Probabilidad de tener fiebre cuanto NO se tiene gripe: {0}"
+print(MSG.format(PROB_F_TRAS_NO_G))
 
 # Probabilidad de NO tener fiebre si se tiene gripe: P(¬F|G)
-prob_no_f_tras_g = 1 - prob_f_tras_g
-msg = "Probabilidad de NO tener fiebre si se tiene gripe: {0}"
-print(msg.format(prob_no_f_tras_g))
+PROB_NO_F_TRAS_G = 1 - PROB_F_TRAS_G
+MSG = "Probabilidad de NO tener fiebre si se tiene gripe: {0}"
+print(MSG.format(PROB_NO_F_TRAS_G))
 
 # Probabilidad de NO tener fiebre cuanto NO se tiene gripe: P(¬F|¬G)
-prob_no_f_tras_no_g = 1 - prob_f_tras_no_g
-msg = "Probabilidad de NO tener fiebre cuanto NO se tiene gripe: {0}"
-print(msg.format(prob_no_f_tras_no_g))
+PROB_NO_F_TRAS_NO_G = 1 - PROB_F_TRAS_NO_G
+MSG = "Probabilidad de NO tener fiebre cuanto NO se tiene gripe: {0}"
+print(MSG.format(PROB_NO_F_TRAS_NO_G))
 print()
 
 # Probabilidad de tener fibre: P(F) = P(F|G)·P(G) + P(F|¬G)·P(¬G)
-prob_f = (prob_f_tras_g * prob_g) + (prob_f_tras_no_g * prob_no_g)
-msg = "Probabilidad de tener fibre: {0}"
-print(msg.format(prob_f))
+PROB_F = (PROB_F_TRAS_G * PROB_G) + (PROB_F_TRAS_NO_G * PROB_NO_G)
+MSG = "Probabilidad de tener fibre: {0}"
+print(MSG.format(PROB_F))
 
 # Probabilidad de NO tener fibre: P(¬F) = P(¬F|G)·P(G) + P(¬F|¬G)·P(¬G)
-prob_no_f = (prob_no_f_tras_g * prob_g) + (prob_no_f_tras_no_g * prob_no_g)
-msg = "Probabilidad de NO tener fibre: {0}"
-print(msg.format(prob_no_f))
+PROB_NO_F = (PROB_NO_F_TRAS_G * PROB_G) + (PROB_NO_F_TRAS_NO_G * PROB_NO_G)
+MSG = "Probabilidad de NO tener fibre: {0}"
+print(MSG.format(PROB_NO_F))
 print()
 
 # Probabilidad de tener gripe si se tiene fiebre:
 # P(G|F) = P(F|G)·P(G) / P(F)
-prob_g_tras_f = (prob_f_tras_g * prob_g) / prob_f
-msg = "Probabilidad de tener gripe si se tiene fiebre: {0}"
-print(msg.format(prob_g_tras_f))
+PROB_G_TRAS_F = (PROB_F_TRAS_G * PROB_G) / PROB_F
+MSG = "Probabilidad de tener gripe si se tiene fiebre: {0}"
+print(MSG.format(PROB_G_TRAS_F))
 
 # Probabilidad de NO tener gripe si se tiene fiebre:
 # P(¬G|F) = P(F|¬G)·P(¬G) / P(F)
-prob_no_g_tras_f = (prob_f_tras_no_g * prob_no_g) / prob_f
-msg = "Probabilidad de NO tener gripe si se tiene fiebre: {0}"
-print(msg.format(prob_no_g_tras_f))
+PROB_NO_G_TRAS_F = (PROB_F_TRAS_NO_G * PROB_NO_G) / PROB_F
+MSG = "Probabilidad de NO tener gripe si se tiene fiebre: {0}"
+print(MSG.format(PROB_NO_G_TRAS_F))
 
 # Probabilidad de tener gripe si NO se tiene fiebre:
 # P(G|¬F) = P(¬F|G)·P(G) / P(¬F)
-prob_g_tras_no_f = (prob_no_f_tras_g * prob_g) / prob_no_f
-msg = "Probabilidad de tener gripe si NO se tiene fiebre: {0}"
-print(msg.format(prob_g_tras_no_f))
+PROB_G_TRAS_NO_F = (PROB_NO_F_TRAS_G * PROB_G) / PROB_NO_F
+MSG = "Probabilidad de tener gripe si NO se tiene fiebre: {0}"
+print(MSG.format(PROB_G_TRAS_NO_F))
 
 # Probabilidad de NO tener gripe si NO se tiene fiebre:
 # P(¬G|¬F) = P(¬F|¬G)·P(¬G) / P(¬F)
-prob_no_g_tras_no_f = (prob_no_f_tras_no_g * prob_no_g) / prob_no_f
-msg = "Probabilidad de NO tener gripe si NO se tiene fiebre: {0}"
-print(msg.format(prob_no_g_tras_no_f))
+PROB_NO_G_TRAS_NO_F = (PROB_NO_F_TRAS_NO_G * PROB_NO_G) / PROB_NO_F
+MSG = "Probabilidad de NO tener gripe si NO se tiene fiebre: {0}"
+print(MSG.format(PROB_NO_G_TRAS_NO_F))
 print()
 
 
-# %% --- NORMALIZACION ---
+# %% --- NORMALIZACION --------------------------------------------------------
 
 # Para no repetir tantos cálculos, se puede usar la normalización 'alfa':
 # alfa = 1 / P(B) = 1 / sum(P(B|Ai)·P(Ai)) => P(A|B) = alfa·P(B|A)·P(B)
@@ -474,44 +478,44 @@ print()
 
 # Normalización de tener fiebre:
 # 1 / P(F) = 1 / [P(F|G)·P(G) + P(F|¬G)·P(¬G)]
-alfa_f = 1 / prob_f
-msg = "Normalización de tener fiebre: {0}"
-print(msg.format(alfa_f))
+ALFA_F = 1 / PROB_F
+MSG = "Normalización de tener fiebre: {0}"
+print(MSG.format(ALFA_F))
 
 # Normalización de NO tener fiebre:
 # 1 / P(¬F) = 1 / [P(¬F|G)·P(G) + P(¬F|¬G)·P(¬G)]
-alfa_no_f = 1 / prob_no_f
-msg = "Normalización de NO tener fiebre: {0}"
-print(msg.format(alfa_no_f))
+ALFA_NO_F = 1 / PROB_NO_F
+MSG = "Normalización de NO tener fiebre: {0}"
+print(MSG.format(ALFA_NO_F))
 print()
 
 # Probabilidad de tener gripe si se tiene fiebre:
 # P(G|F) = alfaF·P(F|G)·P(G)
-prob_g_tras_f = alfa_f * prob_f_tras_g * prob_g
-msg = "Probabilidad de tener gripe si se tiene fiebre: {0}"
-print(msg.format(prob_g_tras_f))
+PROB_G_TRAS_F = ALFA_F * PROB_F_TRAS_G * PROB_G
+MSG = "Probabilidad de tener gripe si se tiene fiebre: {0}"
+print(MSG.format(PROB_G_TRAS_F))
 
 # Probabilidad de NO tener gripe si se tiene fiebre:
 # P(¬G|F) = alfaF·P(F|¬G)·P(¬G)
-prob_no_g_tras_f = alfa_f * prob_f_tras_no_g * prob_no_g
-msg = "Probabilidad de NO tener gripe si se tiene fiebre: {0}"
-print(msg.format(prob_no_g_tras_f))
+PROB_NO_G_TRAS_F = ALFA_F * PROB_F_TRAS_NO_G * PROB_NO_G
+MSG = "Probabilidad de NO tener gripe si se tiene fiebre: {0}"
+print(MSG.format(PROB_NO_G_TRAS_F))
 
 # Probabilidad de tener gripe si NO se tiene fiebre:
 # P(G|¬F) = alfa¬F·P(¬F|G)·P(G)
-prob_g_tras_no_f = alfa_no_f * prob_no_f_tras_g * prob_g
-msg = "Probabilidad de tener gripe si NO se tiene fiebre: {0}"
-print(msg.format(prob_g_tras_no_f))
+PROB_G_TRAS_NO_F = ALFA_NO_F * PROB_NO_F_TRAS_G * PROB_G
+MSG = "Probabilidad de tener gripe si NO se tiene fiebre: {0}"
+print(MSG.format(PROB_G_TRAS_NO_F))
 
 # Probabilidad de NO tener gripe si NO se tiene fiebre:
 # P(¬G|¬F) = alfa¬F·P(¬F|¬G)·P(¬G)
-prob_no_g_tras_no_f = alfa_no_f * prob_no_f_tras_no_g * prob_no_g
-msg = "Probabilidad de NO tener gripe si NO se tiene fiebre: {0}"
-print(msg.format(prob_no_g_tras_no_f))
+PROB_NO_G_TRAS_NO_F = ALFA_NO_F * PROB_NO_F_TRAS_NO_G * PROB_NO_G
+MSG = "Probabilidad de NO tener gripe si NO se tiene fiebre: {0}"
+print(MSG.format(PROB_NO_G_TRAS_NO_F))
 print()
 
 
-# %% --- PROPIEDADES ÚTILES ---
+# %% --- PROPIEDADES ÚTILES ---------------------------------------------------
 
 # La probabilida de que se haya dado un evento si ya se ha dado, es 1:
 # P(A|A) = 1
