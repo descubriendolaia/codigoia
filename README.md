@@ -6,6 +6,10 @@ Este es el código fuente de los algoritmos explicados en el canal de Youtube
 La mayorí­a del código se ha realizadon con el lenguaje de programación Python,
 más concretamente con la versión 3 de dicho lenguaje.
 
+Los archivos que terminan con "_simple" son los que se han mostrado en los
+vídeos del canal. Estos se diferencia de los que no llevan esa terminación
+en que no incluyen comentarios, no muestran log y su código es menos seguro.
+
 ## Novedades
 
 Poco a poco se irán subiendo nuevos algoritmos y códigos de ejemplo.
@@ -19,7 +23,7 @@ Pero, en breve, se irán subiendo más en cada uno de los enfoques.
 
 ## Descripción de las Subcarpetas
 
-* **agentes.py** Ejemplos de agentes tabla y reactivos (los más simples).
+* **agentes.py** Ejemplos de agentes tabla y reactivos (los más sencillos).
 * **busqueda/** Incluye los algoritmos del enfoque de búsqueda en grafos.
   * **grafos.py** Definición de un problema para búsqueda en grafos.
   * **informada.py** Algoritmos de búsqueda informada en grafos.

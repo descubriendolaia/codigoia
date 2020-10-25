@@ -27,7 +27,7 @@ DEFINICIONES:
         - La negación de una sentencia.
         - La conjunción, disyunción, condicional o bicondicional de dos o más
           sentencias.
-    - Implicación: sentencia condicial de tipo "si-entonces" (>>, <<).
+    - Implicación: sentencia condicial de tipo 'si-entonces' (>>, <<).
 
 NOTACIÓN BNF:
     sentencia → sentencia-atómica | sentencia-compleja
@@ -40,6 +40,9 @@ NOTACIÓN BNF:
         | sentencia << sentencia
         | sentencia iif sentencia
     PRECEDENCIA:  not, and, or, >>, <<, ==
+
+Curso del canal de Youtube 'Descubriendo la Inteligencia Artificial'.
+Autor: JL Iglesias Feria (jl.iglesias.feria@gmail.com)
 """
 
 
@@ -1137,7 +1140,7 @@ class Razonamiento:
 
 # %% --- MAIN -----------------------------------------------------------------
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Ejemplos de lógica de proposiciones.
 
     print()
@@ -1146,9 +1149,9 @@ if __name__ == "__main__":
     print("-----------------")
     print()
     # Definimos las proposiciones
-    P = Variable("P")
-    Q = Variable("Q")
-    R = Variable("R")
+    P = Variable('P')
+    Q = Variable('Q')
+    R = Variable('R')
     VARIABLES = [variable.nombre for variable in [P, Q, R]]
     print("Variables: {0}".format(VARIABLES))
     print()
@@ -1343,7 +1346,7 @@ if __name__ == "__main__":
     print("---------------------")
     print()
     # Cambiamos la P por una T
-    T = Variable("T")
+    T = Variable('T')
     sustituida = compleja1.sustituye(P, T)
     sustituida.ver_tabla_verdad()
 

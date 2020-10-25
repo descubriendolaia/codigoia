@@ -46,7 +46,6 @@ algoritmos que se verán durante el resto de curso.
 
 Curso del canal de Youtube 'Descubriendo la Inteligencia Artificial'.
 Autor: JL Iglesias Feria (jl.iglesias.feria@gmail.com)
-Fecha: 01/10/2019
 """
 
 
@@ -104,7 +103,7 @@ class AgenteTabla:
 
         # Agregamos la percepción a la lista de percepciones.
         if len(self.percepciones) != 0:
-            self.percepciones += ","
+            self.percepciones += ','
         self.percepciones += percepcion
 
         # Buscamos la acción a realizar en la tabla según las percepciones
@@ -240,6 +239,7 @@ class AgenteBasadoModelos:
         if clave not in self.modelo.keys():
             self.estado = self.estado_inicial
             self.accion = self.accion_inicial
+            self.ult_accion = self.accion_inicial
             return self.accion_inicial
         self.estado = self.modelo[clave]
 
@@ -247,6 +247,7 @@ class AgenteBasadoModelos:
         if self.estado not in self.reglas.keys():
             self.estado = self.estado_inicial
             self.accion = self.accion_inicial
+            self.ult_accion = self.accion_inicial
             return self.accion_inicial
         accion = self.reglas[self.estado]
 
@@ -259,7 +260,7 @@ class AgenteBasadoModelos:
 
 # %% --- MAIN -----------------------------------------------------------------
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Ejemplos de agentes tabla y reactivos.
 
     # Indicamos los algoritmos que queremos lanzar.
@@ -284,22 +285,22 @@ if __name__ == "__main__":
         # La primera percepción debe ser: moneda
         # Hay que alternar la moneda con los códigos.
         # Puede servir hasta un máximo de 2 bebidas.
-        ACCIONES = {"moneda": "pedir-codigo",
-                    "moneda,a1": "servir-bebida1",
-                    "moneda,a2": "servir-bebida2",
-                    "moneda,a3": "servir-bebida3",
-                    "moneda,a1,moneda": "pedir-codigo",
-                    "moneda,a2,moneda": "pedir-codigo",
-                    "moneda,a3,moneda": "pedir-codigo",
-                    "moneda,a1,moneda,a1": "servir-bebida1",
-                    "moneda,a1,moneda,a2": "servir-bebida2",
-                    "moneda,a1,moneda,a3": "servir-bebida3",
-                    "moneda,a2,moneda,a1": "servir-bebida1",
-                    "moneda,a2,moneda,a2": "servir-bebida2",
-                    "moneda,a2,moneda,a3": "servir-bebida3",
-                    "moneda,a3,moneda,a1": "servir-bebida1",
-                    "moneda,a3,moneda,a2": "servir-bebida2",
-                    "moneda,a3,moneda,a3": "servir-bebida3"}
+        ACCIONES = {'moneda': 'pedir-codigo',
+                    'moneda,a1': 'servir-bebida1',
+                    'moneda,a2': 'servir-bebida2',
+                    'moneda,a3': 'servir-bebida3',
+                    'moneda,a1,moneda': 'pedir-codigo',
+                    'moneda,a2,moneda': 'pedir-codigo',
+                    'moneda,a3,moneda': 'pedir-codigo',
+                    'moneda,a1,moneda,a1': 'servir-bebida1',
+                    'moneda,a1,moneda,a2': 'servir-bebida2',
+                    'moneda,a1,moneda,a3': 'servir-bebida3',
+                    'moneda,a2,moneda,a1': 'servir-bebida1',
+                    'moneda,a2,moneda,a2': 'servir-bebida2',
+                    'moneda,a2,moneda,a3': 'servir-bebida3',
+                    'moneda,a3,moneda,a1': 'servir-bebida1',
+                    'moneda,a3,moneda,a2': 'servir-bebida2',
+                    'moneda,a3,moneda,a3': 'servir-bebida3'}
 
         # Máquina expendedora como agente tabla
         print("-- Agente Tabla: Máquina Expendedora -- ")
@@ -310,7 +311,7 @@ if __name__ == "__main__":
         while PERCEPCION:
             # Obtenemos la acción a realizar.
             ACCION = expendedora.actuar(percepcion=PERCEPCION,
-                                        accion_basica="esperar")
+                                        accion_basica='esperar')
 
             # La mostramos
             print(ACCION)
@@ -329,12 +330,12 @@ if __name__ == "__main__":
         print("***** AGENTE REACTIVO SIMPLE *****")
         print("**********************************")
 
-        # Conjunto de reglas de tipo "si-entonces" para una máquina expendedora
+        # Conjunto de reglas de tipo 'si-entonces' para una máquina expendedora
         # excesivamente simple (no funcionará nada bien, ¡bebida gratis!)
-        REGLAS = {"moneda": "pedir-codigo",
-                  "a1": "servir-bebida1",
-                  "a2": "servir-bebida2",
-                  "a3": "servir-bebida3"}
+        REGLAS = {'moneda': 'pedir-codigo',
+                  'a1': 'servir-bebida1',
+                  'a2': 'servir-bebida2',
+                  'a3': 'servir-bebida3'}
 
         # Máquina expendedora como agente reactivo simple.
         print("-- Agente Reactivo Simple: Máquina Expendedora -- ")
@@ -345,7 +346,7 @@ if __name__ == "__main__":
         while PERCEPCION:
             # Obtenemos la acción a realizar.
             ACCION = expendedora.actuar(percepcion=PERCEPCION,
-                                        accion_basica="esperar")
+                                        accion_basica='esperar')
 
             # La mostramos
             print(ACCION)
@@ -370,27 +371,27 @@ if __name__ == "__main__":
         # En cada estado, al ejecutar una acción, se llega a un nuevo estado.
         # Las aciones posibles son: pedir-moneda, pedir-codigo, reiniciar.
         # Las percepciones posibles son: moneda, a1, a2, a3, servida.
-        MODELO = {("sin-moneda", "pedir-moneda", "moneda"): "con-moneda",
-                  ("con-moneda", "pedir-codigo", "a1"): "a1-servida",
-                  ("con-moneda", "pedir-codigo", "a2"): "a2-servida",
-                  ("con-moneda", "pedir-codigo", "a3"): "a3-servida",
-                  ("a1-servida", "esperar", "servida"): "sin-moneda",
-                  ("a2-servida", "esperar", "servida"): "sin-moneda",
-                  ("a3-servida", "esperar", "servida"): "sin-moneda"}
+        MODELO = {('sin-moneda', 'pedir-moneda', 'moneda'): 'con-moneda',
+                  ('con-moneda', 'pedir-codigo', 'a1'): 'a1-servida',
+                  ('con-moneda', 'pedir-codigo', 'a2'): 'a2-servida',
+                  ('con-moneda', 'pedir-codigo', 'a3'): 'a3-servida',
+                  ('a1-servida', 'esperar', 'servida'): 'sin-moneda',
+                  ('a2-servida', 'esperar', 'servida'): 'sin-moneda',
+                  ('a3-servida', 'esperar', 'servida'): 'sin-moneda'}
 
         # En cada estado hay una nueva acción a ejecutar.
-        REGLAS = {"sin-moneda": "pedir-moneda",
-                  "con-moneda": "pedir-codigo",
-                  "a1-servida": "esperar",
-                  "a2-servida": "esperar",
-                  "a3-servida": "esperar"}
+        REGLAS = {'sin-moneda': 'pedir-moneda',
+                  'con-moneda': 'pedir-codigo',
+                  'a1-servida': 'esperar',
+                  'a2-servida': 'esperar',
+                  'a3-servida': 'esperar'}
 
         # Máquina expendedora como agente reactivo basado en modelos.
         print("-- Agente Reactivo Basado en Modelos: Máquina Expendedora -- ")
         expendedora = AgenteBasadoModelos(modelo=MODELO,
                                           reglas=REGLAS,
-                                          estado_inicial="sin-moneda",
-                                          accion_inicial="pedir-moneda")
+                                          estado_inicial='sin-moneda',
+                                          accion_inicial='pedir-moneda')
 
         # Pedimos percepciones hasta que indique cadena vacía.
         PERCEPCION = input("Indicar Percepcion:")

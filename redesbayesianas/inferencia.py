@@ -5,6 +5,9 @@ Ejemplos de Inferencia en Probabilidad.
 
 Ejemplos de inferencias realizadas mediante probabilidad y que luego serán la
 base de las redes bayesianas.
+
+Curso del canal de Youtube 'Descubriendo la Inteligencia Artificial'.
+Autor: JL Iglesias Feria (jl.iglesias.feria@gmail.com)
 """
 
 
@@ -61,17 +64,17 @@ print()
 
 # Probabilidad de tener fiebre si se tiene gripe: P(F|G)
 P_FIEBRE_TRAS_GRIPE = 0.89231
-MSG = "Probabilidad de tener fiebre si se tienen gripe: {0}"
+MSG = "Probabilidad de tener fiebre si se tiene gripe: {0}"
 print(MSG.format(P_FIEBRE_TRAS_GRIPE))
 
 # Probabilidad de tener dolor de garganta si se tiene gripe: P(D|G)
 P_GARGANTA_TRAS_GRIPE = 0.94213
-MSG = "Probabilidad de tener dolor de garganta si se tienen gripe: {0}"
+MSG = "Probabilidad de tener dolor de garganta si se tiene gripe: {0}"
 print(MSG.format(P_GARGANTA_TRAS_GRIPE))
 
 # Probabilida de tener ambas cosas si se tiene gripe: P(F|G)·P(D|G)
 P_FIEBRE_GARGANTA_TRAS_GRIPE = P_FIEBRE_TRAS_GRIPE * P_GARGANTA_TRAS_GRIPE
-MSG = "Probabilidad de tener ambos si se tienen gripe: {0}"
+MSG = "Probabilidad de tener ambos si se tiene gripe: {0}"
 print(MSG.format(P_FIEBRE_GARGANTA_TRAS_GRIPE))
 
 

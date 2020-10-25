@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Métodos de inferencia en lógica de proposiciones."""
+"""
+Métodos de inferencia en lógica de proposiciones.
+
+Curso del canal de Youtube 'Descubriendo la Inteligencia Artificial'.
+Autor: JL Iglesias Feria (jl.iglesias.feria@gmail.com)
+"""
 from motor import Proposicion
 from motor import Constante
 from motor import Variable
@@ -149,7 +154,7 @@ def deduccion(*premisas,
 
 # %% --- MAIN -----------------------------------------------------------------
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Ejemplos de inferencia en lógica de proposiciones.
 
     # Poder medir los tiempos.
@@ -161,10 +166,10 @@ if __name__ == "__main__":
     print("-----------------")
     print()
     # Definimos las proposiciones
-    P = Variable("P")
-    Q = Variable("Q")
-    R = Variable("R")
-    S = Variable("S")
+    P = Variable('P')
+    Q = Variable('Q')
+    R = Variable('R')
+    S = Variable('S')
     VARIABLES = [variable.nombre for variable in [P, Q, R]]
     print("Variables: {0}".format(VARIABLES))
     print()

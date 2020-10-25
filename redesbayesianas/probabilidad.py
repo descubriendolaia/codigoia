@@ -5,6 +5,9 @@ Bases de la Propabilidad.
 
 Ejemplos de las bases de la probabilidad que luego se usarán en las redes
 bayesianas.
+
+Curso del canal de Youtube 'Descubriendo la Inteligencia Artificial'.
+Autor: JL Iglesias Feria (jl.iglesias.feria@gmail.com)
 """
 import random
 
@@ -76,17 +79,17 @@ print(MSG.format(PROB_1_OR_3_OR_5))
 # Un experimento puede ser sacar un número entero aleatorio entre 1 y 10.
 # El espacio muestral son todos los números enteros que hay entre 1 y 10.
 # Un evento simple es sacar una vez un número aleatorio:
-evento = random.randint(1, 10)
+EVENTO = random.randint(1, 10)
 print("***************")
 print("*** EVENTOS ***")
 print("***************")
 print()
 print("--- Evento Simple ---")
 MSG = "1 nº aleatorio entre 1 y 10: {0}"
-print(MSG.format(evento))
+print(MSG.format(EVENTO))
 
 # En este caso, la probabilidad de que salga cualquier número es la misma,
-# por lo que se dice que son "equiprobables".
+# por lo que se dice que son 'equiprobables'.
 print("Probabilidad: 1/10 para todos (equiprobable)")
 print()
 

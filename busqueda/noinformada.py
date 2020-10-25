@@ -5,6 +5,9 @@ Diferentes algoritmos de búsqueda no informada en grafos.
 
 La principal diferencia es el tipo de lista a usar para almacenar el siguiente
 nodo a visitar (FIFO, LIFO, prioridad, etc.).
+
+Curso del canal de Youtube 'Descubriendo la Inteligencia Artificial'.
+Autor: JL Iglesias Feria (jl.iglesias.feria@gmail.com)
 """
 from grafos import Accion
 from grafos import Estado
@@ -22,7 +25,7 @@ def anchura(
     Búsqueda en grafos primero en anchura (breadth-first search).
 
     Se expande al completo cada nivel antes de expandir los del siguiente.
-    Para ello, se usará una "Lista FIFO".
+    Para ello, se usará una 'Lista FIFO'.
     Este algoritmo no tiene en cuenta los costes.
 
     Argumentos:
@@ -32,7 +35,7 @@ def anchura(
 
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve "None".
+              Si no encuentra solución, devuelve 'None'.
     """
     # Comprobaciones.
     if not problema:
@@ -166,7 +169,7 @@ def coste_uniforme(
 
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve "None".
+              Si no encuentra solución, devuelve 'None'.
     """
     # Comprobaciones.
     if not problema:
@@ -307,7 +310,7 @@ def profundidad(
     Se expande el nodo raíz, luego uno de sus hijos, luego uno de los hijos
     del hijo hasta llegar a un nodo hoja. Si no hay solución, se retrocede
     y se prueba con el siguiente hijo.
-    Para ello, se usará una "Lista LIFO".
+    Para ello, se usará una 'Lista LIFO'.
     Este algoritmo no tiene en cuenta los costes.
 
     Argumentos:
@@ -317,7 +320,7 @@ def profundidad(
 
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve "None".
+              Si no encuentra solución, devuelve 'None'.
     """
     # Comprobaciones.
     if not problema:
@@ -434,7 +437,7 @@ def profundidad(
 def profundidad_recursiva(
         problema,
         limite=None,
-        tipo_limite="profundidad",
+        tipo_limite='profundidad',
         log=False,
         paso_a_paso=False):
     """
@@ -456,14 +459,14 @@ def profundidad_recursiva(
 
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve "None".
+              Si no encuentra solución, devuelve 'None'.
     """
     # Comprobaciones.
     if not problema:
         raise ValueError("No se indicó una definición de problema a resolver")
     if isinstance(limite, int) and limite < 0:
         raise ValueError("Debe indicar un límite positivo")
-    if tipo_limite not in ("profundidad", "coste"):
+    if tipo_limite not in ('profundidad', 'coste'):
         raise ValueError("El tipo de límite debe ser 'profundidad' o 'coste'")
 
     # Obtenemos el nodo raíz.
@@ -507,7 +510,7 @@ def _bpp_recursiva(nodo,
 
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve "None".
+              Si no encuentra solución, devuelve 'None'.
     """
     # Mostramos la situación actual.
     if log:
@@ -650,7 +653,7 @@ def profundidad_iterativa(
 
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve "None".
+              Si no encuentra solución, devuelve 'None'.
     """
     # Comprobaciones.
     if not problema:
@@ -679,7 +682,7 @@ def profundidad_iterativa(
         # Lanzamos la recursiva con cada uno de los límites.
         resultado = profundidad_recursiva(problema=problema,
                                           limite=i,
-                                          tipo_limite="profundidad",
+                                          tipo_limite='profundidad',
                                           log=log,
                                           paso_a_paso=paso_a_paso)
 
@@ -715,7 +718,7 @@ def coste_iterativo(
 
     Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
               él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve "None".
+              Si no encuentra solución, devuelve 'None'.
     """
     # Comprobaciones.
     if not problema:
@@ -744,7 +747,7 @@ def coste_iterativo(
         # Lanzamos la recursiva con cada uno de los límites.
         resultado = profundidad_recursiva(problema=problema,
                                           limite=i,
-                                          tipo_limite="coste",
+                                          tipo_limite='coste',
                                           log=log,
                                           paso_a_paso=paso_a_paso)
 
@@ -1241,7 +1244,7 @@ def muestra_solucion(objetivo=None,
 
 # %% --- MAIN -----------------------------------------------------------------
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Ejemplos de búsqueda no informada en grafos.
 
     # Poder medir los tiempos.
@@ -1255,155 +1258,155 @@ if __name__ == "__main__":
     # Esta búsqueda se realizará con varios algoritmos para ver diferencias.
 
     # Definimos las acciones (direcciones de puntos cardinales).
-    accN = Accion("N")
-    accS = Accion("S")
-    accE = Accion("E")
-    accO = Accion("O")
-    accNE = Accion("NE")
-    accNO = Accion("NO")
-    accSE = Accion("SE")
-    accSO = Accion("SO")
+    accN = Accion('N')
+    accS = Accion('S')
+    accE = Accion('E')
+    accO = Accion('O')
+    accNE = Accion('NE')
+    accNO = Accion('NO')
+    accSE = Accion('SE')
+    accSO = Accion('SO')
 
     # Definimos los estados (ciudades).
-    lanoi = Estado(nombre="Lanoi",
+    lanoi = Estado(nombre='Lanoi',
                    acciones=[accNE])
-    nohoi = Estado(nombre="Nohoi",
+    nohoi = Estado(nombre='Nohoi',
                    acciones=[accSO, accNO, accNE])
-    ruun = Estado(nombre="Ruun",
+    ruun = Estado(nombre='Ruun',
                   acciones=[accNO, accNE, accE, accSE])
-    milos = Estado(nombre="Milos",
+    milos = Estado(nombre='Milos',
                    acciones=[accO, accSO, accN])
-    ghiido = Estado(nombre="Ghiido",
+    ghiido = Estado(nombre='Ghiido',
                     acciones=[accN, accE, accSE])
-    kuart = Estado(nombre="Kuart",
+    kuart = Estado(nombre='Kuart',
                    acciones=[accO, accSO, accNE])
-    boomon = Estado(nombre="Boomon",
+    boomon = Estado(nombre='Boomon',
                     acciones=[accN, accSO])
-    goorum = Estado(nombre="Goorum",
+    goorum = Estado(nombre='Goorum',
                     acciones=[accO, accS])
-    shiphos = Estado(nombre="Shiphos",
+    shiphos = Estado(nombre='Shiphos',
                      acciones=[accO, accE])
-    nokshos = Estado(nombre="Nokshos",
+    nokshos = Estado(nombre='Nokshos',
                      acciones=[accNO, accS, accE])
-    pharis = Estado(nombre="Pharis",
+    pharis = Estado(nombre='Pharis',
                     acciones=[accNO, accSO])
-    khamin = Estado(nombre="Khamin",
+    khamin = Estado(nombre='Khamin',
                     acciones=[accSE, accNO, accO])
-    tarios = Estado(nombre="Tarios",
+    tarios = Estado(nombre='Tarios',
                     acciones=[accO, accNO, accNE, accE])
-    peranna = Estado(nombre="Peranna",
+    peranna = Estado(nombre='Peranna',
                      acciones=[accO, accE])
-    khandan = Estado(nombre="Khandan",
+    khandan = Estado(nombre='Khandan',
                      acciones=[accO, accS])
-    tawa = Estado(nombre="Tawa",
+    tawa = Estado(nombre='Tawa',
                   acciones=[accSO, accSE, accNE])
-    theer = Estado(nombre="Theer",
+    theer = Estado(nombre='Theer',
                    acciones=[accSO, accSE])
-    roria = Estado(nombre="Roria",
+    roria = Estado(nombre='Roria',
                    acciones=[accNO, accSO, accE])
-    kosos = Estado(nombre="Kosos",
+    kosos = Estado(nombre='Kosos',
                    acciones=[accO])
 
     # Definimos las acciones de cada nodo (viajes entre ciudades).
-    acciones = {"Lanoi": {"NE": nohoi},
-                "Nohoi": {"SO": lanoi,
-                          "NO": ruun,
-                          "NE": milos},
-                "Ruun": {"NO": ghiido,
-                         "NE": kuart,
-                         "E": milos,
-                         "SE": nohoi},
-                "Milos": {"O": ruun,
-                          "SO": nohoi,
-                          "N": khandan},
-                "Ghiido": {"N": nokshos,
-                           "E": kuart,
-                           "SE": ruun},
-                "Kuart": {"O": ghiido,
-                          "SO": ruun,
-                          "NE": boomon},
-                "Boomon": {"N": goorum,
-                           "SO": kuart},
-                "Goorum": {"O": shiphos,
-                           "S": boomon},
-                "Shiphos": {"O": nokshos,
-                            "E": goorum},
-                "Nokshos": {"NO": pharis,
-                            "S": ghiido,
-                            "E": shiphos},
-                "Pharis": {"NO": khamin,
-                           "SO": nokshos},
-                "Khamin": {"SE": pharis,
-                           "NO": tawa,
-                           "O": tarios},
-                "Tarios": {"O": khamin,
-                           "NO": tawa,
-                           "NE": roria,
-                           "E": peranna},
-                "Peranna": {"O": tarios,
-                            "E": khandan},
-                "Khandan": {"O": peranna,
-                            "S": milos},
-                "Tawa": {"SO": khamin,
-                         "SE": tarios,
-                         "NE": theer},
-                "Theer": {"SO": tawa,
-                          "SE": roria},
-                "Roria": {"NO": theer,
-                          "SO": tarios,
-                          "E": kosos},
-                "Kosos": {"O": roria}}
+    acciones = {'Lanoi': {'NE': nohoi},
+                'Nohoi': {'SO': lanoi,
+                          'NO': ruun,
+                          'NE': milos},
+                'Ruun': {'NO': ghiido,
+                         'NE': kuart,
+                         'E': milos,
+                         'SE': nohoi},
+                'Milos': {'O': ruun,
+                          'SO': nohoi,
+                          'N': khandan},
+                'Ghiido': {'N': nokshos,
+                           'E': kuart,
+                           'SE': ruun},
+                'Kuart': {'O': ghiido,
+                          'SO': ruun,
+                          'NE': boomon},
+                'Boomon': {'N': goorum,
+                           'SO': kuart},
+                'Goorum': {'O': shiphos,
+                           'S': boomon},
+                'Shiphos': {'O': nokshos,
+                            'E': goorum},
+                'Nokshos': {'NO': pharis,
+                            'S': ghiido,
+                            'E': shiphos},
+                'Pharis': {'NO': khamin,
+                           'SO': nokshos},
+                'Khamin': {'SE': pharis,
+                           'NO': tawa,
+                           'O': tarios},
+                'Tarios': {'O': khamin,
+                           'NO': tawa,
+                           'NE': roria,
+                           'E': peranna},
+                'Peranna': {'O': tarios,
+                            'E': khandan},
+                'Khandan': {'O': peranna,
+                            'S': milos},
+                'Tawa': {'SO': khamin,
+                         'SE': tarios,
+                         'NE': theer},
+                'Theer': {'SO': tawa,
+                          'SE': roria},
+                'Roria': {'NO': theer,
+                          'SO': tarios,
+                          'E': kosos},
+                'Kosos': {'O': roria}}
 
     # Definimos los costes de aplicar cada acción en cada estado.
     # En este caso, son los kilómetros por carretera entre ciudades.
-    costes = {"Lanoi": {"NE": 42},
-              "Nohoi": {"SO": 42,
-                        "NO": 21,
-                        "NE": 95},
-              "Ruun": {"NO": 88,
-                       "NE": 16,
-                       "E": 90,
-                       "SE": 21},
-              "Milos": {"O": 90,
-                        "SO": 95,
-                        "N": 133},
-              "Ghiido": {"N": 17,
-                         "E": 92,
-                         "SE": 88},
-              "Kuart": {"O": 92,
-                        "SO": 16,
-                        "NE": 83},
-              "Boomon": {"N": 8,
-                         "SO": 83},
-              "Goorum": {"O": 59,
-                         "S": 8},
-              "Shiphos": {"O": 71,
-                          "E": 59},
-              "Nokshos": {"NO": 5,
-                          "S": 17,
-                          "E": 71},
-              "Pharis": {"NO": 29,
-                         "SO": 5},
-              "Khamin": {"SE": 29,
-                         "NO": 121,
-                         "O": 98},
-              "Tarios": {"O": 98,
-                         "NO": 83,
-                         "NE": 57,
-                         "E": 82},
-              "Peranna": {"O": 82,
-                          "E": 44},
-              "Khandan": {"O": 44,
-                          "S": 133},
-              "Tawa": {"SO": 121,
-                       "SE": 83,
-                       "NE": 11},
-              "Theer": {"SO": 11,
-                        "SE": 36},
-              "Roria": {"NO": 36,
-                        "SO": 57,
-                        "E": 104},
-              "Kosos": {"O": 104}}
+    costes = {'Lanoi': {'NE': 42},
+              'Nohoi': {'SO': 42,
+                        'NO': 21,
+                        'NE': 95},
+              'Ruun': {'NO': 88,
+                       'NE': 16,
+                       'E': 90,
+                       'SE': 21},
+              'Milos': {'O': 90,
+                        'SO': 95,
+                        'N': 133},
+              'Ghiido': {'N': 17,
+                         'E': 92,
+                         'SE': 88},
+              'Kuart': {'O': 92,
+                        'SO': 16,
+                        'NE': 83},
+              'Boomon': {'N': 8,
+                         'SO': 83},
+              'Goorum': {'O': 59,
+                         'S': 8},
+              'Shiphos': {'O': 71,
+                          'E': 59},
+              'Nokshos': {'NO': 5,
+                          'S': 17,
+                          'E': 71},
+              'Pharis': {'NO': 29,
+                         'SO': 5},
+              'Khamin': {'SE': 29,
+                         'NO': 121,
+                         'O': 98},
+              'Tarios': {'O': 98,
+                         'NO': 83,
+                         'NE': 57,
+                         'E': 82},
+              'Peranna': {'O': 82,
+                          'E': 44},
+              'Khandan': {'O': 44,
+                          'S': 133},
+              'Tawa': {'SO': 121,
+                       'SE': 83,
+                       'NE': 11},
+              'Theer': {'SO': 11,
+                        'SE': 36},
+              'Roria': {'NO': 36,
+                        'SO': 57,
+                        'E': 104},
+              'Kosos': {'O': 104}}
 
     # Definimos varios problemas.
     problema_1 = Problema(estado_inicial=lanoi,
