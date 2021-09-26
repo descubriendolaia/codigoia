@@ -680,8 +680,7 @@ def _brpm_recursiva(problema,
     while True:
         # Obtenemos el hijo con menor valor.
         objetivos = problema.estados_objetivos
-        mejor = nodo.hijo_mejor(metrica='alfa',
-                                objetivos=objetivos)
+        mejor = nodo.hijo_mejor(problema, metrica='alfa')
 
         # Si el valor del mejor hijo supera el límite, retrocedemos.
         if mejor.alfa > limite:
@@ -697,8 +696,7 @@ def _brpm_recursiva(problema,
         alfa = limite
         if nodo.hijos:
             # Nos quedamos con el siguiente mejor.
-            alternativa = nodo.hijo_mejor(metrica='alfa',
-                                          objetivos=objetivos)
+            alternativa = nodo.hijo_mejor(problema, metrica='alfa')
 
             # Entre el valor de la alternativa y el límite, cogemos el menor.
             alfa = min(limite, alternativa.alfa)

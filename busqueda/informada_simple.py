@@ -171,14 +171,14 @@ def _brpm_recursiva(problema, nodo, limite, explorados):
         return None, problema.infinito
     while True:
         objetivos = problema.estados_objetivos
-        mejor = nodo.hijo_mejor('alfa', objetivos=objetivos)
+        mejor = nodo.hijo_mejor(problema, metrica='alfa')
         if mejor.alfa > limite:
             return None, mejor.alfa
         hijos = nodo.hijos.copy()
         nodo.hijos.remove(mejor)
         alfa = limite
         if nodo.hijos:
-            alternativa = nodo.hijo_mejor('alfa', objetivos=objetivos)
+            alternativa = nodo.hijo_mejor(problema, metrica='alfa')
             alfa = min(limite, alternativa.alfa)
         nodo.hijos = hijos
         resultado, mejor.alfa = _brpm_recursiva(problema, mejor, alfa,

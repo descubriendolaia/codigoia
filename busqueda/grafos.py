@@ -429,9 +429,9 @@ class Nodo:
         return self.hijos
 
     def hijo_mejor(self,
+                   problema,
                    metrica='valor',
-                   criterio='menor',
-                   objetivos=None):
+                   criterio='menor'):
         """
         Devuelve hijo con menor cantidad según un criterio.
 
@@ -439,11 +439,10 @@ class Nodo:
         objetivos indicados (necesita que ya se hayan expandido antes).
 
         Argumentos:
+        - problema: definición del problema para obtener objetivos.
         - metrica: con qué cantidad se calculará el menor. Los valores posibles
                    son 'valor', 'heuristica', 'coste', 'alfa', 'beta'.
         - criterio: si se obtendrá el 'menor' o el 'mayor'.
-        - objetivos: estados objetivos para los que hacer los cálculos en caso
-                     de que la métrica no sea 'coste', 'alfa' o 'beta'.
 
         Devuelve: referencia al hijo con menor cantidad.
         """
@@ -454,8 +453,9 @@ class Nodo:
         if criterio not in ('menor', 'mayor'):
             msg = "Se indicó un criterio desconocido: {0}"
             raise ValueError(msg.format(criterio))
-        if metrica in ('valor', 'heuristica') and not objetivos:
-            raise ValueError("No se indicó objetivo")
+        if (metrica in ('valor', 'heuristica') and
+               (not problema or not problema.estados_objetivos)):
+            raise ValueError("No se indicó objetivos en el problema")
 
         # Si no hay hijos aun, terminamos.
         if not self.hijos:
@@ -467,12 +467,12 @@ class Nodo:
         # Recorremos el resto de hijos para ver si alguno es mejor.
         for hijo in self.hijos:
             # Por cada uno de los objetivos.
-            for objetivo in objetivos:
+            for objetivo in problema.estados_objetivos:
                 # Si nos piden el valor
                 if metrica == 'valor':
                     # Si este hijo es mejor que el actual, lo cogemos.
-                    valor_hijo = hijo.valores[objetivo]
-                    valor_mejor = mejor.valores[objetivo]
+                    valor_hijo = hijo.valores[objetivo.nombre]
+                    valor_mejor = mejor.valores[objetivo.nombre]
                     if(criterio == 'menor' and
                        valor_hijo < valor_mejor):
                         mejor = hijo
@@ -482,8 +482,8 @@ class Nodo:
                 # Si nos piden la heurística.
                 elif metrica == 'heuristica':
                     # Si este hijo es mejor que el actual, lo cogemos.
-                    heuristica_hijo = hijo.heuristicas[objetivo]
-                    heuristica_mejor = mejor.heuristicas[objetivo]
+                    heuristica_hijo = hijo.heuristicas[objetivo.nombre]
+                    heuristica_mejor = mejor.heuristicas[objetivo.nombre]
                     if(criterio == 'menor' and
                        heuristica_hijo < heuristica_mejor):
                         mejor = hijo
@@ -723,7 +723,7 @@ if __name__ == '__main__':
     print([hijo.estado.nombre for hijo in hijos_faro])
 
     # Mostramos el hijo con menor valor.
-    menor = nodo_faro.hijo_mejor(objetivos=['Barcelona'])
+    menor = nodo_faro.hijo_mejor(problema=problema_faro_bcn)
     print("Hijo Menor Valor: {0} - {1}".format(
             menor.estado.nombre,
             menor.valores['Barcelona']))
@@ -737,8 +737,8 @@ if __name__ == '__main__':
     acciones_sevilla = problema_faro_bcn.acciones['Sevilla']
     nodo_sevilla = Nodo(estado=este_sevilla,
                         accion=accE,
-                        acciones=acciones_sevilla)
-    nodo_sevilla.padre = nodo_faro
+                        acciones=acciones_sevilla,
+                        padre=nodo_faro)
     nodo_faro.hijos.append(nodo_sevilla)
 
     # Indicamos el coste de camino recorrido.
@@ -759,7 +759,7 @@ if __name__ == '__main__':
     print([hijo.estado.nombre for hijo in hijos_sevilla])
 
     # Mostramos el hijo con menor valor.
-    menor = nodo_sevilla.hijo_mejor(objetivos=['Barcelona'])
+    menor = nodo_sevilla.hijo_mejor(problema=problema_faro_bcn)
     print("Hijo Menor Valor: {0} - {1}".format(
             menor.estado.nombre,
             menor.valores['Barcelona']))
@@ -773,8 +773,8 @@ if __name__ == '__main__':
     acciones_madrid = problema_faro_bcn.acciones['Madrid']
     nodo_madrid = Nodo(estado=norte_madrid,
                        accion=accN,
-                       acciones=acciones_madrid)
-    nodo_madrid.padre = nodo_sevilla
+                       acciones=acciones_madrid,
+                       padre=nodo_sevilla)
     nodo_sevilla.hijos.append(nodo_madrid)
 
     # Indicamos el coste de camino recorrido.
@@ -799,7 +799,7 @@ if __name__ == '__main__':
     print([hijo.estado.nombre for hijo in hijos_madrid])
 
     # Mostramos el hijo con menor valor.
-    menor = nodo_madrid.hijo_mejor(objetivos=['Barcelona'])
+    menor = nodo_madrid.hijo_mejor(problema=problema_faro_bcn)
     print("Hijo Menor Valor: {0} - {1}".format(
             menor.estado.nombre,
             menor.valores['Barcelona']))
@@ -813,8 +813,8 @@ if __name__ == '__main__':
     acciones_valencia = problema_faro_bcn.acciones['Valencia']
     nodo_valencia = Nodo(estado=este_valencia,
                          accion=accE,
-                         acciones=acciones_valencia)
-    nodo_valencia.padre = nodo_madrid
+                         acciones=acciones_valencia,
+                         padre=nodo_madrid)
     nodo_madrid.hijos.append(nodo_valencia)
 
     # Indicamos el coste de camino recorrido.
@@ -835,7 +835,7 @@ if __name__ == '__main__':
     print([hijo.estado.nombre for hijo in hijos_valencia])
 
     # Mostramos el hijo con menor valor.
-    menor = nodo_valencia.hijo_mejor(objetivos=['Barcelona'])
+    menor = nodo_valencia.hijo_mejor(problema=problema_faro_bcn)
     print("Hijo Menor Valor: {0} - {1}".format(
             menor.estado.nombre,
             menor.valores['Barcelona']))
@@ -849,8 +849,8 @@ if __name__ == '__main__':
     acc_barcelona = problema_faro_bcn.acciones['Barcelona']
     nodo_barcelona = Nodo(estado=norte_barcelona,
                           accion=accN,
-                          acciones=acc_barcelona)
-    nodo_barcelona.padre = nodo_valencia
+                          acciones=acc_barcelona,
+                          padre=nodo_valencia)
     nodo_valencia.hijos.append(nodo_barcelona)
 
     # Indicamos el coste de camino recorrido.
