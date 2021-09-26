@@ -56,7 +56,7 @@ class Problema:
             for estado in self.acciones.keys():
                 self.heuristicas[estado] = {}
                 for objetivo in self.estados_objetivos:
-                    self.heuristicas[estado][objetivo] = infinito
+                    self.heuristicas[estado][objetivo] = self.infinito
 
     def __str__(self):
         """Representación en modo texto del problema."""
@@ -132,7 +132,7 @@ class Nodo:
             acciones_nuevo = {}
             if nuevo_estado.nombre in problema.acciones.keys():
                 acciones_nuevo = problema.acciones[nuevo_estado.nombre]
-            hijo = Nodo(nuevo_estado, accion_hijo, acciones_nuevo)
+            hijo = Nodo(nuevo_estado, accion_hijo, acciones_nuevo, self)
             coste = self.padre.coste if self.padre else 0
             coste += problema.coste_accion(self.estado, accion_hijo)
             hijo.coste = coste
@@ -140,7 +140,6 @@ class Nodo:
             hijo.valores = {estado: heuristica + hijo.coste
                             for estado, heuristica
                             in hijo.heuristicas.items()}
-            hijo.padre = self
             self.hijos.append(hijo)
         return self.hijos
 
@@ -348,7 +347,7 @@ if __name__ == '__main__':
     problema_faro_bcn = Problema(faro, [barcelona], viajes, kms, distancias)
 
     acciones_faro = problema_faro_bcn.acciones['Faro']
-    nodo_faro = Nodo(faro, acciones_faro)
+    nodo_faro = Nodo(faro, None, acciones_faro, None)
     hijos_faro = nodo_faro.expandir(problema_faro_bcn)
     print("Hijos de {0}:".format(nodo_faro.estado.nombre))
     print([hijo.estado.nombre for hijo in hijos_faro])
@@ -356,11 +355,11 @@ if __name__ == '__main__':
     print("Hijo Menor Valor: {0} - {1}".format(
             menor.estado.nombre,
             menor.valores['Barcelona']))
+
     este_sevilla = problema_faro_bcn.resultado(faro, accE)
     print("{0}".format(este_sevilla.nombre))
     acciones_sevilla = problema_faro_bcn.acciones['Sevilla']
-    nodo_sevilla = Nodo(este_sevilla, accE, acciones_sevilla)
-    nodo_sevilla.padre = nodo_faro
+    nodo_sevilla = Nodo(este_sevilla, accE, acciones_sevilla, nodo_faro)
     nodo_faro.hijos.append(nodo_sevilla)
     kms = problema_faro_bcn.coste_camino(nodo_sevilla)
     print("Coste: {0}".format(kms))
@@ -375,11 +374,11 @@ if __name__ == '__main__':
     print("Hijo Menor Valor: {0} - {1}".format(
             menor.estado.nombre,
             menor.valores['Barcelona']))
+
     norte_madrid = problema_faro_bcn.resultado(nodo_sevilla.estado, accN)
     print("{0}".format(norte_madrid.nombre))
     acciones_madrid = problema_faro_bcn.acciones['Madrid']
-    nodo_madrid = Nodo(norte_madrid, accN, acciones_madrid)
-    nodo_madrid.padre = nodo_sevilla
+    nodo_madrid = Nodo(norte_madrid, accN, acciones_madrid, nodo_sevilla)
     nodo_sevilla.hijos.append(nodo_madrid)
     kms = problema_faro_bcn.coste_camino(nodo_madrid)
     print("Coste: {0}".format(kms))
@@ -396,11 +395,11 @@ if __name__ == '__main__':
     print("Hijo Menor Valor: {0} - {1}".format(
             menor.estado.nombre,
             menor.valores['Barcelona']))
+
     este_valencia = problema_faro_bcn.resultado(nodo_madrid.estado, accE)
     print("{0}".format(este_valencia.nombre))
     acciones_valencia = problema_faro_bcn.acciones['Valencia']
-    nodo_valencia = Nodo(este_valencia, accE, acciones_valencia)
-    nodo_valencia.padre = nodo_madrid
+    nodo_valencia = Nodo(este_valencia, accE, acciones_valencia, nodo_madrid)
     nodo_madrid.hijos.append(nodo_valencia)
     kms = problema_faro_bcn.coste_camino(nodo_valencia)
     print("Coste: {0}".format(kms))
@@ -415,11 +414,11 @@ if __name__ == '__main__':
     print("Hijo Menor Valor: {0} - {1}".format(
             menor.estado.nombre,
             menor.valores['Barcelona']))
+
     norte_barcelona = problema_faro_bcn.resultado(nodo_valencia.estado, accN)
     print("{0}".format(norte_barcelona.nombre))
     acc_barcelona = problema_faro_bcn.acciones['Barcelona']
-    nodo_barcelona = Nodo(norte_barcelona, accN, acc_barcelona)
-    nodo_barcelona.padre = nodo_valencia
+    nodo_barcelona = Nodo(norte_barcelona, accN, acc_barcelona, nodo_valencia)
     nodo_valencia.hijos.append(nodo_barcelona)
     kms = problema_faro_bcn.coste_camino(nodo_barcelona)
     print("Coste: {0}".format(kms))
