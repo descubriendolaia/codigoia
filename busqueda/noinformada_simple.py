@@ -58,15 +58,17 @@ def coste_uniforme(problema):
             accion = Accion(nombre_accion)
             hijo = crea_nodo_hijo(problema, nodo, accion)
             estados_frontera = [nodo.estado for nodo in frontera]
-            if hijo.estado in explorados or hijo.estado in estados_frontera:
+            if(hijo.estado not in explorados and
+               hijo.estado not in estados_frontera):
+                frontera.append(hijo)
+            else:
                 buscar = [nodo for nodo in frontera
                           if nodo.estado == hijo.estado]
                 if buscar:
                     if hijo.coste < buscar[0].coste:
                         indice = frontera.index(buscar[0])
                         frontera[indice] = hijo
-            else:
-                frontera.append(hijo)
+            frontera.sort(key=lambda nodo: nodo.coste)
 
 
 # %%
@@ -238,11 +240,10 @@ def crea_nodo_hijo(problema, padre, accion):
     acciones_nuevo = {}
     if nuevo_estado.nombre in problema.acciones.keys():
         acciones_nuevo = problema.acciones[nuevo_estado.nombre]
-    hijo = Nodo(nuevo_estado, accion, acciones_nuevo)
+    hijo = Nodo(nuevo_estado, accion, acciones_nuevo, padre)
     coste = padre.coste
     coste += problema.coste_accion(padre.estado, accion)
     hijo.coste = coste
-    hijo.padre = padre
     padre.hijos.append(hijo)
     return hijo
 

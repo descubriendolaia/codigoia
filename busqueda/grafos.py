@@ -405,7 +405,8 @@ class Nodo:
             # Creamos el nodo hijo.
             hijo = Nodo(estado=nuevo_estado,
                         accion=accion_hijo,
-                        acciones=acciones_nuevo)
+                        acciones=acciones_nuevo,
+                        padre=self)
 
             # Calculamos el coste del camino (para ahorrar cálculos)
             coste = self.padre.coste if self.padre else 0
@@ -422,7 +423,6 @@ class Nodo:
                             in hijo.heuristicas.items()}
 
             # Lo agregamos al nodo actual como hijo.
-            hijo.padre = self
             self.hijos.append(hijo)
 
         # Devolvemos los hijos generados.
@@ -846,10 +846,10 @@ if __name__ == '__main__':
     print("{0}".format(norte_barcelona.nombre))
 
     # Agregamos Barcelona a los hijos del nodo Valencia.
-    acc_barcelona = problema_faro_bcn.acciones['Barcelona']
+    acciones_barcelona = problema_faro_bcn.acciones['Barcelona']
     nodo_barcelona = Nodo(estado=norte_barcelona,
                           accion=accN,
-                          acciones=acc_barcelona,
+                          acciones=acciones_barcelona,
                           padre=nodo_valencia)
     nodo_valencia.hijos.append(nodo_barcelona)
 

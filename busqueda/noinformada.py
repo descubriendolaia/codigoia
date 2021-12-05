@@ -254,7 +254,14 @@ def coste_uniforme(
             # y tampoco está en la frontera.
             estados_frontera = [nodo.estado
                                 for nodo in frontera]
-            if hijo.estado in explorados or hijo.estado in estados_frontera:
+            if(hijo.estado not in explorados and
+               hijo.estado not in estados_frontera):
+                # Lo agregamos a la frontera.
+                frontera.append(hijo)
+                if log:
+                    msg = "   Añade Frontera: {0}"
+                    print(msg.format(nombre_hijo))
+            else:
                 # Miramos si el estado está en algún nodo de la frontera.
                 buscar = [nodo
                           for nodo in frontera
@@ -286,12 +293,9 @@ def coste_uniforme(
                         # Indicamos que no se sustituye.
                         if log:
                             print("      Sustituido: NO")
-            else:
-                # Lo agregamos a la frontera.
-                frontera.append(hijo)
-                if log:
-                    msg = "   Añade Frontera: {0}"
-                    print(msg.format(nombre_hijo))
+
+            # Reordenadmos la lista según el coste de cada nodo.
+            frontera.sort(key=lambda nodo: nodo.coste)
 
         # Si nos piden ir paso a paso.
         if paso_a_paso:
@@ -1107,16 +1111,14 @@ def crea_nodo_hijo(problema,
     # Creamos el nodo hijo.
     hijo = Nodo(estado=nuevo_estado,
                 accion=accion,
-                acciones=acciones_nuevo)
+                acciones=acciones_nuevo,
+                padre=padre)
 
     # Calculamos el coste del camino (para ahorrar cálculos)
     coste = padre.coste
     coste += problema.coste_accion(estado=padre.estado,
                                    accion=accion)
     hijo.coste = coste
-
-    # Le asignamos el nodo padre.
-    hijo.padre = padre
 
     # Agregamos el hijo.
     padre.hijos.append(hijo)

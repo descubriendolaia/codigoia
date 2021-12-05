@@ -19,6 +19,10 @@ class Accion:
         """Representación en modo texto de la acción."""
         return self.nombre
 
+    def __repr__(self):
+        """Representación de la acción para depuración."""
+        return "Accion({0})".format(self)
+
 
 # %%
 class Estado:
@@ -31,6 +35,10 @@ class Estado:
     def __str__(self):
         """Representación en modo texto del estado."""
         return self.nombre
+
+    def __repr__(self):
+        """Representación del estado para depuración."""
+        return "Estado({0})".format(self)
 
 
 # %%
@@ -63,6 +71,10 @@ class Problema:
         msg = "Estado Inicial: {0}; Objetivos: {1}"
         return msg.format(self.estado_inicial.nombre,
                           self.estados_objetivos)
+
+    def __repr__(self):
+        """Representación del problema para depuración."""
+        return "Problema({0})".format(self)
 
     def es_objetivo(self, estado):
         """Indica si el estado indicado es uno de los estados objetivos."""
@@ -118,6 +130,10 @@ class Nodo:
     def __str__(self):
         """Representación en modo texto del nodo."""
         return self.estado.nombre
+
+    def __repr__(self):
+        """Representación del nodo para depuración."""
+        return "Nodo({0})".format(self)
 
     def expandir(self, problema):
         """Crea todos los nodos hijos aplicando todas las acciones posibles."""
@@ -417,8 +433,8 @@ if __name__ == '__main__':
 
     norte_barcelona = problema_faro_bcn.resultado(nodo_valencia.estado, accN)
     print("{0}".format(norte_barcelona.nombre))
-    acc_barcelona = problema_faro_bcn.acciones['Barcelona']
-    nodo_barcelona = Nodo(norte_barcelona, accN, acc_barcelona, nodo_valencia)
+    acciones_barcelona = problema_faro_bcn.acciones['Barcelona']
+    nodo_barcelona = Nodo(norte_barcelona, accN, acciones_barcelona, nodo_valencia)
     nodo_valencia.hijos.append(nodo_barcelona)
     kms = problema_faro_bcn.coste_camino(nodo_barcelona)
     print("Coste: {0}".format(kms))
