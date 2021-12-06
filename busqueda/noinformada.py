@@ -175,12 +175,8 @@ def __coste_recursivo(nodo, problema, limite, explorados, soluciones):
 # %%
 def bidireccional(problema):
     """Búsqueda que comienza en los nodos inicial y final a la vez."""
-    estado_i = problema.estado_inicial.nombre
-    acciones_i = problema.acciones[estado_i] if problema.acciones else {}
-    raiz_i = Nodo(problema.estado_inicial, acciones=acciones_i)
-    estado_f = problema.estados_objetivos[0].nombre
-    acciones_f = problema.acciones[estado_f] if problema.acciones else {}
-    raiz_f = Nodo(problema.estados_objetivos[0], acciones=acciones_f)
+    raiz_i = crea_nodo_raiz(problema, problema.estado_inicial)
+    raiz_f = crea_nodo_raiz(problema, problema.estados_objetivos[0])
     if problema.es_objetivo(raiz_i.estado):
         return (raiz_i, raiz_f)
     if problema.estado_inicial == raiz_f.estado:
@@ -196,28 +192,16 @@ def bidireccional(problema):
         nodo_f = frontera_f.pop(0)
         explorados_i.append(nodo_i)
         explorados_f.append(nodo_f)
-        for nombre_accion in nodo_i.acciones.keys():
-            accion = Accion(nombre_accion)
-            hijo = crea_nodo_hijo(problema, nodo_i, accion)
-            estados_frontera = [nodo.estado for nodo in frontera_i]
-            estados_explorados = [nodo.estado for nodo in explorados_i]
-            if(hijo.estado not in estados_explorados and
-               hijo.estado not in estados_frontera):
-                es_objetivo = problema.es_objetivo(hijo.estado)
-                if es_objetivo:
-                    return (hijo, None)
-                frontera_i.append(hijo)
-        for nombre_accion in nodo_f.acciones.keys():
-            accion = Accion(nombre_accion)
-            hijo = crea_nodo_hijo(problema, nodo_f, accion)
-            estados_frontera = [nodo.estado for nodo in frontera_f]
-            estados_explorados = [nodo.estado for nodo in explorados_f]
-            if(hijo.estado not in estados_explorados and
-               hijo.estado not in estados_frontera):
-                es_objetivo = problema.es_objetivo(hijo.estado)
-                if es_objetivo:
-                    return (None, hijo)
-                frontera_f.append(hijo)
+        resultado_i = amplia_frontera(problema, nodo_i,
+                                      problema.estados_objetivos[0],
+                                      frontera_i, explorados_i)
+        if resultado_i:
+            return (resultado_i, None)
+        resultado_f = amplia_frontera(problema, nodo_f,
+                                      problema.estado_inicial,
+                                      frontera_f, explorados_f)
+        if resultado_f:
+            return (None, resultado_f)
         estados_i = set(nodo.estado for nodo in frontera_i)
         estados_f = set(nodo.estado for nodo in frontera_f)
         estados_i = estados_i.union(set(nodo.estado for nodo in explorados_i))
@@ -238,10 +222,24 @@ def bidireccional(problema):
             return (comun_i, comun_f)
 
 
+def amplia_frontera(problema, nodo, objetivo, frontera, explorados):
+    for nombre_accion in nodo.acciones.keys():
+        accion = Accion(nombre_accion)
+        hijo = crea_nodo_hijo(problema, nodo, accion)
+        estados_frontera = [nodo.estado for nodo in frontera]
+        estados_explorados = [nodo.estado for nodo in explorados]
+        if(hijo.estado not in estados_explorados and
+           hijo.estado not in estados_frontera):
+            if objetivo == hijo.estado:
+                return hijo
+            frontera.append(hijo)
+    return None
+
+
 # %%
-def crea_nodo_raiz(problema):
+def crea_nodo_raiz(problema, estado=None):
     """Crea y devuelve el nodo raíz del problema indicado."""
-    estado_raiz = problema.estado_inicial
+    estado_raiz = estado or problema.estado_inicial
     acciones_raiz = {}
     if estado_raiz.nombre in problema.acciones.keys():
         acciones_raiz = problema.acciones[estado_raiz.nombre]
