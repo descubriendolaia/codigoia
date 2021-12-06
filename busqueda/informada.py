@@ -3,11 +3,6 @@
 """
 Diferentes algoritmos de búsqueda informada en grafos.
 
-Parten del algoritmo de búsqueda en grafos de coste uniforme y lo amplían.
-Aparte del coste del camino, se usará una función heurística que estimará el
-coste hasta los objetivos y calculará un valor por el cual se escogerá el
-siguiente nodo a expandir y visitar.
-
 Curso del canal de Youtube 'Descubriendo la Inteligencia Artificial'.
 Autor: JL Iglesias Feria (jl.iglesias.feria@gmail.com)
 """
@@ -17,123 +12,30 @@ from grafos import Nodo
 from grafos import Problema
 
 
-# %% --- VORAZ / GRADIENTE / MÁXIMA PENDIENTE ---------------------------------
-
-def voraz(
-        problema,
-        log=False,
-        paso_a_paso=False):
-    """
-    Búsqueda en grafos voraz (greedy search).
-
-    No tiene en cuenta el coste del camino recorrido, sólo la heurística.
-
-    Argumentos:
-    - problema: definición del problema a resolver.
-    - log: Si se mostrarán los pasos que se van realizando.
-    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
-
-    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
-              él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve 'None'.
-    """
-    # Comprobaciones.
-    if not problema:
-        raise ValueError("No se indicó una definición de problema a resolver")
-
-    # Obtenemos el nodo raíz.
-    raiz = crea_nodo_raiz(problema=problema)
-
-    # Definimos la frontera y agregamos el nodo raíz.
+# %%
+def voraz(problema):
+    """Búsqueda en grafos voraz (greedy search)."""
+    raiz = crea_nodo_raiz(problema)
     frontera = [raiz, ]
-
-    # Definimos el conjunto de los estados explorados.
     explorados = set()
-
-    # Entramos en el bucle principal.
     while True:
-        # Mostramos la frontera y explorada.
-        if log:
-            log_frontera = [nodo.estado.nombre
-                            for nodo in frontera]
-            log_explorados = [estado.nombre
-                              for estado in explorados]
-            print("----- NUEVO CICLO -----")
-            msg = "Frontera: {0}"
-            print(msg.format(log_frontera))
-            msg = "Explorados: {0}"
-            print(msg.format(log_explorados))
-
-        # Si frontera está vacía, terminamos.
         if not frontera:
             return None
-
-        # Obtenemos el siguiente nodo.
-        nodo = sacar_siguiente(frontera=frontera,
-                               metrica='heuristica',
+        nodo = sacar_siguiente(frontera, 'heuristica',
                                objetivos=problema.estados_objetivos)
-        if log:
-            msg = "Nodo: {0}"
-            print(msg.format(nodo.estado.nombre))
-            log_frontera = [nodo.estado.nombre
-                            for nodo in frontera]
-            msg = "Frontera: {0}"
-            print(msg.format(log_frontera))
-
-        # Miramos si el nodo es ya un objetivo.
-        if problema.es_objetivo(estado=nodo.estado):
-            if log:
-                msg = "Objetivo: {0}"
-                print(msg.format(nodo.estado.nombre))
+        if problema.es_objetivo(nodo.estado):
             return nodo
-
-        # Agregamos su estado al conjunto de explorados.
         explorados.add(nodo.estado)
-        if log:
-            log_explorados = [estado.nombre
-                              for estado in explorados]
-            msg = "Explorados: {0}"
-            print(msg.format(log_explorados))
-
-        # Si el nodo no tiene acciones, pasamos al siguiente.
         if not nodo.acciones:
-            if log:
-                print("No hay Acciones")
             continue
-
-        # Por cada una de las acciones que se pueden hacer.
         for nombre_accion in nodo.acciones.keys():
-            # Indicamos la acción.
-            if log:
-                msg = "   Accion: {0}"
-                print(msg.format(nombre_accion))
-
-            # Creamos un nodo hijo.
-            accion = Accion(nombre=nombre_accion)
-            hijo = crea_nodo_hijo(problema=problema,
-                                  padre=nodo,
-                                  accion=accion)
-            nombre_hijo = hijo.estado.nombre
-            if log:
-                msg = "   Hijo: {0}"
-                print(msg.format(nombre_hijo))
-
-            # Si el estado del hijo no ha sido explorado
-            # y tampoco está en la frontera.
-            estados_frontera = [nodo.estado
-                                for nodo in frontera]
+            accion = Accion(nombre_accion)
+            hijo = crea_nodo_hijo(problema, nodo, accion)
+            estados_frontera = [nodo.estado for nodo in frontera]
             if hijo.estado in explorados or hijo.estado in estados_frontera:
-                # Miramos si el estado está en algún nodo de la frontera.
-                buscar = [nodo
-                          for nodo in frontera
+                buscar = [nodo for nodo in frontera
                           if nodo.estado == hijo.estado]
                 if buscar:
-                    # Indicamos que el estado ya existía en la frontera.
-                    if log:
-                        msg = "   Estado En Frontera: {0}"
-                        print(msg.format(nombre_hijo))
-
-                    # Obtenemos las mejores heurísticas.
                     heuristic_hijo = [hijo.heuristicas[objetivo.nombre]
                                       for objetivo
                                       in problema.estados_objetivos]
@@ -142,156 +44,37 @@ def voraz(
                                         in problema.estados_objetivos]
                     minimo_hijo = min(heuristic_hijo)
                     minimo_buscar = min(heuristic_buscar)
-
-                    # Si tiene mejor heurística el hijo que el de la frontera.
-                    if log:
-                        msg = "      Heurística Hijo: {0}"
-                        print(msg.format(minimo_hijo))
-                        msg = "      Heurística Frontera: {0}"
-                        print(msg.format(minimo_buscar))
                     if minimo_hijo < minimo_buscar:
-                        # Indicamos que vamos a sustituir el nodo frontera.
-                        if log:
-                            print("      Sustituido: SÍ")
-
-                        # Sustituimos el de la frontera por el del hijo.
                         indice = frontera.index(buscar[0])
                         frontera[indice] = hijo
-                        if log:
-                            msg = "      Nueva Heurística: {0}"
-                            print(msg.format(minimo_hijo))
-                    else:
-                        # Indicamos que no se sustituye.
-                        if log:
-                            print("      Sustituido: NO")
             else:
-                # Lo agregamos a la frontera.
                 frontera.append(hijo)
-                if log:
-                    msg = "   Añade Frontera: {0}"
-                    print(msg.format(nombre_hijo))
-
-        # Si nos piden ir paso a paso.
-        if paso_a_paso:
-            input("Pulsa la tecla 'Enter' para continuar.")
 
 
-# %% --- A* (A ESTRELLA) ------------------------------------------------------
-
-def a_estrella(
-        problema,
-        log=False,
-        paso_a_paso=False):
-    """
-    Búsqueda A* (que se lee 'A estrella').
-
-    Tiene en cuenta tanto el coste de camino recorrido como la heurística.
-
-    Argumentos:
-    - problema: definición del problema a resolver.
-    - log: Si se mostrarán los pasos que se van realizando.
-    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
-
-    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
-              él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve 'None'.
-    """
-    # Comprobaciones.
-    if not problema:
-        raise ValueError("No se indicó una definición de problema a resolver")
-
-    # Obtenemos el nodo raíz.
-    raiz = crea_nodo_raiz(problema=problema)
-
-    # Definimos la frontera y agregamos el nodo raíz.
+# %%
+def a_estrella(problema):
+    """Búsqueda A* (que se lee 'A estrella')."""
+    raiz = crea_nodo_raiz(problema)
     frontera = [raiz, ]
-
-    # Definimos el conjunto de los estados explorados.
     explorados = set()
-
-    # Entramos en el bucle principal.
     while True:
-        # Mostramos la frontera y explorada.
-        if log:
-            log_frontera = [nodo.estado.nombre
-                            for nodo in frontera]
-            log_explorados = [estado.nombre
-                              for estado in explorados]
-            print("----- NUEVO CICLO -----")
-            msg = "Frontera: {0}"
-            print(msg.format(log_frontera))
-            msg = "Explorados: {0}"
-            print(msg.format(log_explorados))
-
-        # Si frontera está vacía, terminamos.
         if not frontera:
             return None
-
-        # Obtenemos el siguiente nodo.
-        nodo = sacar_siguiente(frontera=frontera,
-                               metrica='valor',
+        nodo = sacar_siguiente(frontera, 'valor',
                                objetivos=problema.estados_objetivos)
-        if log:
-            msg = "Nodo: {0}"
-            print(msg.format(nodo.estado.nombre))
-            log_frontera = [nodo.estado.nombre
-                            for nodo in frontera]
-            msg = "Frontera: {0}"
-            print(msg.format(log_frontera))
-
-        # Miramos si el nodo es ya un objetivo.
-        if problema.es_objetivo(estado=nodo.estado):
-            if log:
-                msg = "Objetivo: {0}"
-                print(msg.format(nodo.estado.nombre))
+        if problema.es_objetivo(nodo.estado):
             return nodo
-
-        # Agregamos su estado al conjunto de explorados.
         explorados.add(nodo.estado)
-        if log:
-            log_explorados = [estado.nombre
-                              for estado in explorados]
-            msg = "Explorados: {0}"
-            print(msg.format(log_explorados))
-
-        # Si el nodo no tiene acciones, pasamos al siguiente.
         if not nodo.acciones:
-            if log:
-                print("No hay Acciones")
             continue
-
-        # Por cada una de las acciones que se pueden hacer.
         for nombre_accion in nodo.acciones.keys():
-            # Indicamos la acción.
-            if log:
-                msg = "   Accion: {0}"
-                print(msg.format(nombre_accion))
-
-            # Creamos un nodo hijo.
-            accion = Accion(nombre=nombre_accion)
-            hijo = crea_nodo_hijo(problema=problema,
-                                  padre=nodo,
-                                  accion=accion)
-            nombre_hijo = hijo.estado.nombre
-            if log:
-                msg = "   Hijo: {0}"
-                print(msg.format(nombre_hijo))
-
-            # Si el estado del hijo ha sido explorado o está en la frontera.
-            estados_frontera = [nodo.estado
-                                for nodo in frontera]
+            accion = Accion(nombre_accion)
+            hijo = crea_nodo_hijo(problema, nodo, accion)
+            estados_frontera = [nodo.estado for nodo in frontera]
             if hijo.estado in explorados or hijo.estado in estados_frontera:
-                # Miramos si el estado está en algún nodo de la frontera.
-                buscar = [nodo
-                          for nodo in frontera
+                buscar = [nodo for nodo in frontera
                           if nodo.estado == hijo.estado]
                 if buscar:
-                    # Indicamos que el estado ya existía en la frontera.
-                    if log:
-                        msg = "   Estado En Frontera: {0}"
-                        print(msg.format(nombre_hijo))
-
-                    # Obtenemos los mejores valores.
                     valores_hijo = [hijo.valores[objetivo.nombre]
                                     for objetivo
                                     in problema.estados_objetivos]
@@ -300,543 +83,134 @@ def a_estrella(
                                       in problema.estados_objetivos]
                     minimo_hijo = min(valores_hijo)
                     minimo_buscar = min(valores_buscar)
-
-                    # Si tiene mejor valor el hijo que el de la frontera.
-                    if log:
-                        msg = "      Valor Hijo: {0}"
-                        print(msg.format(minimo_hijo))
-                        msg = "      Valor Frontera: {0}"
-                        print(msg.format(minimo_buscar))
                     if minimo_hijo < minimo_buscar:
-                        # Indicamos que vamos a sustituir el nodo frontera.
-                        if log:
-                            print("      Sustituido: SÍ")
-
-                        # Sustituimos el de la frontera por el del hijo.
                         indice = frontera.index(buscar[0])
                         frontera[indice] = hijo
-                        if log:
-                            msg = "      Nuevo Valor: {0}"
-                            print(msg.format(minimo_hijo))
-                    else:
-                        # Indicamos que no se sustituye.
-                        if log:
-                            print("      Sustituido: NO")
             else:
-                # Lo agregamos a la frontera.
                 frontera.append(hijo)
-                if log:
-                    msg = "   Añade Frontera: {0}"
-                    print(msg.format(nombre_hijo))
-
-        # Si nos piden ir paso a paso.
-        if paso_a_paso:
-            input("Pulsa la tecla 'Enter' para continuar.")
 
 
-# %% --- A* ITERATIVA ---------------------------------------------------------
-
-def a_estrella_iterativa(
-        problema,
-        nodo=None,
-        limite=0,
-        explorados=None,
-        log=False,
-        paso_a_paso=False):
-    """
-    Búsqueda A* iterativa que buscará hasta un límite máximo.
-
-    Argumentos:
-    - problema: definición del problema a resolver.
-    - nodo: nodo a partir del cual realizar la búsqueda. Si no se indica, se
-            cogerá el nodo raíz del problema.
-    - limite: valor máximo hasta el que explorar. Si no se indica, será el
-              valor que tenga el problema como infinito.
-    - explorados: conjunto de los estados ya explorados.
-    - log: Si se mostrarán los pasos que se van realizando.
-    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
-
-    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
-              él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve 'None'.
-    """
-    # Comprobaciones.
-    if not problema:
-        raise ValueError("No se indicó una definición de problema a resolver")
-
-    # Si no indican nodo, cogemos la raíz del problema.
+# %%
+def a_estrella_iterativa(problema, nodo=None, limite=0, explorados=None):
+    """Búsqueda A* iterativa que buscará hasta un límite máximo."""
     if not nodo:
-        nodo = crea_nodo_raiz(problema=problema)
-
-    # Si no hay explorados, creamos el conjunto.
+        nodo = crea_nodo_raiz(problema)
     if explorados is None:
         explorados = set()
     else:
-        # Agregamos su estado al conjunto de explorados.
         explorados.add(nodo.estado)
-        if log:
-            log_explorados = [estado.nombre
-                              for estado in explorados]
-            msg = "Explorados: {0}"
-            print(msg.format(log_explorados))
-
-    # Si no indican límite, cogemos el infinito del problema.
     if limite <= 0:
         limite = problema.infinito
-
-    # Mostramos información si nos lo piden.
-    if log:
-        msg = "----- NUEVO CICLO: LÍMITE {0} -----"
-        print(msg.format(limite))
-        msg = "Nodo: {0}"
-        print(msg.format(nodo.estado.nombre))
-
-    # Si el valor del nodo supera el límite, devolvemos el valor
     valor_nodo = min([nodo.valores[objetivo.nombre]
                       for objetivo in problema.estados_objetivos])
-    if log:
-        msg = "Valor Mínimo: {0}"
-        print(msg.format(valor_nodo))
     if valor_nodo > limite:
-        if log:
-            msg = "Límite Superado: {0} > {1}"
-            print(msg.format(valor_nodo,
-                             limite))
         return None, valor_nodo
-
-    # Miramos si el nodo es ya un objetivo.
-    if problema.es_objetivo(estado=nodo.estado):
-        if log:
-            msg = "Objetivo: {0}"
-            print(msg.format(nodo.estado.nombre))
+    if problema.es_objetivo(nodo.estado):
         return nodo, limite
-
-    # Si el nodo no tiene acciones, pasamos al siguiente.
     if not nodo.acciones:
-        if log:
-            print("No hay Acciones")
         return None, limite
-
-    # Indicará el hijo con menor valor.
     minimo = problema.infinito
-
-    # Por cada una de las acciones que se pueden hacer.
     for nombre_accion in nodo.acciones.keys():
-        # Indicamos la acción.
-        if log:
-            msg = "   Accion: {0}"
-            print(msg.format(nombre_accion))
-
-        # Creamos un nodo hijo.
-        accion = Accion(nombre=nombre_accion)
-        hijo = crea_nodo_hijo(problema=problema,
-                              padre=nodo,
-                              accion=accion)
-        nombre_hijo = hijo.estado.nombre
-        if log:
-            msg = "   Hijo: {0}"
-            print(msg.format(nombre_hijo))
-
-        # Si el estado del hijo no ha sido explorado
-        if hijo.estado in explorados:
-            # Indicamos que ese estado ya ha sido explorado.
-            if log:
-                msg = "   {0} ya ha sido explorado"
-                print(msg.format(hijo.estado.nombre))
-        else:
-            # Si nos piden ir paso a paso.
-            if paso_a_paso:
-                input("Pulsa la tecla 'Enter' para continuar.")
-
-            # Lanzamos la búsqueda desde el hijo.
-            nod_hijo, lim_hijo = a_estrella_iterativa(problema=problema,
-                                                      nodo=hijo,
-                                                      limite=limite,
-                                                      explorados=explorados,
-                                                      log=log,
-                                                      paso_a_paso=paso_a_paso)
-
-            # Si devuelve un nodo, es la solución.
+        accion = Accion(nombre_accion)
+        hijo = crea_nodo_hijo(problema, nodo, accion)
+        if hijo.estado not in explorados:
+            nod_hijo, lim_hijo = a_estrella_iterativa(problema, hijo,
+                                                      limite, explorados)
             if nod_hijo:
                 return nod_hijo, lim_hijo
-
-            # Si el límite es menor al mínimo, lo cogemos.
             if lim_hijo < minimo:
                 minimo = lim_hijo
-                if log:
-                    msg = "Nuevo Mínimo: {0}"
-                    print(msg.format(minimo))
-
-    # Devolvemos el mínimo como nuevo límite.
     return None, minimo
 
 
-# %% --- IDA* -----------------------------------------------------------------
-
-def ida_estrella(
-        problema,
-        log=False,
-        paso_a_paso=False):
-    """
-    Búsqueda IDA* (Iterative Deepening A*).
-
-    Es una mejora de A* en la que iremos aumentando progresivamente el
-    límite máximo del valor.
-
-    Argumentos:
-    - problema: definición del problema a resolver.
-    - log: Si se mostrarán los pasos que se van realizando.
-    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
-
-    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
-              él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve 'None'.
-    """
-    # Comprobaciones.
-    if not problema:
-        raise ValueError("No se indicó una definición de problema a resolver")
-
-    # Obtenemos el nodo raíz.
-    raiz = crea_nodo_raiz(problema=problema)
-
-    # Como límite inicial, cogeremos la heurística del nodo raíz ya que, como
-    # mínimo, la solución está esa distancia.
+# %%
+def ida_estrella(problema):
+    """Búsqueda IDA* (Iterative Deepening A*)."""
+    raiz = crea_nodo_raiz(problema)
     limite = min([raiz.heuristicas[objetivo.nombre]
                   for objetivo in problema.estados_objetivos])
-    if log:
-        msg = "Límite Inicial: {0}"
-        print(msg.format(limite))
-
-    # Entramos en el bucle principal.
     while True:
-        # Indicamos que vamos a empezar el ciclo.
-        if log:
-            msg = "===== EMPEZAMOS: LÍMITE {0} ====="
-            print(msg.format(limite))
-
-        # Definimos el conjunto de los estados explorados.
         explorados = set()
-        if log:
-            print("Explorados reiniciado")
-
-        # Probamos con ese límite.
-        nodo, limite = a_estrella_iterativa(problema=problema,
-                                            nodo=raiz,
-                                            limite=limite,
-                                            explorados=explorados,
-                                            log=log,
-                                            paso_a_paso=paso_a_paso)
-
-        # Si devuelve un nodo, es la solución.
+        nodo, limite = a_estrella_iterativa(problema, raiz, limite,
+                                            explorados)
         if nodo:
             return nodo
-
-        # Si devuelve un límite infinito, no hay solución.
         if limite == problema.infinito:
             return None
 
 
-# %% --- RECURSIVA PRIMERO EL MEJOR -------------------------------------------
-
-def recursiva_primero_mejor(
-        problema,
-        log=False,
-        paso_a_paso=False):
-    """
-    Búsqueda recursiva primero el mejor (Recursive Best-First Search).
-
-    Ampliación de A* donde a cada llamada recursiva se le pasa un coste límite
-    que será el coste estimado del mejor camino alternativo (hermano del nodo
-    escogido).
-
-    Argumentos:
-    - problema: definición del problema a resolver.
-    - log: Si se mostrarán los pasos que se van realizando.
-    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
-
-    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
-              él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve 'None'.
-    """
-    # Comprobaciones.
-    if not problema:
-        raise ValueError("No se indicó una definición de problema a resolver")
-
-    # Obtenemos el nodo raíz.
-    raiz = crea_nodo_raiz(problema=problema)
-
-    # La raíz de be tener una alfa mínima.
+# %%
+def recursiva_primero_mejor(problema):
+    """Búsqueda recursiva primero el mejor (Recursive Best-First Search)."""
+    raiz = crea_nodo_raiz(problema)
     raiz.alfa = 0
-
-    # Como límite inicial cogemos infinito indicado en el problema.
     limite = problema.infinito
-    if log:
-        msg = "Límite Inicial: {0}"
-        print(msg.format(limite))
-
-    # Definimos el conjunto de los estados explorados.
     explorados = set()
-
-    # Devolvemos lo que devuelve la función recursiva.
-    return _brpm_recursiva(problema=problema,
-                           nodo=raiz,
-                           limite=limite,
-                           explorados=explorados,
-                           log=log,
-                           paso_a_paso=paso_a_paso)
+    return _brpm_recursiva(problema, raiz, limite, explorados)
 
 
-def _brpm_recursiva(problema,
-                    nodo,
-                    limite,
-                    explorados,
-                    log,
-                    paso_a_paso):
-    """
-    Función recursiva para realizar la búsqueda recursiva primero el mejor.
-
-    Argumentos:
-    - problema: definición del problema a resolver.
-    - nodo: nodo a partir del cual resolver el problema.
-    - limite: coste estimado del mejor camino alternativo.
-    - log: Si se mostrarán los pasos que se van realizando.
-    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
-
-    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
-              él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve 'None'.
-    """
-    # Mostramos información si nos lo piden.
-    if log:
-        msg = "----- NUEVO CICLO: LÍMITE {0} -----"
-        print(msg.format(limite))
-        msg = "Nodo: {0}"
-        print(msg.format(nodo.estado.nombre))
-
-    # Agregamos su estado al conjunto de explorados.
+def _brpm_recursiva(problema, nodo, limite, explorados):
+    """Función recursiva para búsqueda recursiva primero el mejor."""
     explorados.add(nodo.estado)
-    if log:
-        log_explorados = [estado.nombre
-                          for estado in explorados]
-        msg = "Explorados: {0}"
-        print(msg.format(log_explorados))
-
-    # Si no indican límite, cogemos el infinito del problema.
     if limite <= 0:
         limite = problema.infinito
-
-    # Miramos si el nodo es ya un objetivo.
-    if problema.es_objetivo(estado=nodo.estado):
-        if log:
-            msg = "Objetivo: {0}"
-            print(msg.format(nodo.estado.nombre))
+    if problema.es_objetivo(nodo.estado):
         return nodo, limite
-
-    # Si el nodo no tiene acciones, pasamos al siguiente.
     if not nodo.acciones:
-        if log:
-            print("No hay Acciones")
         return None, limite
-
-    # Por cada una de las acciones que se pueden hacer.
     for nombre_accion in nodo.acciones.keys():
-        # Indicamos la acción.
-        if log:
-            msg = "   Accion: {0}"
-            print(msg.format(nombre_accion))
-
-        # Creamos un nodo hijo, pero sin agregarlo a los hijos del nodo.
-        accion = Accion(nombre=nombre_accion)
-        hijo = crea_nodo_hijo(problema=problema,
-                              padre=nodo,
-                              accion=accion,
-                              agregar=False)
-        nombre_hijo = hijo.estado.nombre
-        if log:
-            msg = "   Hijo: {0}"
-            print(msg.format(nombre_hijo))
-
-        # Si el estado del hijo no ha sido explorado
-        if hijo.estado in explorados:
-            # Indicamos que ese estado ya ha sido explorado.
-            if log:
-                msg = "   {0} ya ha sido explorado"
-                print(msg.format(hijo.estado.nombre))
-        else:
-            # Ahora sí, agregamos el nodo hijo creado.
+        accion = Accion(nombre_accion)
+        hijo = crea_nodo_hijo(problema, nodo, accion, False)
+        if hijo.estado not in explorados:
             hijo.padre = nodo
             nodo.hijos.append(hijo)
-
-            # Guardamos el valor de referencia en el nodo hijo.
             maximo = max([hijo.valores[objetivo.nombre]
                           for objetivo in problema.estados_objetivos])
             hijo.alfa = max(maximo, nodo.alfa)
-
-    # Si no se agregó ningún hijo, es un camino sin salida.
     if not nodo.hijos:
         return None, problema.infinito
-
-    # Entramos en el bucle principal.
     while True:
-        # Obtenemos el hijo con menor valor.
         objetivos = problema.estados_objetivos
         mejor = nodo.hijo_mejor(problema, metrica='alfa')
-
-        # Si el valor del mejor hijo supera el límite, retrocedemos.
         if mejor.alfa > limite:
             return None, mejor.alfa
-
-        # Hacemos una copia de los hijos actuales, pera recurperarlos luego.
         hijos = nodo.hijos.copy()
-
-        # Quitamos el mejor para poder coger el siguiente mejor.
         nodo.hijos.remove(mejor)
-
-        # Si aun tiene hijos.
         alfa = limite
         if nodo.hijos:
-            # Nos quedamos con el siguiente mejor.
             alternativa = nodo.hijo_mejor(problema, metrica='alfa')
-
-            # Entre el valor de la alternativa y el límite, cogemos el menor.
             alfa = min(limite, alternativa.alfa)
-
-        # Restauramos los hijos que había.
         nodo.hijos = hijos
-
-        # Hacemos la llamada recursiva con el mejor hijo.
-        resultado, mejor.alfa = _brpm_recursiva(problema=problema,
-                                                nodo=mejor,
-                                                limite=alfa,
-                                                explorados=explorados,
-                                                log=log,
-                                                paso_a_paso=paso_a_paso)
-
-        # Si nos devuelve un nodo, es la solución.
+        resultado, mejor.alfa = _brpm_recursiva(problema, mejor, alfa,
+                                                explorados)
         if resultado:
             return resultado, mejor.alfa
 
 
-# %% --- SMA* -----------------------------------------------------------------
-
-def sma_estrella(
-        problema,
-        maximo_nodos=10,
-        log=False,
-        paso_a_paso=False):
-    """
-    Búsqueda A* para memoria limitada (Simplified Memory-Bounded A*).
-
-    Al alcanzar un tamaño máximo en memoria, elimina el nodo con peor valor.
-
-    Argumentos:
-    - problema: definición del problema a resolver.
-    - maximo_nodos: número máximo de nodos en la frontera.
-    - log: Si se mostrarán los pasos que se van realizando.
-    - paso_a_paso: si se detendrá en cada paso para poder analizarlo.
-
-    Devuelve: referencia al nodo con uno de los estado objetivo. A partir de
-              él y siguiendo sus nodos padres, se obtendrá la solución.
-              Si no encuentra solución, devuelve 'None'.
-    """
-    # Comprobaciones.
-    if not problema:
-        raise ValueError("No se indicó una definición de problema a resolver")
-    if maximo_nodos <= 0:
-        raise ValueError("maximo_nodos debe ser positivo")
-
-    # Obtenemos el nodo raíz.
-    raiz = crea_nodo_raiz(problema=problema)
-
-    # Definimos la frontera y agregamos el nodo raíz.
+# %%
+def sma_estrella(problema, maximo_nodos=10):
+    """Búsqueda A* para memoria limitada (Simplified Memory-Bounded A*)."""
+    raiz = crea_nodo_raiz(problema)
     frontera = [raiz, ]
-
-    # Definimos el conjunto de los estados explorados.
     explorados = set()
-
-    # Entramos en el bucle principal.
     while True:
-        # Mostramos la frontera y explorada.
-        if log:
-            log_frontera = [nodo.estado.nombre
-                            for nodo in frontera]
-            log_explorados = [estado.nombre
-                              for estado in explorados]
-            print("----- NUEVO CICLO -----")
-            msg = "Frontera: {0}"
-            print(msg.format(log_frontera))
-            msg = "Explorados: {0}"
-            print(msg.format(log_explorados))
-
-        # Si frontera está vacía, terminamos.
         if not frontera:
             return None
-
-        # Obtenemos el siguiente nodo.
-        nodo = sacar_siguiente(frontera=frontera,
-                               metrica='valor',
+        nodo = sacar_siguiente(frontera, 'valor',
                                objetivos=problema.estados_objetivos)
-        if log:
-            msg = "Nodo: {0}"
-            print(msg.format(nodo.estado.nombre))
-            log_frontera = [nodo.estado.nombre
-                            for nodo in frontera]
-            msg = "Frontera: {0}"
-            print(msg.format(log_frontera))
-
-        # Miramos si el nodo es ya un objetivo.
-        if problema.es_objetivo(estado=nodo.estado):
-            if log:
-                msg = "Objetivo: {0}"
-                print(msg.format(nodo.estado.nombre))
+        if problema.es_objetivo(nodo.estado):
             return nodo
-
-        # Agregamos su estado al conjunto de explorados.
         explorados.add(nodo.estado)
-        if log:
-            log_explorados = [estado.nombre
-                              for estado in explorados]
-            msg = "Explorados: {0}"
-            print(msg.format(log_explorados))
-
-        # Si el nodo no tiene acciones, pasamos al siguiente.
         if not nodo.acciones:
-            if log:
-                print("No hay Acciones")
             continue
-
-        # Por cada una de las acciones que se pueden hacer.
         for nombre_accion in nodo.acciones.keys():
-            # Indicamos la acción.
-            if log:
-                msg = "   Accion: {0}"
-                print(msg.format(nombre_accion))
-
-            # Creamos un nodo hijo.
-            accion = Accion(nombre=nombre_accion)
-            hijo = crea_nodo_hijo(problema=problema,
-                                  padre=nodo,
-                                  accion=accion)
-            nombre_hijo = hijo.estado.nombre
-            if log:
-                msg = "   Hijo: {0}"
-                print(msg.format(nombre_hijo))
-
-            # Si el estado del hijo ha sido explorado o está en la frontera.
-            estados_frontera = [nodo.estado
-                                for nodo in frontera]
+            accion = Accion(nombre_accion)
+            hijo = crea_nodo_hijo(problema, nodo, accion)
+            estados_frontera = [nodo.estado for nodo in frontera]
             if hijo.estado in explorados or hijo.estado in estados_frontera:
-                # Miramos si el estado está en algún nodo de la frontera.
-                buscar = [nodo
-                          for nodo in frontera
+                buscar = [nodo for nodo in frontera
                           if nodo.estado == hijo.estado]
                 if buscar:
-                    # Indicamos que el estado ya existía en la frontera.
-                    if log:
-                        msg = "   Estado En Frontera: {0}"
-                        print(msg.format(nombre_hijo))
-
-                    # Obtenemos los mejores valores.
                     valores_hijo = [hijo.valores[objetivo.nombre]
                                     for objetivo
                                     in problema.estados_objetivos]
@@ -845,204 +219,62 @@ def sma_estrella(
                                       in problema.estados_objetivos]
                     minimo_hijo = min(valores_hijo)
                     minimo_buscar = min(valores_buscar)
-
-                    # Si tiene mejor valor el hijo que el de la frontera.
-                    if log:
-                        msg = "      Valor Hijo: {0}"
-                        print(msg.format(minimo_hijo))
-                        msg = "      Valor Frontera: {0}"
-                        print(msg.format(minimo_buscar))
                     if minimo_hijo < minimo_buscar:
-                        # Indicamos que vamos a sustituir el nodo frontera.
-                        if log:
-                            print("      Sustituido: SÍ")
-
-                        # Sustituimos el de la frontera por el del hijo.
                         indice = frontera.index(buscar[0])
                         frontera[indice] = hijo
-                        if log:
-                            msg = "      Nuevo Valor: {0}"
-                            print(msg.format(minimo_hijo))
-                    else:
-                        # Indicamos que no se sustituye.
-                        if log:
-                            print("      Sustituido: NO")
             else:
-                # Si hemos llegado al máximo de nodos.
                 if len(frontera) > maximo_nodos:
-                    # Quitamos el que tenga mayor valor.
                     ordenador = lambda x: [x.valores[objetivo.nombre]
                                            for objetivo
                                            in problema.estados_objetivos]
-                    frontera = sorted(frontera,
-                                      key=ordenador)
+                    frontera = sorted(frontera, key=ordenador)
                     frontera.pop()
-
-                # Lo agregamos a la frontera.
                 frontera.append(hijo)
-                if log:
-                    msg = "   Añade Frontera: {0}"
-                    print(msg.format(nombre_hijo))
-
-        # Si nos piden ir paso a paso.
-        if paso_a_paso:
-            input("Pulsa la tecla 'Enter' para continuar.")
 
 
-# %% --- FUNCIONES AUXILIARES -------------------------------------------------
-
+# %%
 def crea_nodo_raiz(problema):
-    """
-    Método auxiliar que ayudará a crear nodos raíz.
-
-    Será usado por los métodos que implementan algoritmos de búsqueda
-    informada.
-
-    Argumentos:
-    - problemas: definición del problema a crear su nodo raíz.
-
-    Devuelve: el nodo raíz creado.
-    """
-    # Comprobaciones.
-    if not problema:
-        raise ValueError("No se indicó una definición de problema")
-
-    # Obtenemos el estado inicial del problema.
+    """Método auxiliar que ayudará a crear nodos raíz."""
     estado_raiz = problema.estado_inicial
-
-    # Miramos si el estado tiene acciones asociadas.
     acciones_raiz = {}
     if estado_raiz.nombre in problema.acciones.keys():
         acciones_raiz = problema.acciones[estado_raiz.nombre]
-
-    # Creamos el nodo raíz.
-    raiz = Nodo(estado=estado_raiz,
-                acciones=acciones_raiz)
-
-    # No habrá aun coste de camino.
+    raiz = Nodo(estado_raiz, acciones=acciones_raiz)
     raiz.coste = 0
-
-    # Obtenemos las heurísticas hasta los objetivos.
     raiz.heuristicas = problema.heuristicas[estado_raiz.nombre]
-
-    # Calculamos el valor sólo con la heurística.
     raiz.valores = dict(raiz.heuristicas.items())
-
-    # Devolvemos el nodo raíz creado.
     return raiz
 
 
-def crea_nodo_hijo(problema,
-                   padre,
-                   accion,
-                   agregar=True):
-    """
-    Creación de nodos hijos.
-
-    Método auxiliar que ayudará a crear nodos hijos a los métodos que
-    implementan algoritmos de búsqueda informada.
-
-    Argumentos:
-    - problema: definición del problema a resolver.
-    - padre: nodo padre del nodo hijo a crear. Se agrega a los hijos de él.
-    - accion: acción que ha provocado la creación de este nodo hijo.
-    - agregar: si el nodo hijo creado se agregará a los hijos del padre.
-
-    Devuelve: nodo hijo creado.
-    """
-    # Comprobaciones.
-    if not problema:
-        raise ValueError("No se indicó una definición de problema")
-    if not padre:
-        raise ValueError("No se indicó el nodo padre")
-    if not accion:
-        raise ValueError("No se indicó la acción")
-
-    # Creamos el nuevo estado.
-    nuevo_estado = problema.resultado(estado=padre.estado,
-                                      accion=accion)
-
-    # Miramos si el nuevo estado tiene acciones asociadas.
+def crea_nodo_hijo(problema, padre, accion, agregar=True):
+    """Creación de nodos hijos."""
+    nuevo_estado = problema.resultado(padre.estado, accion)
     acciones_nuevo = {}
     if nuevo_estado.nombre in problema.acciones.keys():
         acciones_nuevo = problema.acciones[nuevo_estado.nombre]
-
-    # Creamos el nodo hijo.
-    hijo = Nodo(estado=nuevo_estado,
-                accion=accion,
-                acciones=acciones_nuevo)
-
-    # Calculamos el coste del camino (para ahorrar cálculos)
+    hijo = Nodo(nuevo_estado, accion, acciones_nuevo)
     coste = padre.coste
-    coste += problema.coste_accion(estado=padre.estado,
-                                   accion=accion)
+    coste += problema.coste_accion(padre.estado, accion)
     hijo.coste = coste
-
-    # Obtenemos las heurísticas hasta los objetivos.
     hijo.heuristicas = problema.heuristicas[hijo.estado.nombre]
-
-    # Calculamos el valor.
     hijo.valores = {estado: heuristica + hijo.coste
                     for estado, heuristica
                     in hijo.heuristicas.items()}
-
-    # Lo agregamos al nodo actual como hijo.
     if agregar:
-        # Le asignamos el padre.
         hijo.padre = padre
-
-        # Agregamos el hijo.
         padre.hijos.append(hijo)
-
-    # Devolvemos el hijo.
     return hijo
 
 
-def sacar_siguiente(frontera,
-                    metrica='valor',
-                    criterio='menor',
+def sacar_siguiente(frontera, metrica='valor', criterio='menor',
                     objetivos=None):
-    """
-    Devuelve el siguiente nodo de la frontera según un criterio.
-
-    De todos nodos en la frontera, saca y devuelve el siguiente nodo según una
-    métrica y un criterio.
-
-    Argumentos:
-    - frontera: frontera de la que obtener el siguiente nodo.
-    - metrica: con qué cantidad se harán los cálculos. Los valores posibles
-               son 'valor', 'heuristica', 'coste'.
-    - criterio: si se obtendrá el 'menor' o el 'mayor'.
-    - objetivos: estados objetivos para los que hacer los cálculos en caso
-                 de que la métrica no sea 'coste'.
-
-    Devuelve: siguiente nodo según métrica y criterio indicado.
-              Devuelve None si no hay más nodos en la frontera.
-    """
-    # Comprobaciones.
-    if metrica not in ('valor', 'heuristica', 'coste'):
-        msg = "Se indicó una métrica desconocida: {0}"
-        raise ValueError(msg.format(metrica))
-    if criterio not in ('menor', 'mayor'):
-        msg = "Se indicó un criterio desconocido: {0}"
-        raise ValueError(msg.format(criterio))
-    if metrica != 'coste' and not objetivos:
-        raise ValueError("No se indicó objetivo")
-
-    # Si no hay nada en la frontera, terminamos.
+    """Devuelve el siguiente nodo de la frontera según un criterio."""
     if not frontera:
         return None
-
-    # Cogemos el primer nodo en la frontera como el mejor.
     mejor = frontera[0]
-
-    # Recorremos el resto de nodo para ver si alguno es mejor.
     for nodo in frontera[1:]:
-        # Por cada uno de los objetivos.
         for objetivo in objetivos:
-            # Si nos piden el valor
             if metrica == 'valor':
-                # Si este nodo es mejor que el actual, lo cogemos.
                 valor_nodo = nodo.valores[objetivo.nombre]
                 valor_mejor = mejor.valores[objetivo.nombre]
                 if(criterio == 'menor' and
@@ -1051,9 +283,7 @@ def sacar_siguiente(frontera,
                 elif(criterio == 'mayor' and
                      valor_nodo > valor_mejor):
                     mejor = nodo
-            # Si nos piden la heurística.
             elif metrica == 'heuristica':
-                # Si este nodo es mejor que el actual, lo cogemos.
                 heuristica_nodo = nodo.heuristicas[objetivo.nombre]
                 heuristica_mejor = mejor.heuristicas[objetivo.nombre]
                 if(criterio == 'menor' and
@@ -1062,55 +292,24 @@ def sacar_siguiente(frontera,
                 elif(criterio == 'mayor' and
                      heuristica_nodo > heuristica_mejor):
                     mejor = nodo
-            # Si nos piden el coste
             elif metrica == 'coste':
-                # Si este hijo es mejor que el actual, lo cogemos.
                 if(criterio == 'menor' and
                    nodo.coste_camino < mejor.coste_camino):
                     mejor = nodo
                 elif(criterio == 'mayor' and
                      nodo.coste_camino > mejor.coste_camino):
                     mejor = nodo
-
-    # Quitamos el nodo de la frontera.
     frontera.remove(mejor)
-
-    # Devolvemos el mejor.
     return mejor
 
 
-def muestra_solucion(objetivo=None,
-                     segundos=0):
-    """
-    Muestra la solución encuentrada a partir de un nodo objetivo.
-
-    Argumentos:
-    - objetivo: nodo objetivo encontrado por un algoritmo.
-    - segundos: cantidad de tiempo que ha tardado en ejecutarse el algoritmo.
-
-    Devuelve: nada.
-    """
-    # Mostramos la solución.
-    print()
-    print("--------------------")
-    print("----- SOLUCIÓN -----")
-    print("--------------------")
-
-    # Si nos pasan el tiempo.
-    if segundos > 0:
-        msg = "Tiempo: {0} milisegundos"
-        print(msg.format(segundos*1000))
-        print("--------------------")
-
-    # Si no hay objetivo, no hay solución.
+def muestra_solucion(objetivo=None):
+    """Muestra la solución encuentrada a partir de un nodo objetivo."""
     if not objetivo:
         print("No hay solución")
         return
-
-    # Recorremos desde el nodo objetivo al nodo raíz.
     nodo = objetivo
     while nodo:
-        # Mostramos los datos de ese nodo.
         msg = "Estado {0}, Valor {1}"
         estado = nodo.estado.nombre
         valores = [nodo.valores[objetivo.nombre]
@@ -1118,48 +317,27 @@ def muestra_solucion(objetivo=None,
                    in problema_resolver.estados_objetivos]
         valor = min(valores)
         print(msg.format(estado, valor))
-
         msg = "  Coste: {0}"
         coste_total = nodo.coste
         print(msg.format(coste_total))
-
         msg = "  Heurística: {0}"
         heuristicas_objetivos = [nodo.heuristicas[objetivo.nombre]
                                  for objetivo
                                  in problema_resolver.estados_objetivos]
         heuristica = min(heuristicas_objetivos)
         print(msg.format(heuristica))
-
-        # Mostramos la acción que llevó a ese nodo.
         if nodo.accion:
             accion = nodo.accion.nombre
             padre = nodo.padre.estado
-            coste = problema_resolver.coste_accion(estado=padre,
-                                                   accion=nodo.accion)
+            coste = problema_resolver.coste_accion(padre, nodo.accion)
             if accion:
                 msg = "<--- {0} [{1}] ---"
                 print(msg.format(accion, coste))
-
-        # Pasamos al nodo padre.
         nodo = nodo.padre
 
 
-# %% --- MAIN -----------------------------------------------------------------
-
+# %%
 if __name__ == '__main__':
-    # Ejemplos de búsqueda informada en grafos.
-
-    # Poder medir los tiempos.
-    from time import time
-
-    # ------------------------------------------------------------------------
-    # DEFINICIÓN DEL PROGRAMA
-    # ------------------------------------------------------------------------
-
-    # El problema consiste en buscar ruta para viajar entre ciudades.
-    # Esta búsqueda se realizará con varios algoritmos para ver diferencias.
-
-    # Definimos las acciones (direcciones de puntos cardinales).
     accN = Accion('N')
     accS = Accion('S')
     accE = Accion('E')
@@ -1169,47 +347,26 @@ if __name__ == '__main__':
     accSE = Accion('SE')
     accSO = Accion('SO')
 
-    # Definimos los estados (ciudades).
-    lanoi = Estado(nombre='Lanoi',
-                   acciones=[accNE])
-    nohoi = Estado(nombre='Nohoi',
-                   acciones=[accSO, accNO, accNE])
-    ruun = Estado(nombre='Ruun',
-                  acciones=[accNO, accNE, accE, accSE])
-    milos = Estado(nombre='Milos',
-                   acciones=[accO, accSO, accN])
-    ghiido = Estado(nombre='Ghiido',
-                    acciones=[accN, accE, accSE])
-    kuart = Estado(nombre='Kuart',
-                   acciones=[accO, accSO, accNE])
-    boomon = Estado(nombre='Boomon',
-                    acciones=[accN, accSO])
-    goorum = Estado(nombre='Goorum',
-                    acciones=[accO, accS])
-    shiphos = Estado(nombre='Shiphos',
-                     acciones=[accO, accE])
-    nokshos = Estado(nombre='Nokshos',
-                     acciones=[accNO, accS, accE])
-    pharis = Estado(nombre='Pharis',
-                    acciones=[accNO, accSO])
-    khamin = Estado(nombre='Khamin',
-                    acciones=[accSE, accNO, accO])
-    tarios = Estado(nombre='Tarios',
-                    acciones=[accO, accNO, accNE, accE])
-    peranna = Estado(nombre='Peranna',
-                     acciones=[accO, accE])
-    khandan = Estado(nombre='Khandan',
-                     acciones=[accO, accS])
-    tawa = Estado(nombre='Tawa',
-                  acciones=[accSO, accSE, accNE])
-    theer = Estado(nombre='Theer',
-                   acciones=[accSO, accSE])
-    roria = Estado(nombre='Roria',
-                   acciones=[accNO, accSO, accE])
-    kosos = Estado(nombre='Kosos',
-                   acciones=[accO])
+    lanoi = Estado('Lanoi', [accNE])
+    nohoi = Estado('Nohoi', [accSO, accNO, accNE])
+    ruun = Estado('Ruun', [accNO, accNE, accE, accSE])
+    milos = Estado('Milos', [accO, accSO, accN])
+    ghiido = Estado('Ghiido', [accN, accE, accSE])
+    kuart = Estado('Kuart', [accO, accSO, accNE])
+    boomon = Estado('Boomon', [accN, accSO])
+    goorum = Estado('Goorum', [accO, accS])
+    shiphos = Estado('Shiphos', [accO, accE])
+    nokshos = Estado('Nokshos', [accNO, accS, accE])
+    pharis = Estado('Pharis', [accNO, accSO])
+    khamin = Estado('Khamin', [accSE, accNO, accO])
+    tarios = Estado('Tarios', [accO, accNO, accNE, accE])
+    peranna = Estado('Peranna', [accO, accE])
+    khandan = Estado('Khandan', [accO, accS])
+    tawa = Estado('Tawa', [accSO, accSE, accNE])
+    theer = Estado('Theer', [accSO, accSE])
+    roria = Estado('Roria', [accNO, accSO, accE])
+    kosos = Estado('Kosos', [accO])
 
-    # Definimos las acciones de cada nodo (viajes entre ciudades).
     acciones = {'Lanoi': {'NE': nohoi},
                 'Nohoi': {'SO': lanoi,
                           'NO': ruun,
@@ -1259,8 +416,6 @@ if __name__ == '__main__':
                           'E': kosos},
                 'Kosos': {'O': roria}}
 
-    # Definimos los costes de aplicar cada acción en cada estado.
-    # En este caso, son los kilómetros por carretera entre ciudades.
     costes = {'Lanoi': {'NE': 42},
               'Nohoi': {'SO': 42,
                         'NO': 21,
@@ -1310,7 +465,6 @@ if __name__ == '__main__':
                         'E': 104},
               'Kosos': {'O': 104}}
 
-    # Definimos las hurísticas para ir entre cada par de estados.
     heuristicas = {'Lanoi': {'Lanoi': 0,
                              'Nohoi': 32,
                              'Ruun': 43,
@@ -1673,205 +827,44 @@ if __name__ == '__main__':
                              'Roria': 87,
                              'Kosos': 0}}
 
-    # Definimos varios problemas.
-    problema_1 = Problema(estado_inicial=lanoi,
-                          estados_objetivos=[kosos],
-                          acciones=acciones,
-                          costes=costes,
-                          heuristicas=heuristicas)
+    objetivo_1 = [kosos]
+    problema_1 = Problema(lanoi, objetivo_1, acciones, costes, heuristicas)
 
-    problema_2 = Problema(estado_inicial=lanoi,
-                          estados_objetivos=[goorum],
-                          acciones=acciones,
-                          costes=costes,
-                          heuristicas=heuristicas)
+    objetivo_2 = [goorum]
+    problema_2 = Problema(lanoi, objetivo_2, acciones, costes, heuristicas)
 
-    problema_3 = Problema(estado_inicial=lanoi,
-                          estados_objetivos=[boomon, goorum],
-                          acciones=acciones,
-                          costes=costes,
-                          heuristicas=heuristicas)
+    objetivo_3 = [boomon, goorum]
+    problema_3 = Problema(lanoi, objetivo_3, acciones, costes, heuristicas)
 
-    # ------------------------------------------------------------------------
-    # ALGORITMOS DE BÚSQUEDA INFORMADA
-    # ------------------------------------------------------------------------
-
-    # Indicamos los algoritmos que queremos lanzar.
     LANZA_VORAZ = True
     LANZA_A_ESTRELLA = True
-    LANZA_AO_ESTRELLA = True
     LANZA_IDA_ESTRELLA = True
     LANZA_RECURSIVA_PRIMER_MEJOR = True
     LANZA_SMA_ESTRELLA = True
 
-    # Indica si se mostrará lo que hace cada algoritmo.
-    LOG = False
-    PASO_A_PASO = False
-
-    # Indicamos el problema a resolver.
     problema_resolver = problema_1
 
-    # Búsqueda voraz.
     if LANZA_VORAZ:
-        print()
-        print("*****************")
         print("***** VORAZ *****")
-        print("*****************")
-        inicio = time()
-        solucion = voraz(problema=problema_resolver,
-                         log=LOG,
-                         paso_a_paso=PASO_A_PASO)
-        tiempo = time() - inicio
-        muestra_solucion(objetivo=solucion,
-                         segundos=tiempo)
+        solucion = voraz(problema_resolver)
+        muestra_solucion(solucion)
 
-    # Búsqueda A*.
     if LANZA_A_ESTRELLA:
-        print()
-        print("**************")
         print("***** A* *****")
-        print("**************")
-        inicio = time()
-        solucion = a_estrella(problema=problema_resolver,
-                              log=LOG,
-                              paso_a_paso=PASO_A_PASO)
-        tiempo = time() - inicio
-        muestra_solucion(objetivo=solucion,
-                         segundos=tiempo)
+        solucion = a_estrella(problema_resolver)
+        muestra_solucion(solucion)
 
-    # Búsqueda AO*.
-    # Esta búsqueda no tiene una función asociada, sino que es una técnica que
-    # se apoya en la búsqueda A*. El problema a resolver será ir desde Nohoi
-    # hasta Theer pero probando a ir por Nokshos o por Khandan.
-    if LANZA_AO_ESTRELLA:
-        print()
-        print("***************")
-        print("***** AO* *****")
-        print("***************")
-        inicio = time()
-        # Dividimos el problema de ir de Nohoi hasta Theer en 2 subproblemas:
-        # 1. Ir de Nohoi hasta Nokshos.
-        # 2. Ir de Nohoi hasta Khandan.
-        # Luego se probará a ir desde estas dos ciudades a Theer.
-        # Por último, se sumarán los costes de las dos trayectorias posibles y,
-        # la que tenga un menor coste, será la elegida.
-
-        # El primero será el de ir desde Nohoi hasta Nokshos.
-        problema_nohoi_nokshos = Problema(estado_inicial=nohoi,
-                                          estados_objetivos=[nokshos],
-                                          acciones=acciones,
-                                          costes=costes,
-                                          heuristicas=heuristicas)
-        solucion_nohoi_nokshos = a_estrella(problema=problema_nohoi_nokshos,
-                                            log=LOG,
-                                            paso_a_paso=PASO_A_PASO)
-        coste_nohoi_nokshos = solucion_nohoi_nokshos.coste
-        MSG = "Coste Nohoi -> Nokshos: {0}"
-        print(MSG.format(coste_nohoi_nokshos))
-
-        # El segundo será el de ir desde Nohoi hasta Khandan.
-        problema_nohoi_khandan = Problema(estado_inicial=nohoi,
-                                          estados_objetivos=[khandan],
-                                          acciones=acciones,
-                                          costes=costes,
-                                          heuristicas=heuristicas)
-        solucion_nohoi_khandan = a_estrella(problema=problema_nohoi_khandan,
-                                            log=LOG,
-                                            paso_a_paso=PASO_A_PASO)
-        coste_nohoi_khandan = solucion_nohoi_khandan.coste
-        MSG = "Coste Nohoi -> Khandan: {0}"
-        print(MSG.format(coste_nohoi_khandan))
-
-        # Miramos cuando se tarda desde Nokshos hasta Theer.
-        problema_nokshos_theer = Problema(estado_inicial=nokshos,
-                                          estados_objetivos=[theer],
-                                          acciones=acciones,
-                                          costes=costes,
-                                          heuristicas=heuristicas)
-        solucion_nokshos_theer = a_estrella(problema=problema_nokshos_theer,
-                                            log=LOG,
-                                            paso_a_paso=PASO_A_PASO)
-        coste_nokshos_theer = solucion_nokshos_theer.coste
-        MSG = "Coste Nokshos -> Theer: {0}"
-        print(MSG.format(coste_nokshos_theer))
-
-        # Y cuando se tarda desde Khandan hasta Theer.
-
-        problema_khandan_theer = Problema(estado_inicial=khandan,
-                                          estados_objetivos=[theer],
-                                          acciones=acciones,
-                                          costes=costes,
-                                          heuristicas=heuristicas)
-        solucion_khandan_theer = a_estrella(problema=problema_khandan_theer,
-                                            log=LOG,
-                                            paso_a_paso=PASO_A_PASO)
-        coste_khandan_theer = solucion_khandan_theer.coste
-        MSG = "Coste Khandan -> Theer: {0}"
-        print(MSG.format(coste_khandan_theer))
-
-        # Comparamos los valorse de las dos trayectorias probadas.
-        coste_por_nokshos = coste_nohoi_nokshos + coste_nokshos_theer
-        coste_por_khandan = coste_nohoi_khandan + coste_khandan_theer
-        MSG = "Coste Nohoi -> Nokshos -> Theer: {0} + {1} = {2}"
-        print(MSG.format(coste_nohoi_nokshos,
-                         coste_nokshos_theer,
-                         coste_por_nokshos))
-        MSG = "Coste Nohoi -> Khandan -> Theer: {0} + {1} = {2}"
-        print(MSG.format(coste_nohoi_khandan,
-                         coste_khandan_theer,
-                         coste_por_khandan))
-
-        # Indicamos la trayectorio con menor coste.
-        MSG = "Para ir de Nohoi a Theer es mejor ir por: {0}"
-        if coste_por_nokshos <= coste_por_khandan:
-            print(MSG.format('Nokshos'))
-            MSG = "Coste: {0}"
-            print(MSG.format(coste_por_nokshos))
-        else:
-            print(MSG.format('Khandan'))
-            MSG = "Coste: {0}"
-            print(MSG.format(coste_por_khandan))
-        tiempo = time() - inicio
-
-    # Búsqueda IDA*.
     if LANZA_IDA_ESTRELLA:
-        print()
-        print("****************")
         print("***** IDA* *****")
-        print("****************")
-        inicio = time()
-        solucion = ida_estrella(problema=problema_resolver,
-                                log=LOG,
-                                paso_a_paso=PASO_A_PASO)
-        tiempo = time() - inicio
-        muestra_solucion(objetivo=solucion,
-                         segundos=tiempo)
+        solucion = ida_estrella(problema_resolver)
+        muestra_solucion(solucion)
 
-    # Búsqueda Recursiva Primero el Mejor.
     if LANZA_RECURSIVA_PRIMER_MEJOR:
-        print()
-        print("***********************************")
         print("***** RECURSIVA PRIMERO MEJOR *****")
-        print("***********************************")
-        inicio = time()
-        solucion, _ = recursiva_primero_mejor(problema=problema_resolver,
-                                              log=LOG,
-                                              paso_a_paso=PASO_A_PASO)
-        tiempo = time() - inicio
-        muestra_solucion(objetivo=solucion,
-                         segundos=tiempo)
+        solucion, _ = recursiva_primero_mejor(problema_resolver)
+        muestra_solucion(solucion)
 
-    # Búsqueda SMA*.
     if LANZA_SMA_ESTRELLA:
-        print()
-        print("****************")
         print("***** SMA* *****")
-        print("****************")
-        inicio = time()
-        solucion = sma_estrella(problema=problema_resolver,
-                                maximo_nodos=1,
-                                log=LOG,
-                                paso_a_paso=PASO_A_PASO)
-        tiempo = time() - inicio
-        muestra_solucion(objetivo=solucion,
-                         segundos=tiempo)
+        solucion = sma_estrella(problema_resolver, maximo_nodos=1)
+        muestra_solucion(solucion,)
