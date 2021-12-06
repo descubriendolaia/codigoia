@@ -98,17 +98,19 @@ def profundidad(problema):
                 frontera.append(hijo)
 
 
-def profundidad_recursiva(problema, limite=None, tipo_limite='profundidad'):
+def profundidad_recursiva(problema, limite=99999):
     """Versión recursiva de la búsqueda en grafos primero en profundidad."""
     raiz = crea_nodo_raiz(problema)
     explorados = set()
-    return _bpp_recursiva(raiz, problema, limite, tipo_limite, explorados)
+    return __bpp_recursiva(raiz, problema, limite, explorados)
 
 
-def _bpp_recursiva(nodo, problema, limite, tipo_limite, explorados):
+def __bpp_recursiva(nodo, problema, limite, explorados):
     """Función recursiva para realizar la búsqueda primero en profundidad."""
     if problema.es_objetivo(nodo.estado):
         return nodo
+    if limite == 0:
+        return None
     explorados.add(nodo.estado)
     if not nodo.acciones:
         return None
@@ -116,17 +118,8 @@ def _bpp_recursiva(nodo, problema, limite, tipo_limite, explorados):
         accion = Accion(nombre_accion)
         hijo = crea_nodo_hijo(problema, nodo, accion)
         if hijo.estado not in explorados:
-            lim = None
-            if isinstance(limite, int):
-                if limite <= 0:
-                    return None
-                if tipo_limite == 'profundidad':
-                    lim = limite - 1
-                elif tipo_limite == 'coste':
-                    coste = problema.coste_accion(nodo.estado, accion)
-                    lim = limite - coste
-            resultado = _bpp_recursiva(hijo, problema, lim,
-                                       tipo_limite, explorados)
+            resultado = __bpp_recursiva(hijo, problema, limite - 1,
+                                        explorados.copy())
             if resultado:
                 return resultado
     return None
@@ -138,21 +131,44 @@ def profundidad_iterativa(problema, limite):
     if limite is None:
         return profundidad_recursiva(problema)
     for i in range(1, limite + 1):
-        resultado = profundidad_recursiva(problema, i, 'profundidad')
+        resultado = profundidad_recursiva(problema, i)
         if resultado:
             return resultado
     return None
 
 
 # %%
-def coste_iterativo(problema, limite, paso=1):
+def profundidad_iterativa_coste(problema, limite=99999, paso=1):
     """Búsqueda en profundidad iterativa pero con costes."""
-    if limite is None:
-        return profundidad_recursiva(problema)
     for i in range(1, limite + 1, paso):
-        resultado = profundidad_recursiva(problema, i, 'coste')
-        if resultado:
-            return resultado
+        raiz = crea_nodo_raiz(problema)
+        explorados = set()
+        soluciones = []
+        __coste_recursivo(raiz, problema, i, explorados, soluciones)
+        if soluciones:
+            mejor = min(soluciones, key=lambda nodo: nodo.coste)
+            return mejor
+    return None
+
+
+def __coste_recursivo(nodo, problema, limite, explorados, soluciones):
+    if problema.es_objetivo(nodo.estado):
+        return nodo
+    if limite <= 0:
+        return None
+    explorados.add(nodo.estado)
+    if not nodo.acciones:
+        return None
+    for nombre_accion in nodo.acciones.keys():
+        accion = Accion(nombre_accion)
+        hijo = crea_nodo_hijo(problema, nodo, accion)
+        if hijo.estado not in explorados:
+            coste = problema.coste_accion(nodo.estado, accion)
+            resultado = __coste_recursivo(hijo, problema, limite - coste,
+                                          explorados.copy(), soluciones)
+            if resultado:
+                soluciones.append(resultado)
+                return resultado
     return None
 
 
@@ -438,7 +454,7 @@ if __name__ == '__main__':
     LANZA_PROFUNDIDAD_RECURSIVA = True
     LANZA_PROFUNDIDAD_LIMITADA = True
     LANZA_PROFUNDIDAD_ITERATIVA = True
-    LANZA_COSTE_ITERATIVO = True
+    LANZA_PROFUNDIDAD_ITERATIVA_COSTES = True
     LANZA_BIDIRECCIONAL = True
 
     problema_resolver = problema_1
@@ -475,11 +491,11 @@ if __name__ == '__main__':
         solucion = profundidad_iterativa(problema_resolver, LIMITE)
         muestra_solucion(solucion)
 
-    if LANZA_COSTE_ITERATIVO:
-        print("***** COSTE ITERATIVO *****")
-        LIMITE = 500
+    if LANZA_PROFUNDIDAD_ITERATIVA_COSTES:
+        print("***** PRIMERO EN PROFUNDIDAD (ITERATIVA) CON COSTES *****")
+        LIMITE = 1000
         PASO = 100
-        solucion = coste_iterativo(problema_resolver, LIMITE, PASO)
+        solucion = profundidad_iterativa_coste(problema_resolver, LIMITE, PASO)
         muestra_solucion(solucion)
 
     if LANZA_BIDIRECCIONAL:
