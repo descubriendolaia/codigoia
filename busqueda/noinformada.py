@@ -152,10 +152,12 @@ def profundidad_iterativa_coste(problema, limite=99999, paso=1):
 
 
 def __coste_recursivo(nodo, problema, limite, explorados, soluciones):
-    if problema.es_objetivo(nodo.estado):
-        return nodo
+    """Función recursiva de la busqueda en profundidad iterativa con costes."""
     if limite <= 0:
         return None
+    if problema.es_objetivo(nodo.estado):
+        soluciones.append(nodo)
+        return nodo
     explorados.add(nodo.estado)
     if not nodo.acciones:
         return None
@@ -164,11 +166,8 @@ def __coste_recursivo(nodo, problema, limite, explorados, soluciones):
         hijo = crea_nodo_hijo(problema, nodo, accion)
         if hijo.estado not in explorados:
             coste = problema.coste_accion(nodo.estado, accion)
-            resultado = __coste_recursivo(hijo, problema, limite - coste,
+            __coste_recursivo(hijo, problema, limite - coste,
                                           explorados.copy(), soluciones)
-            if resultado:
-                soluciones.append(resultado)
-                return resultado
     return None
 
 
